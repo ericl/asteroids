@@ -1,7 +1,11 @@
+import asteroids.display.*;
+import asteroids.bodies.*;
+import static asteroids.Util.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
+import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
@@ -13,7 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class Demo {
-	protected Frame frame;
+	protected JFrame frame;
 	protected Display d;
 	protected boolean running;
 	protected World world;
@@ -32,7 +36,8 @@ public class Demo {
 
 	public Demo() {
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
-		frame = new Frame("Asteroid Field Demo");
+		frame = new JFrame("Asteroid Field Demo");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		width = 500;
 		height = 500;
 		frame.setSize(width, height);
@@ -44,12 +49,6 @@ public class Demo {
 			getScreenSize().getHeight()-width)/2;
 		
 		frame.setLocation(x,y);
-
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
 
 		frame.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -65,7 +64,7 @@ public class Demo {
 		});
 	
 		d = new Java2DDisplay(frame);
-		d.setBackground("pixmaps/opo9929b.jpg");
+		d.setBackground("opo9929b.jpg");
 		init();
 		mainLoop();
 	}
@@ -116,6 +115,8 @@ public class Demo {
 		adjustAngularVelocity = 0;
 		shift = 0;
 		accel = 0;
+		xo = width/2;
+		yo = height/2;
 		xid = (float)Math.E;
 		d.setCenter(v(xo, yo));
 		stopped = null;
@@ -149,8 +150,8 @@ public class Demo {
 		c = Color.gray;
 		int w = width, h = height;
 		d.drawString("Speed: " + ship.getVelocity().length(),f,c,v(w-120,h-75));
-		d.drawString("Xcoord: " + (int)(xo - 250),f,c,v(w-120,h-55));
-		d.drawString("Ycoord: " + (int)(-yo + 250),f,c,v(w-120,h-35));
+		d.drawString("Xcoord: " + (int)(xo - width/2),f,c,v(w-120,h-55));
+		d.drawString("Ycoord: " + (int)(-yo + height/2),f,c,v(w-120,h-35));
 		d.drawString("Asteroids: " + score,f,c,v(w-120,h-15));
 		c = Color.red;
 		d.drawString("R - Restart Demo",f,c,v(15,h-15));
@@ -252,13 +253,15 @@ public class Demo {
 		float vy = (float)((1+score/100)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(20*Math.random())) {
-			case 0: rock = CircleAsteroid.random(0,300); break;
-			case 1: rock = new Rock1(); break;
-			case 2: rock = Sphere1.random(20,30); break;
-			default: rock = CircleAsteroid.random(20,30); break;
+			case 1: rock = new Rock1(range(10,90)); break;
+			case 2: rock = new Sphere1(range(20,30)); break;
+			case 3: rock = new HexAsteroid(range(20,40)); break;
+			case 4: rock = new Rock2(range(40,60)); break;
+			case 5: rock = new BoxAsteroid(range(30,50));
+			default: rock = new CircleAsteroid(range(20,30)); break;
 		}
 		if (oneIn(100))
-			rock = HexAsteroid.getInstance();
+			rock = new CircleAsteroid(range(100,300));
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
 		Vector2f vo = getOffscreenCoords(rock.getRadius());
 		rock.setPosition(vo.getX(), vo.getY());
@@ -280,11 +283,7 @@ public class Demo {
 	}
 
 	protected boolean oneIn(int num) {
-		return (num*Math.random() < 1);
-	}
-
-	protected Vector2f v(Number x, Number y) {
-		return new Vector2f(x.floatValue(), y.floatValue());
+		return num*Math.random() < 1;
 	}
 
 	// precondition: v is absolute vector from display origin

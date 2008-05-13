@@ -1,3 +1,6 @@
+import asteroids.display.*;
+import asteroids.bodies.*;
+import static asteroids.Util.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
@@ -40,28 +43,19 @@ public class RotateTest {
 			}
 		});
 
-		TestAsteroid b = TestAsteroid.getInstance();
-		BoxAsteroid c = BoxAsteroid.random(50,50);
-		Rock1 r = new Rock1();
-		Sphere1 s = Sphere1.random(31,41);
+		Rock1 r = new Rock1(range(30,60));
+		Sphere1 s = new Sphere1(range(31,41));
 		d = new Java2DDisplay(frame);
-		d.setBackground("pixmaps/opo9929b.jpg");
 		d.setCenter(new Vector2f(-90,0));
 		float rot = 0;
 		float xx = 50, yy = 50;
 		float x2 = 300, y2 = 300;
 		while (true) {
-			b.setPosition(xx,yy);
 			r.setPosition(--x2,y2);
 			s.setPosition(x2/2,y2/2);
-			c.setPosition(xx++,yy++);
-			b.setRotation(rot);
-			c.setRotation(rot);
 			r.setRotation(rot);
 			s.setRotation(rot);
 			rot += .2;
-			d.drawDrawable(c);
-			d.drawTextured(b);
 			d.drawDrawable(r);
 			d.drawTextured(r);
 			d.drawDrawable(s);

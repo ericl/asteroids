@@ -4,6 +4,7 @@
  * 	an alternate renderer...
  */
 
+package asteroids.display;
 import java.awt.Image;
 import java.awt.Color;
 import java.awt.Font;

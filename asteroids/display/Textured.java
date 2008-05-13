@@ -2,6 +2,7 @@
  * Something with texture information that can be rendered by a Display.
  */
 
+package asteroids.display;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
@@ -10,7 +11,8 @@ public interface Textured {
 
 	/**
 	 * Returns constant distance in pixels from the top-left corner
-	 * of the texture pixmap to its center of rotation.
+	 * of the texture pixmap to its center of rotation. This should
+	 * not be scaled ever.
 	 * @return The center of rotation of the texture.
 	 */
 	public Vector2f getTextureCenter();

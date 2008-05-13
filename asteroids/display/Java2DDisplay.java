@@ -1,3 +1,4 @@
+package asteroids.display;
 import java.awt.RenderingHints;
 import java.awt.MediaTracker;
 import java.awt.Graphics2D;
@@ -12,6 +13,7 @@ import java.awt.geom.*;
 import javax.imageio.*;
 import java.util.*;
 import java.io.*;
+import java.net.URL;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.*;
@@ -121,7 +123,11 @@ public class Java2DDisplay implements Display {
 	}
 
 	public void setBackground(String path) {
-		orig = frame.getToolkit().getImage(path);
+		try { 
+			orig = frame.getToolkit().getImage(path);
+		} catch (Exception e) {
+			System.out.println("Invalid background path.");
+		}
 		tracker.addImage(orig, 0);
 		rescaleBackground();
 	}
@@ -144,11 +150,12 @@ public class Java2DDisplay implements Display {
 
 	private BufferedImage loadImage(String path) {
 		BufferedImage i = cache.get(path);
-		// TODO: test if the caching actually helps or not
 		if (i == null)
 			try {
-				System.out.println("read: " + path);
-				i = ImageIO.read(new File(path));
+				String dir = getClass().getResource("/asteroids/").toString();
+				System.out.println("read " + dir + path);
+				i = ImageIO.read(new URL(dir+path));
+//				i = ImageIO.read(new File(path));
 				cache.put(path, i);
 			} catch (Exception e) {
 				System.out.println("Invalid image path.");

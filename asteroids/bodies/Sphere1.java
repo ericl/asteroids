@@ -1,3 +1,5 @@
+package asteroids.bodies;
+import asteroids.display.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
@@ -7,9 +9,9 @@ import java.awt.Color;
 public class Sphere1 extends CircleAsteroid implements Textured {
 	private float sphereradius;
 
-	private Sphere1(Circle c) {
-		super(c);
-		sphereradius = c.getRadius();
+	public Sphere1(float radius) {
+		super(radius);
+		sphereradius = radius;
 	}
 
 	public Vector2f getTextureCenter() {
@@ -30,10 +32,5 @@ public class Sphere1 extends CircleAsteroid implements Textured {
 
 	private static Vector2f v(Number x, Number y) {
 		return new Vector2f(x.floatValue(), y.floatValue());
-	}
-
-	public static Sphere1 random(int minR, int maxR) {
-		Circle circle = new Circle((float)(minR+(maxR-minR)*Math.random()));
-		return new Sphere1(circle);	
 	}
 }

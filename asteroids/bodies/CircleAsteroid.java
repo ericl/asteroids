@@ -1,3 +1,5 @@
+package asteroids.bodies;
+import asteroids.display.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import java.awt.Graphics2D;
@@ -5,8 +7,8 @@ import java.awt.Color;
 
 public class CircleAsteroid extends Asteroid implements Drawable {
 
-	public CircleAsteroid(Circle circle) {
-		super(circle, (float)Math.pow(circle.getRadius(),2));
+	public CircleAsteroid(float radius) {
+		super(new Circle(radius), (float)Math.pow(radius,2));
 	}
 
 	public void drawTo(Graphics2D g2d, float xo, float yo) {
@@ -20,10 +22,5 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 
 	public float getRadius() {
 		return ((Circle)getShape()).getRadius();
-	}
-
-	public static CircleAsteroid random(int minR, int maxR) {
-		Circle circle = new Circle((float)(minR+(maxR-minR)*Math.random()));
-		return new CircleAsteroid(circle);	
 	}
 }

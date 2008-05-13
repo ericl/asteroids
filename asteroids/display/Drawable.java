@@ -2,6 +2,8 @@
  * Drawable object. This actually breaks the whole point of the
  * Display interface since it relies on Graphics2D....
  */
+
+package asteroids.display;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
