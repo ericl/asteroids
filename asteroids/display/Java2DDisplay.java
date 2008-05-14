@@ -120,6 +120,8 @@ public class Java2DDisplay implements Display {
 			buf.drawImage(bg,0,0,frame);
 		buf.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			RenderingHints.VALUE_ANTIALIAS_ON);
+		buf.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 	}
 
 	public void setBackground(String path) {
@@ -155,7 +157,6 @@ public class Java2DDisplay implements Display {
 				String dir = getClass().getResource("/asteroids/").toString();
 				System.out.println("read " + dir + path);
 				i = ImageIO.read(new URL(dir+path));
-//				i = ImageIO.read(new File(path));
 				cache.put(path, i);
 			} catch (Exception e) {
 				System.out.println("Invalid image path.");

@@ -11,6 +11,6 @@ public class HexAsteroid extends PolyAsteroid {
 	private static ROVector2f[] geo = {v(-30,0),v(-10,-10),v(10,-10),v(30,0),v(10,20),v(-10,20)};
 
 	public HexAsteroid(float size) {
-		super(geo, size / 30);
+		super(geo, size / 25);
 	}
 }

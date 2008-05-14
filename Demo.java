@@ -25,7 +25,7 @@ public class Demo {
 	protected int numrocks = 50, score;
 	protected String stopped;
 	protected Ship ship;
-	protected float xid, xo, yo;
+	protected float xo, yo;
 	protected int width, height;
 	protected int shift, accel;
 	protected float adjustAngularVelocity;
@@ -107,17 +107,26 @@ public class Demo {
 		}
 	}
 
+	private class ShipKiller implements CollisionListener {
+		public void collisionOccured(CollisionEvent event) {
+			if (event.getBodyA() == ship || event.getBodyB() == ship) {
+				world.remove(ship);
+				stopped = "Score: " + score;
+			}
+		}
+	}
+
 	/**
 	 * Resets game within demo.
 	 */
 	protected void init() {
 		world.clear();
+		world.addListener(new ShipKiller());
 		adjustAngularVelocity = 0;
 		shift = 0;
 		accel = 0;
 		xo = width/2;
 		yo = height/2;
-		xid = (float)Math.E;
 		d.setCenter(v(xo, yo));
 		stopped = null;
 		score = 0;
@@ -125,7 +134,7 @@ public class Demo {
 		for (int i=0; i < numrocks; i++)
 			world.add(newAsteroid());
 		ship = new Ship(1000f);
-		ship.setPosition((float)(xo+width/2),(float)(yo+height/2));
+		ship.setPosition((xo+width/2),(yo+height/2));
 		ship.setRotDamping(1500);
 		ship.adjustVelocity(v(0,0));
 		ship.setMaxVelocity(100,100);
@@ -164,10 +173,6 @@ public class Demo {
 	 * Creates/deletes asteroids, manages ship position.
 	 */
 	protected void update() {
-		if (xid != (float)Math.E && ship.getVelocity().getX() != xid) {
-			world.remove(ship);
-			stopped = "Score: " + score;
-		}
 		double xmax = xo + width + border + buf;
 		double xmin = xo - border - buf;
 		double ymax = yo + height + border + buf;
@@ -190,7 +195,6 @@ public class Demo {
 		xo = ship.getPosition().getX() - (float)width/2;
 		yo = ship.getPosition().getY() - (float)height/2;
 		d.setCenter(v(xo, yo));
-		xid = ship.getVelocity().getX();
 	}
 
 
@@ -237,14 +241,12 @@ public class Demo {
 		double ax = accelfactor*Math.sin(ship.getRotation());
 		double ay = accelfactor*Math.cos(ship.getRotation());
 		ship.adjustVelocity(v(ax,-ay));
-		xid = ship.getVelocity().getX();
 	}
 
 	protected void shift(float dir) {
 		double ax = Math.sin(ship.getRotation() + Math.PI/2);
 		double ay = Math.cos(ship.getRotation() + Math.PI/2);
 		ship.adjustVelocity(v(dir*ax,dir*-ay));
-		xid = ship.getVelocity().getX();
 	}
 
 	protected Asteroid newAsteroid() {
@@ -253,14 +255,14 @@ public class Demo {
 		float vy = (float)((1+score/100)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(20*Math.random())) {
-			case 1: rock = new Rock1(range(10,90)); break;
+			case 1: rock = new Rock1(range(20,30)); break;
 			case 2: rock = new Sphere1(range(20,30)); break;
-			case 3: rock = new HexAsteroid(range(20,40)); break;
-			case 4: rock = new Rock2(range(40,60)); break;
-			case 5: rock = new BoxAsteroid(range(30,50));
+			case 3: rock = new HexAsteroid(range(20,30)); break;
+			case 4: rock = new Rock2(range(20,30)); break;
+			case 5: rock = new BoxAsteroid(range(20,30)); break;
 			default: rock = new CircleAsteroid(range(20,30)); break;
 		}
-		if (oneIn(100))
+		if (oneIn(200))
 			rock = new CircleAsteroid(range(100,300));
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
 		Vector2f vo = getOffscreenCoords(rock.getRadius());
@@ -288,8 +290,8 @@ public class Demo {
 
 	// precondition: v is absolute vector from display origin
 	public boolean onScreen(ROVector2f v, float r) {
-		float w2 = (float)(width/2 + r);
-		float h2 = (float)(height/2 + r);
+		float w2 = (width/2 + r);
+		float h2 = (height/2 + r);
 		float x = v.getX();
 		float y = v.getY();
 		return x > -w2-r && x < w2 && y > -h2-r && y < h2;
