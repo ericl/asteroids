@@ -135,8 +135,13 @@ public class Java2DDisplay implements Display {
 	}
 
 	private void rescaleBackground() {
-		bg = orig.getScaledInstance(
-			(int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
+		try {
+		         bg = orig.getScaledInstance(
+			         (int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
+		} catch (Exception e) {
+		         System.out.println("No background.");
+		         return;
+		}
 		tracker.addImage(bg, 0);
 		try {
 			tracker.waitForID(0);

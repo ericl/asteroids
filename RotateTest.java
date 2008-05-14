@@ -5,6 +5,7 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
+import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
@@ -16,7 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class RotateTest {
-	protected Frame frame;
+	protected JFrame frame;
 	protected Display d;
 	protected int width, height;
 
@@ -25,7 +26,8 @@ public class RotateTest {
 	}
 
 	public RotateTest() {
-		frame = new Frame("Rotate Test");
+		frame = new JFrame("Rotate Test");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		width = 500;
 		height = 500;
 		frame.setSize(width, height);
@@ -36,12 +38,6 @@ public class RotateTest {
 			getScreenSize().getHeight()-width)/2;
 		
 		frame.setLocation(x,y);
-
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
 
 		Rock1 r = new Rock1(range(30,60));
 		Sphere1 s = new Sphere1(range(31,41));
