@@ -17,7 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class RotateTest {
-	protected Frame frame;
+	protected JFrame frame;
 	protected Display d;
 	protected int width, height;
 
