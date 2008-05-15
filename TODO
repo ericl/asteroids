@@ -1,3 +1,5 @@
-- make asteroids split up (Breakable interface)
+(high priority)
+- method to find empty space to place bodies (put in Util)
+- make asteroids split up (Explodable interface)
 - make ship shoot projectiles
-- asynchronous physics
+(low priority)
