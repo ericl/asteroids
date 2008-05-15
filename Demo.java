@@ -63,7 +63,7 @@ public class Demo {
 			}
 		});
 	
-		d = new Java2DDisplay(frame);
+		d = new Display(frame);
 		d.setBackground("opo9929b.jpg");
 		init();
 		mainLoop();
@@ -141,32 +141,30 @@ public class Demo {
 		world.add(ship);
 	}
 
-	/**
-	 * Draws info text onscreen.
-	 */
 	protected void drawGUI(float frameAverage, long renderTime, long logicTime) {
-		Font f = new Font("SanSerif", Font.PLAIN, 12);
-		Color c = Color.orange;
-		d.drawString("FPS: "+(int)(1000/frameAverage),f,c,v(10,40));
-		d.drawString("Arbiters: "+world.getArbiters().size(),f,c,v(10,60));
-		d.drawString("Bodies: "+world.getBodies().size(),f,c,v(10,80));
-		d.drawString("Render time: "+renderTime+"ms",f,c,v(10,100));
-		d.drawString("Logic time: "+logicTime+"ms",f,c,v(10,120));
+		Graphics2D g2d = d.getGraphics();
+		g2d.setFont(new Font("SanSerif", Font.PLAIN, 12));
+		g2d.setColor(Color.orange);
+		g2d.drawString("FPS: "+(int)(1000/frameAverage),10,40);
+		g2d.drawString("Arbiters: "+world.getArbiters().size(),10,60);
+		g2d.drawString("Bodies: "+world.getBodies().size(),10,80);
+		g2d.drawString("Render time: "+renderTime+"ms",10,100);
+		g2d.drawString("Logic time: "+logicTime+"ms",10,120);
 		if (stopped != null) {
-			c = Color.black;
-			d.drawString(stopped,f,c,v(width/2-27,height/2+5));
+			g2d.setColor(Color.black);
+			g2d.drawString(stopped,width/2-27,height/2+5);
 		}
-		c = Color.gray;
+		g2d.setColor(Color.gray);
 		int w = width, h = height;
-		d.drawString("Speed: " + ship.getVelocity().length(),f,c,v(w-120,h-75));
-		d.drawString("Xcoord: " + (int)(xo - width/2),f,c,v(w-120,h-55));
-		d.drawString("Ycoord: " + (int)(-yo + height/2),f,c,v(w-120,h-35));
-		d.drawString("Asteroids: " + score,f,c,v(w-120,h-15));
-		c = Color.red;
-		d.drawString("R - Restart Demo",f,c,v(15,h-15));
-		f = new Font("Monospaced", Font.PLAIN, 14);
-		d.drawString("    u",f,c,v(15,h-50));
-		d.drawString("H h j k K",f,c,v(15,h-35));
+		g2d.drawString("Speed: " + ship.getVelocity().length(),w-120,h-75);
+		g2d.drawString("Xcoord: " + (int)(xo - width/2),w-120,h-55);
+		g2d.drawString("Ycoord: " + (int)(-yo + height/2),w-120,h-35);
+		g2d.drawString("Asteroids: " + score,w-120,h-15);
+		g2d.setColor(Color.red);
+		g2d.drawString("R - Restart Demo",15,h-15);
+		g2d.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		g2d.drawString("    u",15,h-50);
+		g2d.drawString("H h j k K",15,h-35);
 	}
 
 	/**
