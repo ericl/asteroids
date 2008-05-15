@@ -41,7 +41,7 @@ public class RotateTest {
 
 		Rock1 r = new Rock1(range(30,60));
 		Sphere1 s = new Sphere1(range(31,41));
-		d = new Java2DDisplay(frame);
+		d = new Display(frame);
 		d.setCenter(new Vector2f(-90,0));
 		float rot = 0;
 		float xx = 50, yy = 50;
