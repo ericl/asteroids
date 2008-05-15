@@ -144,6 +144,8 @@ public class Display {
 			RenderingHints.VALUE_ANTIALIAS_ON);
 		buf.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		buf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
 	/**
@@ -163,11 +165,11 @@ public class Display {
 
 	private void rescaleBackground() {
 		try {
-		         bg = orig.getScaledInstance(
-			         (int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
+			bg = orig.getScaledInstance(
+			(int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
 		} catch (Exception e) {
-		         System.out.println("No background.");
-		         return;
+			System.out.println("No background.");
+			return;
 		}
 		tracker.addImage(bg, 0);
 		try {

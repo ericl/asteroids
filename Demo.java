@@ -77,31 +77,21 @@ public class Demo {
 	 * Obviously this is beyond the scope of this demo.
 	 */
 	protected void mainLoop() {
-		float target = 1000 / 60.0f;
-		float frameAverage = target;
-		long lastFrame = System.currentTimeMillis();
-		float yield = 10000f, damping = 0.1f;
 		long renderTime = 0, logicTime = 0;
+		float dt = 0;
+		Timer t = new Timer(60f);
 		while (running) {
-			long timeNow = System.currentTimeMillis();
-			frameAverage = (frameAverage * 10 + (timeNow - lastFrame)) / 11;
-			lastFrame = timeNow;
-			
-			yield+=yield*((target/frameAverage)-1)*damping+0.05f;
-			for(int i=0;i<yield;i++)
-				Thread.yield();
-			
 			long beforeRender = System.currentTimeMillis();
 			d.drawWorld(world);
-			drawGUI(frameAverage, renderTime, logicTime);
+			drawGUI(dt, renderTime, logicTime);
 			d.show();
+			renderTime = System.currentTimeMillis() - beforeRender;
 			ship.decrThrust();
 			processKeys();
-			renderTime = System.currentTimeMillis() - beforeRender;
-			
+			dt = t.tick();
 			long beforeLogic = System.currentTimeMillis();
 			for (int i=0;i<5;i++)
-				world.step();
+				world.step(dt);
 			logicTime = System.currentTimeMillis() - beforeLogic;
 			update();
 		}
@@ -133,6 +123,7 @@ public class Demo {
 		world.setGravity(0,0);
 		for (int i=0; i < numrocks; i++)
 			world.add(newAsteroid());
+		world.add(new Europa(150));
 		ship = new Ship(1000f);
 		ship.setPosition((xo+width/2),(yo+height/2));
 		ship.setRotDamping(1500);
@@ -145,7 +136,7 @@ public class Demo {
 		Graphics2D g2d = d.getGraphics();
 		g2d.setFont(new Font("SanSerif", Font.PLAIN, 12));
 		g2d.setColor(Color.orange);
-		g2d.drawString("FPS: "+(int)(1000/frameAverage),10,40);
+		g2d.drawString("FPS: "+(int)(1/frameAverage),10,40);
 		g2d.drawString("Arbiters: "+world.getArbiters().size(),10,60);
 		g2d.drawString("Bodies: "+world.getBodies().size(),10,80);
 		g2d.drawString("Render time: "+renderTime+"ms",10,100);
