@@ -157,7 +157,7 @@ public class Display {
 		try {
 			orig = frame.getToolkit().getImage(path);
 		} catch (Exception e) {
-			System.out.println("Invalid background path.");
+			System.err.println("Invalid background path.");
 		}
 		tracker.addImage(orig, 0);
 		rescaleBackground();
@@ -168,14 +168,14 @@ public class Display {
 			bg = orig.getScaledInstance(
 			(int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
 		} catch (Exception e) {
-			System.out.println("No background.");
+			System.err.println("No background.");
 			return;
 		}
 		tracker.addImage(bg, 0);
 		try {
 			tracker.waitForID(0);
 		} catch (Exception e) {
-			System.out.println("E: what?");
+			System.err.println("E: what?");
 		}
 	}
 
@@ -189,11 +189,11 @@ public class Display {
 		if (i == null)
 			try {
 				String dir = getClass().getResource("/asteroids/").toString();
-				System.out.println("read " + dir + path);
+				System.err.println("read " + dir + path);
 				i = ImageIO.read(new URL(dir+path));
 				cache.put(path, i);
 			} catch (Exception e) {
-				System.out.println("Invalid image path.");
+				System.err.println("Invalid image path.");
 			}
 		return i;
 	}

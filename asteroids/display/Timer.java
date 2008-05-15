@@ -33,8 +33,7 @@ public class Timer {
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-		// tradeoff between slow response and a jerky display
-		frame_ns = (frame_ns * 4 + (now_ns - old_ns)) / 5;
+		frame_ns = now_ns - old_ns;
 		old_ns = now_ns;
 		return frame_ns/1e9f;
 	}

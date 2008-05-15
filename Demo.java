@@ -36,6 +36,8 @@ public class Demo {
 
 	public Demo() {
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
+//		world.addListener(new ShipKiller());
+		world.addListener(new Exploder());
 		frame = new JFrame("Asteroid Field Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		width = 500;
@@ -80,7 +82,9 @@ public class Demo {
 		long renderTime = 0, logicTime = 0;
 		float dt = 0;
 		Timer t = new Timer(60f);
+//		float STATX = 0, STATY = 0, COUNTX = 0;
 		while (running) {
+			long Xbegin = System.currentTimeMillis();
 			long beforeRender = System.currentTimeMillis();
 			d.drawWorld(world);
 			drawGUI(dt, renderTime, logicTime);
@@ -94,6 +98,12 @@ public class Demo {
 				world.step(dt);
 			logicTime = System.currentTimeMillis() - beforeLogic;
 			update();
+//			STATY += dt;
+//			STATX += (System.currentTimeMillis() - Xbegin);
+//			COUNTX+=STATX;
+//			System.out.println(COUNTX + " " + STATY/STATX);
+//			STATX = 0;
+//			STATY = 0;
 		}
 	}
 
@@ -106,12 +116,32 @@ public class Demo {
 		}
 	}
 
+	private class Exploder implements CollisionListener {
+		public void collisionOccured(CollisionEvent event) {
+			if (event.getBodyA() instanceof Explodable) {
+				Explodable A = (Explodable)event.getBodyA();
+				if (A.canExplode()) {
+					for (Body b : A.explode())
+						world.add(b);
+					world.remove(event.getBodyA());
+				}
+			}
+			if (event.getBodyB() instanceof Explodable) {
+				Explodable B = (Explodable)event.getBodyB();
+				if (B.canExplode()) {
+					for (Body b : B.explode())
+						world.add(b);
+					world.remove(event.getBodyB());
+				}
+			}
+		}
+	}
+
 	/**
 	 * Resets game within demo.
 	 */
 	protected void init() {
 		world.clear();
-		world.addListener(new ShipKiller());
 		adjustAngularVelocity = 0;
 		shift = 0;
 		accel = 0;
@@ -125,6 +155,8 @@ public class Demo {
 			world.add(newAsteroid());
 		world.add(new Europa(150));
 		ship = new Ship(1000f);
+//		ship.setRotation((float)(-Math.PI/3));
+//		ship.adjustVelocity(v(-75,-45));
 		ship.setPosition((xo+width/2),(yo+height/2));
 		ship.setRotDamping(1500);
 		ship.adjustVelocity(v(0,0));
