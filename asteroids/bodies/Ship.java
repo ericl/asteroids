@@ -8,8 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.Color;
 
 public class Ship extends Body implements Drawable, Textured {
-	private static ROVector2f[] tri = {v(0,-25), v(10,10), v(-10,10)};
-	private static Shape shape = new Polygon(tri);
+	
+	private static ROVector2f[] poly = {v(0,-30), v(10,-5), v(32,-5), v(0,15), v(-32, 0), v(-10,-5)};
+	private static Shape shape = new Polygon(poly);
 	private double hull = 1;
 	private int thrust;
 
@@ -26,7 +27,7 @@ public class Ship extends Body implements Drawable, Textured {
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(10,25);
+		return v(32,32);
 	}
 
 	public void incrThrust() {
