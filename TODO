@@ -1,5 +1,4 @@
 (high priority)
-- method to find empty space to place bodies (put in Util)
-- make asteroids split up (Explodable interface)
-- make ship shoot projectiles
+- make explosions robust
+- write proper ship class
 (low priority)

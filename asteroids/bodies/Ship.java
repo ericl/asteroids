@@ -63,12 +63,18 @@ public class Ship extends Body implements Drawable, Textured {
 		g2d.fillPolygon(xcoords, ycoords, verts.length);
 	}
 
+	public Body fire() {
+		Body c = new Sphere1(3);
+		float ax = (float)(20*Math.sin(getRotation()));
+		float ay = (float)(20*Math.cos(getRotation()));
+		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
+		c.adjustVelocity(v(20*ax,20*-ay));
+		c.addExcludedBody(this);
+		return c;
+	}
+
 	// the ship is all important
 	public float getRadius() {
 		return Float.POSITIVE_INFINITY;
-	}
-
-	protected static Vector2f v(Number x, Number y) {
-		return new Vector2f(x.floatValue(), y.floatValue());
 	}
 }

@@ -4,8 +4,6 @@ import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
 import java.util.*;
 
-// note the body method 'void collided(Body other)'
-
 public interface Explodable {
 
 	/**
@@ -14,7 +12,10 @@ public interface Explodable {
 	public boolean canExplode();
 
 	/**
-	 * @return Fragments from exploding the body, each speeding outwards.
+	 * @return Fragments from exploding the body.
 	 */
 	public List<Body> explode();
+
+	// note the body method 'void collided(Body other)'
+	public void collided(CollisionEvent event);
 }

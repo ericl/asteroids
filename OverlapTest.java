@@ -1,13 +1,10 @@
 /**
- * All the bad situations here need to be solved.
- * 1. There are two vibrating overlapping shapes.
- *    They should not be doing this.
- * 2. An object is created in midst of others, pushing them away.
- *    There should be some way to avoid this.
- * Note that solving (2) will probably solve (1).
+ * As you can see, one of these examples *still* don't work.
+ * The others are hardly ideal in smoothness.
  */
 
 import asteroids.*;
+import asteroids.handlers.*;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
@@ -45,9 +42,9 @@ public class OverlapTest {
 		d.setCenter(new Vector2f(0,0));
 		final World world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 
-		Body s = new BoxAsteroid(40);
+		Body s = new HexAsteroid(40);
 		Body t = new CircleAsteroid(40);
-		Body a = new BoxAsteroid(30);
+		Body a = new HexAsteroid(30);
 		Body b = new CircleAsteroid(30);
 		Body f = new CircleAsteroid(30);
 		Body g = new CircleAsteroid(30);
@@ -59,24 +56,7 @@ public class OverlapTest {
 		world.add(f);
 		world.add(g);
 		world.add(z);
-		world.addListener(new CollisionListener() {
-			public void collisionOccured(CollisionEvent event) {
-				if (event.getBodyA() instanceof Explodable) {
-					Explodable A = (Explodable)event.getBodyA();
-					if (A.canExplode())
-						for (Body b : A.explode())
-							world.add(b);
-					world.remove(event.getBodyA());
-				}
-				if (event.getBodyB() instanceof Explodable) {
-					Explodable B = (Explodable)event.getBodyB();
-					if (B.canExplode())
-						for (Body b : B.explode())
-							world.add(b);
-					world.remove(event.getBodyB());
-				}
-			}
-		});
+		world.addListener(new Exploder(world));
 		s.setPosition(350,150);
 		t.setPosition(350,150);
 		a.setPosition(420,250);

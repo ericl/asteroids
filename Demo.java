@@ -1,5 +1,6 @@
 import asteroids.display.*;
 import asteroids.bodies.*;
+import asteroids.handlers.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
@@ -27,8 +28,9 @@ public class Demo {
 	protected Ship ship;
 	protected float xo, yo;
 	protected int width, height;
-	protected int shift, accel;
+	protected int accel;
 	protected float adjustAngularVelocity;
+	protected boolean fire;
 
 	public static void main(String[] args) {
 		Demo demo = new Demo();
@@ -36,8 +38,10 @@ public class Demo {
 
 	public Demo() {
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
-//		world.addListener(new ShipKiller());
-		world.addListener(new Exploder());
+		// trigger endFrame() events
+		world.enableRestingBodyDetection(.1f, .1f, .1f);
+		world.addListener(new ShipKiller());
+		world.addListener(new Exploder(world));
 		frame = new JFrame("Asteroid Field Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		width = 500;
@@ -58,10 +62,10 @@ public class Demo {
 					running = false;
 					System.exit(0);
 				}
-				keyHit(e.getKeyChar());
+				keyHit(e.getKeyCode());
 			}
 			public void keyReleased(KeyEvent e) {
-				keyUnHit(e.getKeyChar());
+				keyUnHit(e.getKeyCode());
 			}
 		});
 	
@@ -82,7 +86,6 @@ public class Demo {
 		long renderTime = 0, logicTime = 0;
 		float dt = 0;
 		Timer t = new Timer(60f);
-//		float STATX = 0, STATY = 0, COUNTX = 0;
 		while (running) {
 			long Xbegin = System.currentTimeMillis();
 			long beforeRender = System.currentTimeMillis();
@@ -98,40 +101,15 @@ public class Demo {
 				world.step(dt);
 			logicTime = System.currentTimeMillis() - beforeLogic;
 			update();
-//			STATY += dt;
-//			STATX += (System.currentTimeMillis() - Xbegin);
-//			COUNTX+=STATX;
-//			System.out.println(COUNTX + " " + STATY/STATX);
-//			STATX = 0;
-//			STATY = 0;
 		}
 	}
 
 	private class ShipKiller implements CollisionListener {
 		public void collisionOccured(CollisionEvent event) {
 			if (event.getBodyA() == ship || event.getBodyB() == ship) {
-				world.remove(ship);
-				stopped = "Score: " + score;
-			}
-		}
-	}
-
-	private class Exploder implements CollisionListener {
-		public void collisionOccured(CollisionEvent event) {
-			if (event.getBodyA() instanceof Explodable) {
-				Explodable A = (Explodable)event.getBodyA();
-				if (A.canExplode()) {
-					for (Body b : A.explode())
-						world.add(b);
-					world.remove(event.getBodyA());
-				}
-			}
-			if (event.getBodyB() instanceof Explodable) {
-				Explodable B = (Explodable)event.getBodyB();
-				if (B.canExplode()) {
-					for (Body b : B.explode())
-						world.add(b);
-					world.remove(event.getBodyB());
+				if (!ship.survived(event.getPenetrationDepth())) {
+					world.remove(ship);
+					stopped = "Score: " + score;
 				}
 			}
 		}
@@ -143,7 +121,6 @@ public class Demo {
 	protected void init() {
 		world.clear();
 		adjustAngularVelocity = 0;
-		shift = 0;
 		accel = 0;
 		xo = width/2;
 		yo = height/2;
@@ -155,8 +132,6 @@ public class Demo {
 			world.add(newAsteroid());
 		world.add(new Europa(150));
 		ship = new Ship(1000f);
-//		ship.setRotation((float)(-Math.PI/3));
-//		ship.adjustVelocity(v(-75,-45));
 		ship.setPosition((xo+width/2),(yo+height/2));
 		ship.setRotDamping(1500);
 		ship.adjustVelocity(v(0,0));
@@ -179,6 +154,7 @@ public class Demo {
 		}
 		g2d.setColor(Color.gray);
 		int w = width, h = height;
+		g2d.drawString("Armor: " + (int)(ship.getDamage()*1000)/10+"%",w-120,h-95);
 		g2d.drawString("Speed: " + ship.getVelocity().length(),w-120,h-75);
 		g2d.drawString("Xcoord: " + (int)(xo - width/2),w-120,h-55);
 		g2d.drawString("Ycoord: " + (int)(-yo + height/2),w-120,h-35);
@@ -186,8 +162,6 @@ public class Demo {
 		g2d.setColor(Color.red);
 		g2d.drawString("R - Restart Demo",15,h-15);
 		g2d.setFont(new Font("Monospaced", Font.PLAIN, 14));
-		g2d.drawString("    u",15,h-50);
-		g2d.drawString("H h j k K",15,h-35);
 	}
 
 	/**
@@ -201,15 +175,13 @@ public class Demo {
 		BodyList bodies = world.getBodies();
 		for (int i=0; i < bodies.size(); i++) {
 			Body body = bodies.get(i);
-			if (body instanceof Asteroid) {
-				double x = body.getPosition().getX();
-				double y = body.getPosition().getY();
-				if (x > xmax || x < xmin || y > ymax || y < ymin) {
-					score++;
-					world.remove(body);
-					if (world.getBodies().size() < 51)
-						world.add(newAsteroid());
-				}
+			double x = body.getPosition().getX();
+			double y = body.getPosition().getY();
+			if (x > xmax || x < xmin || y > ymax || y < ymin) {
+				score++;
+				world.remove(body);
+				if (world.getBodies().size() < 51)
+					world.add(newAsteroid());
 			}
 		}
 
@@ -224,36 +196,35 @@ public class Demo {
 			init();
 	}
 
-	protected void keyHit(char c) {
+	// XXX don't do this in the real game
+	protected void keyHit(int c) {
 		switch (c) {
-			case 'h': adjustAngularVelocity = -.25f; return;
-			case 'k': adjustAngularVelocity = .25f; return;
-			case 'H': shift = -1; return;
-			case 'K': shift = 1; return;
-			case 'u': accel = 1; return;
-			case 'j': accel = -1; return;
-			case 'r': init(); return;
+			case 37: adjustAngularVelocity = -.25f; return; // left
+			case 39: adjustAngularVelocity = .25f; return; // right
+			case 38: accel = 1; return; // up
+			case 40: accel = -1; return; // down
+			case 82: init(); return; // r
+			case 32: fire = true; return; // space
 		}
 	}
 
-	protected void keyUnHit(char c) {
+	protected void keyUnHit(int c) {
 		switch (c) {
-			case 'h': adjustAngularVelocity = 0; return;
-			case 'k': adjustAngularVelocity = 0; return;
-			case 'H': shift = 0; return;
-			case 'K': shift = 0; return;
-			case 'u': accel = 0; return;
-			case 'j': accel = 0; return;
+			case 32: fire = false; return;
+			case 37: adjustAngularVelocity = 0; return;
+			case 39: adjustAngularVelocity = 0; return;
+			case 38: accel = 0; return;
+			case 40: accel = 0; return;
 		}
 	}
 
 	protected void processKeys() {
 		if (accel != 0)
 			accel(accel);
-		if (shift != 0)
-			shift(shift);
 		if (adjustAngularVelocity != 0)
 			ship.adjustAngularVelocity(adjustAngularVelocity);
+		if (fire)
+			world.add(ship.fire());
 	}
 
 	protected void accel(int accelfactor) {
@@ -264,27 +235,19 @@ public class Demo {
 		ship.adjustVelocity(v(ax,-ay));
 	}
 
-	protected void shift(float dir) {
-		double ax = Math.sin(ship.getRotation() + Math.PI/2);
-		double ay = Math.cos(ship.getRotation() + Math.PI/2);
-		ship.adjustVelocity(v(dir*ax,dir*-ay));
-	}
-
 	protected Asteroid newAsteroid() {
 		// difficulty increases with score
 		float vx = (float)((1+score/100)*(5 - Math.random()*10));
 		float vy = (float)((1+score/100)*(5 - Math.random()*10));
 		Asteroid rock;
-		switch ((int)(20*Math.random())) {
-			case 1: rock = new Rock1(range(20,30)); break;
-			case 2: rock = new Sphere1(range(20,30)); break;
-			case 3: rock = new HexAsteroid(range(20,30)); break;
-			case 4: rock = new Rock2(range(20,30)); break;
-			case 5: rock = new BoxAsteroid(range(20,30)); break;
+		switch ((int)(5*Math.random())) {
+			case 1: rock = new HexAsteroid(range(20,30)); break;
+			case 2: rock = new Rock2(range(20,30)); break;
 			default: rock = new CircleAsteroid(range(20,30)); break;
 		}
 		if (oneIn(200))
 			rock = new CircleAsteroid(range(100,300));
+		rock.setRestitution(0.2f);
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
 		Vector2f vo = getOffscreenCoords(rock.getRadius());
 		rock.setPosition(vo.getX(), vo.getY());
