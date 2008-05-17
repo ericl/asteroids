@@ -6,20 +6,47 @@ import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
 import java.awt.Graphics2D;
 import java.awt.Color;
+import java.util.*;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 
-public class Ship extends Body implements Drawable, Textured {
+public class Ship extends Body implements Drawable, Textured, Explodable, KeyListener {
 	
-	private static ROVector2f[] poly = {v(0,-30), v(10,-5), v(32,-5), v(0,15), v(-32, 0), v(-10,-5)};
+	private static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	private static Shape shape = new Polygon(poly);
 	private double hull = 1;
 	private int thrust;
+	private float accel, torque;
+	private boolean fire, explode;
+	private long lastFired;
+	private World world;
 
-	public Ship(float m) {
-		super("Your ship", shape, m);
+	public Ship(World w) {
+		super("Your ship", shape, 1000f);
+		world = w;
+		setRotDamping(4000);
+		setMaxVelocity(100,100);
+	}
+
+	public void collided(CollisionEvent event) {
+		if (!survived(event.getPenetrationDepth()))
+			explode = true;
+	}
+
+	public boolean canExplode() {
+		return explode;
 	}
 
 	public float getTextureScaleFactor() {
 		return 1.0f;
+	}
+
+	public List<Body> explode() {
+		HexAsteroid hull = new HexAsteroid(21);
+		hull.setColor(Color.DARK_GRAY);
+		// not realistic, but looks better onscreen
+		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
+		return hull.explode();
 	}
 
 	public String getTexturePath() {
@@ -27,7 +54,7 @@ public class Ship extends Body implements Drawable, Textured {
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(32,32);
+		return v(33,32);
 	}
 
 	public void incrThrust() {
@@ -64,18 +91,66 @@ public class Ship extends Body implements Drawable, Textured {
 		g2d.fillPolygon(xcoords, ycoords, verts.length);
 	}
 
-	public Body fire() {
-		Body c = new Sphere1(3);
+	// the ship is all important
+	public float getRadius() {
+		return Float.POSITIVE_INFINITY;
+	}
+	
+	public void keyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_LEFT: torque = -.00008f; break;
+			case KeyEvent.VK_RIGHT: torque = .00008f; break;
+			case KeyEvent.VK_UP: accel = 10; break;
+			case KeyEvent.VK_DOWN: accel = -10; break;
+			case KeyEvent.VK_SPACE: fire = true; break;
+		}
+	}
+
+	public void keyReleased(KeyEvent e) {
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_RIGHT: torque = 0; break;
+			case KeyEvent.VK_UP:
+			case KeyEvent.VK_DOWN: accel = 0; break;
+			case KeyEvent.VK_SPACE: fire = false; break;
+		}
+	}
+
+	// be careful not to use methods that do not account for varying dt!
+	public void endFrame() {
+		accel();
+		torque();
+		fire();
+	}
+
+	private void accel() {
+		if (accel > 0)
+			incrThrust();
+		Vector2f dir = direction(getRotation());
+		addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
+	}
+
+	private void torque() {
+		// unfortunately setTorque() gives unpredictable results with changing dt
+		adjustAngularVelocity(getMass()*torque);
+	}
+
+	private void fire() {
+		long timenow = System.currentTimeMillis();
+		if (canExplode() || !fire || timenow - lastFired < 150)
+			return;
+		lastFired = timenow;
+		Body c = new Sphere1(3, 70f);
+		c.setRotation(getRotation());
 		float ax = (float)(20*Math.sin(getRotation()));
 		float ay = (float)(20*Math.cos(getRotation()));
 		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
 		c.adjustVelocity(v(20*ax,20*-ay));
 		c.addExcludedBody(this);
-		return c;
+		world.add(c);
 	}
 
-	// the ship is all important
-	public float getRadius() {
-		return Float.POSITIVE_INFINITY;
+	public void keyTyped(KeyEvent e) {
+		// don't care
 	}
 }

@@ -24,13 +24,9 @@ public class Demo {
 	protected World world;
 	protected float border = 300, buf = 500;
 	protected int numrocks = 50, score;
-	protected String stopped;
 	protected Ship ship;
 	protected float xo, yo;
 	protected int width, height;
-	protected int accel;
-	protected float adjustAngularVelocity;
-	protected boolean fire;
 
 	public static void main(String[] args) {
 		Demo demo = new Demo();
@@ -40,7 +36,6 @@ public class Demo {
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 		// trigger endFrame() events
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
-		world.addListener(new ShipKiller());
 		world.addListener(new Exploder(world));
 		frame = new JFrame("Asteroid Field Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,14 +53,9 @@ public class Demo {
 
 		frame.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == 27) {
-					running = false;
-					System.exit(0);
+				switch (e.getKeyChar()) {
+					case 'r': init(); return;
 				}
-				keyHit(e.getKeyCode());
-			}
-			public void keyReleased(KeyEvent e) {
-				keyUnHit(e.getKeyCode());
 			}
 		});
 	
@@ -94,7 +84,6 @@ public class Demo {
 			d.show();
 			renderTime = System.currentTimeMillis() - beforeRender;
 			ship.decrThrust();
-			processKeys();
 			dt = t.tick();
 			long beforeLogic = System.currentTimeMillis();
 			for (int i=0;i<5;i++)
@@ -104,38 +93,22 @@ public class Demo {
 		}
 	}
 
-	private class ShipKiller implements CollisionListener {
-		public void collisionOccured(CollisionEvent event) {
-			if (event.getBodyA() == ship || event.getBodyB() == ship) {
-				if (!ship.survived(event.getPenetrationDepth())) {
-					world.remove(ship);
-					stopped = "Score: " + score;
-				}
-			}
-		}
-	}
-
 	/**
 	 * Resets game within demo.
 	 */
 	protected void init() {
 		world.clear();
-		adjustAngularVelocity = 0;
-		accel = 0;
 		xo = width/2;
 		yo = height/2;
 		d.setCenter(v(xo, yo));
-		stopped = null;
 		score = 0;
 		world.setGravity(0,0);
 		for (int i=0; i < numrocks; i++)
 			world.add(newAsteroid());
 		world.add(new Europa(150));
-		ship = new Ship(1000f);
+		ship = new Ship(world);
+		frame.addKeyListener(ship);
 		ship.setPosition((xo+width/2),(yo+height/2));
-		ship.setRotDamping(1500);
-		ship.adjustVelocity(v(0,0));
-		ship.setMaxVelocity(100,100);
 		world.add(ship);
 	}
 
@@ -148,9 +121,9 @@ public class Demo {
 		g2d.drawString("Bodies: "+world.getBodies().size(),10,80);
 		g2d.drawString("Render time: "+renderTime+"ms",10,100);
 		g2d.drawString("Logic time: "+logicTime+"ms",10,120);
-		if (stopped != null) {
+		if (ship.canExplode()) {
 			g2d.setColor(Color.black);
-			g2d.drawString(stopped,width/2-27,height/2+5);
+			g2d.drawString("Score: " + score,width/2-27,height/2+5);
 		}
 		g2d.setColor(Color.gray);
 		int w = width, h = height;
@@ -160,6 +133,7 @@ public class Demo {
 		g2d.drawString("Ycoord: " + (int)(-yo + height/2),w-120,h-35);
 		g2d.drawString("Asteroids: " + score,w-120,h-15);
 		g2d.setColor(Color.red);
+		g2d.drawString("left right up down space",15,h-35);
 		g2d.drawString("R - Restart Demo",15,h-15);
 		g2d.setFont(new Font("Monospaced", Font.PLAIN, 14));
 	}
@@ -180,59 +154,13 @@ public class Demo {
 			if (x > xmax || x < xmin || y > ymax || y < ymin) {
 				score++;
 				world.remove(body);
-				if (world.getBodies().size() < 51)
+				if (world.getBodies().size() <= numrocks)
 					world.add(newAsteroid());
 			}
 		}
-
 		xo = ship.getPosition().getX() - (float)width/2;
 		yo = ship.getPosition().getY() - (float)height/2;
 		d.setCenter(v(xo, yo));
-	}
-
-
-	protected void keyOnceHit(char c) {
-		if (c == 'r')
-			init();
-	}
-
-	// XXX don't do this in the real game
-	protected void keyHit(int c) {
-		switch (c) {
-			case 37: adjustAngularVelocity = -.25f; return; // left
-			case 39: adjustAngularVelocity = .25f; return; // right
-			case 38: accel = 1; return; // up
-			case 40: accel = -1; return; // down
-			case 82: init(); return; // r
-			case 32: fire = true; return; // space
-		}
-	}
-
-	protected void keyUnHit(int c) {
-		switch (c) {
-			case 32: fire = false; return;
-			case 37: adjustAngularVelocity = 0; return;
-			case 39: adjustAngularVelocity = 0; return;
-			case 38: accel = 0; return;
-			case 40: accel = 0; return;
-		}
-	}
-
-	protected void processKeys() {
-		if (accel != 0)
-			accel(accel);
-		if (adjustAngularVelocity != 0)
-			ship.adjustAngularVelocity(adjustAngularVelocity);
-		if (fire)
-			world.add(ship.fire());
-	}
-
-	protected void accel(int accelfactor) {
-		if (accelfactor > 0)
-			ship.incrThrust();
-		double ax = accelfactor*Math.sin(ship.getRotation());
-		double ay = accelfactor*Math.cos(ship.getRotation());
-		ship.adjustVelocity(v(ax,-ay));
 	}
 
 	protected Asteroid newAsteroid() {
@@ -266,10 +194,6 @@ public class Demo {
 			y = (float)(Math.random()*2*(height + border) - height - border);
 		}
 		return v(x+xo+width/2+r,y+yo+height/2+r);
-	}
-
-	protected boolean oneIn(int num) {
-		return num*Math.random() < 1;
 	}
 
 	// precondition: v is absolute vector from display origin

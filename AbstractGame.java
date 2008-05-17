@@ -21,7 +21,7 @@ public abstract class AbstractGame {
 				doInput();
 			}
 		} catch (NullPointerException e) {
-			System.out.println("Caught a probable concurrency error.");
+			System.err.println("Caught a probable concurrency error.");
 		}
 		mainLoop();
 	}

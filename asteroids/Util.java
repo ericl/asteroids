@@ -13,4 +13,12 @@ public class Util {
 	public static float range(float minR, float maxR) {
 		return (float)(minR+(maxR-minR)*Math.random());
 	}
+
+	public static Vector2f direction(float rotation) {
+		return v(Math.sin(rotation),-Math.cos(rotation));
+	}
+
+	public static boolean oneIn(int num) {
+		return num*Math.random() < 1;
+	}
 }

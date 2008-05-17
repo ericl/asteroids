@@ -13,12 +13,12 @@ public class Exploder implements CollisionListener {
 
 	public void collisionOccured(CollisionEvent event) {
 		if (event.getBodyA() instanceof Explodable)
-			tryExplode(event.getBodyA(), event);
+			tryExplode(event.getBodyA(), event.getBodyB(), event);
 		if (event.getBodyB() instanceof Explodable)
-			tryExplode(event.getBodyB(), event);
+			tryExplode(event.getBodyB(), event.getBodyA(), event);
 	}
 
-	private void tryExplode(Body body, CollisionEvent event) {
+	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		e.collided(event);
 		if (!e.canExplode())
@@ -33,13 +33,21 @@ public class Exploder implements CollisionListener {
 					j.addExcludedBody(k);
 		float x = body.getPosition().getX();
 		float y = body.getPosition().getY();
+		// TODO: restitution and true conservation of momentum
+		float mf = Math.min(other.getMass() / body.getMass() * .5f, 3);
+		float vx = body.getVelocity().getX() + mf * other.getVelocity().getX();
+		float vy = body.getVelocity().getY() + mf * other.getVelocity().getY();
+		float sx, sy;
 		double theta = Math.random()*2*Math.PI;
 		double tstep = 2*Math.PI / f.size();
 		for (Body b : f) {
+			sx = body.getPosition().getX() + 20*(float)Math.sin(theta);
+			sy = body.getPosition().getY() + 20*(float)Math.cos(theta);
+			sx += (float)(20*Math.random());
+			sy += (float)(20*Math.random());
 			b.setRotation((float)(2 * Math.PI * Math.random()));
-			b.adjustVelocity(v(10*Math.sin(theta), 10*Math.cos(theta)));
-			b.setPosition(body.getPosition().getX() + 30*(float)Math.sin(theta),
-			              body.getPosition().getY() + 30*(float)Math.cos(theta));
+			b.adjustVelocity(v(vx+10*Math.sin(theta), vy+10*Math.cos(theta)));
+			b.setPosition(sx, sy);
 			theta += tstep + Math.random() - Math.random();
 		}
 		for (Body b : f)
@@ -47,6 +55,6 @@ public class Exploder implements CollisionListener {
 	}
 
 	public static boolean worthyCollision(CollisionEvent e) {
-		return Math.abs(e.getPenetrationDepth()) > 1;
+		return Math.abs(e.getPenetrationDepth()) > .1;
 	}
 }

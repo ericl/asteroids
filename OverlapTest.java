@@ -1,6 +1,5 @@
 /**
- * As you can see, one of these examples *still* don't work.
- * The others are hardly ideal in smoothness.
+ * [make this work well]
  */
 
 import asteroids.*;

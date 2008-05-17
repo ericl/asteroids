@@ -15,6 +15,11 @@ public class Sphere1 extends CircleAsteroid implements Textured {
 		sphereradius = radius;
 	}
 
+	public Sphere1(float radius, float fixedmass) {
+		super(radius, fixedmass);
+		sphereradius = radius;
+	}
+
 	public Vector2f getTextureCenter() {
 		return v(74,74);
 	}

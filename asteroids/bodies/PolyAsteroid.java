@@ -10,6 +10,7 @@ public class PolyAsteroid extends Asteroid implements Drawable {
 	private float radius;
 	private Vector2f centroid;
 	protected float ratio;
+	protected Color color = Color.blue;
 
 	public PolyAsteroid(ROVector2f[] raw, float ratio) {
 		super(new Polygon(centralized(scaled(raw, ratio))));
@@ -21,7 +22,7 @@ public class PolyAsteroid extends Asteroid implements Drawable {
 
 	public void drawTo(Graphics2D g2d, float xo, float yo) {
 		Polygon poly = (Polygon)getShape();
-		g2d.setColor(Color.blue);
+		g2d.setColor(color);
 		ROVector2f[] verts = poly.getVertices(getPosition(), getRotation());
 		int[] xcoords = new int[verts.length];
 		int[] ycoords = new int[verts.length];
@@ -30,6 +31,10 @@ public class PolyAsteroid extends Asteroid implements Drawable {
 			ycoords[i] = (int)(verts[i].getY() - yo);
 		}
 		g2d.fillPolygon(xcoords, ycoords, verts.length);
+	}
+
+	public void setColor(Color c) {
+		color = c;
 	}
 
 	public float getRadius() {

@@ -13,7 +13,7 @@ public class Europa extends CircleAsteroid implements Textured {
 	private int explode = 0;
 
 	public Europa(float radius) {
-		super(radius);
+		super(radius, Body.INFINITE_MASS);
 		sphereradius = radius;
 	}
 

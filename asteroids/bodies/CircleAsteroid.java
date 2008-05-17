@@ -16,6 +16,10 @@ public class CircleAsteroid extends Asteroid implements Drawable, Explodable {
 		super(new Circle(radius), (float)Math.pow(radius,2));
 	}
 
+	public CircleAsteroid(float radius, float fixedmass) {
+		super(new Circle(radius), fixedmass);
+	}
+
 	public void drawTo(Graphics2D g2d, float xo, float yo) {
 		Circle circle = (Circle)getShape();
 		g2d.setColor(getRadius() < 100 ? Color.ORANGE : Color.darkGray);

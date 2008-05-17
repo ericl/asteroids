@@ -189,7 +189,6 @@ public class Display {
 		if (i == null)
 			try {
 				String dir = getClass().getResource("/asteroids/").toString();
-				System.err.println("read " + dir + path);
 				i = ImageIO.read(new URL(dir+path));
 				cache.put(path, i);
 			} catch (Exception e) {

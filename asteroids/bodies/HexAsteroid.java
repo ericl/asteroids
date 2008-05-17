@@ -29,9 +29,13 @@ public class HexAsteroid extends PolyAsteroid implements Explodable {
 
 	public List<Body> explode() {
 		List<Body> f = new LinkedList<Body>();
+		HexAsteroid tmp;
 		if (getRadius() > 10)
-			for (int i=0; i < 7; i++)
-				f.add(new HexAsteroid(getRadius() / 3));	
+			for (int i=0; i < 7; i++) {
+				tmp = new HexAsteroid(getRadius() / 3);
+				tmp.setColor(color);
+				f.add(tmp);
+			}
 		return f;
 	}
 }
