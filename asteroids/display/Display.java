@@ -156,21 +156,18 @@ public class Display {
 	public void setBackground(String path) {
 		try {
 			orig = frame.getToolkit().getImage(path);
+			tracker.addImage(orig, 0);
+			rescaleBackground();
 		} catch (Exception e) {
 			System.err.println("Invalid background path.");
 		}
-		tracker.addImage(orig, 0);
-		rescaleBackground();
 	}
 
 	private void rescaleBackground() {
-		try {
-			bg = orig.getScaledInstance(
-			(int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
-		} catch (Exception e) {
-			System.err.println("No background.");
+		if (orig == null)
 			return;
-		}
+		bg = orig.getScaledInstance(
+		    (int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
 		try {
 			tracker.waitForID(0);
@@ -179,7 +176,11 @@ public class Display {
 		}
 	}
 
-	private boolean isVisible(ROVector2f v, float r) {
+	/**
+	 * @param v The absolute location of the object.
+	 * @param r The visible radius of the object.
+	 */
+	public boolean isVisible(ROVector2f v, float r) {
 		float x = v.getX() - xo, y = v.getY() - yo;
 		return x > -r && x < width+r && y > -r && y < height+r;
 	}

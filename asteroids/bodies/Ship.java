@@ -29,6 +29,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	}
 
 	public void collided(CollisionEvent event) {
+		// note that this is hugely dependent on framerate
 		if (!survived(event.getPenetrationDepth()))
 			explode = true;
 	}
@@ -101,7 +102,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 			case KeyEvent.VK_LEFT: torque = -.00008f; break;
 			case KeyEvent.VK_RIGHT: torque = .00008f; break;
 			case KeyEvent.VK_UP: accel = 10; break;
-			case KeyEvent.VK_DOWN: accel = -10; break;
+			case KeyEvent.VK_DOWN: accel = -5; break;
 			case KeyEvent.VK_SPACE: fire = true; break;
 		}
 	}

@@ -55,7 +55,7 @@ public class OverlapTest {
 		world.add(f);
 		world.add(g);
 		world.add(z);
-		world.addListener(new Exploder(world));
+		world.addListener(new Exploder(world, d));
 		s.setPosition(350,150);
 		t.setPosition(350,150);
 		a.setPosition(420,250);

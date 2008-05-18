@@ -24,6 +24,10 @@ public class Sphere1 extends CircleAsteroid implements Textured {
 		return v(74,74);
 	}
 
+	public boolean canExplode() {
+		return true;
+	}
+
 	public List<Body> explode() {
 		List<Body> f = new LinkedList<Body>();
 		if (getRadius() > 10)

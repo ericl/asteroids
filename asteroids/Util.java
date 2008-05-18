@@ -14,8 +14,9 @@ public class Util {
 		return (float)(minR+(maxR-minR)*Math.random());
 	}
 
-	public static Vector2f direction(float rotation) {
-		return v(Math.sin(rotation),-Math.cos(rotation));
+	public static Vector2f direction(Number rotation) {
+		return v(Math.sin(rotation.doubleValue()),
+		        -Math.cos(rotation.doubleValue()));
 	}
 
 	public static boolean oneIn(int num) {

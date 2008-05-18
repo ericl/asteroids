@@ -1,14 +1,18 @@
 package asteroids.handlers;
 import asteroids.bodies.*;
+import asteroids.display.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
+import net.phys2d.math.*;
 import java.util.*;
 
 public class Exploder implements CollisionListener {
 	private World world;
+	private Display display;
 
-	public Exploder(World w) {
+	public Exploder(World w, Display d) {
 		world = w;
+		display = d;
 	}
 
 	public void collisionOccured(CollisionEvent event) {
@@ -21,11 +25,20 @@ public class Exploder implements CollisionListener {
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		e.collided(event);
-		if (!e.canExplode())
+		/*
+		 * Don't destroy bodies outside the field of vision:
+		 *   1. the game is too easy with tiny bits floating everywhere
+		 *   2. it causes physics slowdowns with no visible reason
+		 * High energy collisions are allowed to avoid "stuck" bodies.
+		 */
+		if (!e.canExplode() ||
+				body instanceof Visible &&
+				!display.isVisible(body.getPosition(),((Visible)body).getRadius()) &&
+				event.getPenetrationDepth() < 5)
 			return;
 		List<Body> f = e.explode();
 		world.remove(body);
-		if (world.getBodies().size() > 150 || f == null || f.size() < 1)
+		if (world.getBodies().size() > 100 || f == null || f.size() < 1)
 			return;
 		for (Body j : f)
 			for (Body k : f)
@@ -33,22 +46,30 @@ public class Exploder implements CollisionListener {
 					j.addExcludedBody(k);
 		float x = body.getPosition().getX();
 		float y = body.getPosition().getY();
-		// TODO: restitution and true conservation of momentum
-		float mf = Math.min(other.getMass() / body.getMass() * .5f, 3);
+		float res = (body.getRestitution() + other.getRestitution())/2;
+		float mf = Math.min(other.getMass() / body.getMass() * res, 3);
 		float vx = body.getVelocity().getX() + mf * other.getVelocity().getX();
 		float vy = body.getVelocity().getY() + mf * other.getVelocity().getY();
 		float sx, sy;
 		double theta = Math.random()*2*Math.PI;
 		double tstep = 2*Math.PI / f.size();
 		for (Body b : f) {
-			sx = body.getPosition().getX() + 20*(float)Math.sin(theta);
-			sy = body.getPosition().getY() + 20*(float)Math.cos(theta);
-			sx += (float)(20*Math.random());
-			sy += (float)(20*Math.random());
+			sx = body.getPosition().getX();
+			sy = body.getPosition().getY();
+			if (b instanceof Visible) {
+				sx += ((Visible)b).getRadius()*(float)Math.sin(theta);
+				sy += ((Visible)b).getRadius()*(float)Math.cos(theta);
+			} else {
+				sx += 20*(float)Math.sin(theta);
+				sy += 20*(float)Math.cos(theta);
+			}
+			sx += (float)(20*Math.random()) - 10;
+			sy += (float)(20*Math.random()) - 10;
 			b.setRotation((float)(2 * Math.PI * Math.random()));
-			b.adjustVelocity(v(vx+10*Math.sin(theta), vy+10*Math.cos(theta)));
+			b.adjustVelocity(MathUtil.scale(direction(theta),10));
+			b.adjustVelocity(v(vx,vy));
 			b.setPosition(sx, sy);
-			theta += tstep + Math.random() - Math.random();
+			theta += tstep + Math.random() - .5;
 		}
 		for (Body b : f)
 			world.add(b);

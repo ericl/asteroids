@@ -7,7 +7,7 @@ import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 
-public interface Textured {
+public interface Textured extends Visible {
 
 	/**
 	 * Returns constant distance in pixels from the top-left corner
@@ -28,13 +28,6 @@ public interface Textured {
 	 * @return Default scaling multiplier of the texture at 100%.
 	 */
 	public float getTextureScaleFactor();
-
-	/**
-	 * Returns the maximum visible radius of the rendered texture, not
-	 * to be confused with the collidable surface of the body.
-	 * @return Maximum visible radius of the texture/body.
-	 */
-	public float getRadius();
 
 	/**
 	 * @return Position as by body.getPosition()

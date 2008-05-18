@@ -35,7 +35,7 @@ public class Europa extends CircleAsteroid implements Textured {
 	}
 
 	public List<Body> explode() {
-		List<Body> f = new LinkedList<Body>();
+		List<Body> f = new ArrayList<Body>(6);
 		if (getRadius() > 10)
 			for (int i=0; i < 6; i++)
 				f.add(new HexAsteroid(50));	

@@ -23,7 +23,8 @@ public class Demo {
 	protected boolean running;
 	protected World world;
 	protected float border = 300, buf = 500;
-	protected int numrocks = 50, score;
+	protected int numrocks = 50, count;
+	protected String score;
 	protected Ship ship;
 	protected float xo, yo;
 	protected int width, height;
@@ -36,7 +37,6 @@ public class Demo {
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 		// trigger endFrame() events
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
-		world.addListener(new Exploder(world));
 		frame = new JFrame("Asteroid Field Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		width = 500;
@@ -60,6 +60,7 @@ public class Demo {
 		});
 	
 		d = new Display(frame);
+		world.addListener(new Exploder(world, d));
 		d.setBackground("opo9929b.jpg");
 		init();
 		mainLoop();
@@ -98,10 +99,11 @@ public class Demo {
 	 */
 	protected void init() {
 		world.clear();
+		score = null;
 		xo = width/2;
 		yo = height/2;
 		d.setCenter(v(xo, yo));
-		score = 0;
+		count = 0;
 		world.setGravity(0,0);
 		for (int i=0; i < numrocks; i++)
 			world.add(newAsteroid());
@@ -123,6 +125,8 @@ public class Demo {
 		g2d.drawString("Logic time: "+logicTime+"ms",10,120);
 		if (ship.canExplode()) {
 			g2d.setColor(Color.black);
+			if (score == null)
+				score = "" + count;
 			g2d.drawString("Score: " + score,width/2-27,height/2+5);
 		}
 		g2d.setColor(Color.gray);
@@ -131,7 +135,7 @@ public class Demo {
 		g2d.drawString("Speed: " + ship.getVelocity().length(),w-120,h-75);
 		g2d.drawString("Xcoord: " + (int)(xo - width/2),w-120,h-55);
 		g2d.drawString("Ycoord: " + (int)(-yo + height/2),w-120,h-35);
-		g2d.drawString("Asteroids: " + score,w-120,h-15);
+		g2d.drawString("Asteroids: " + count,w-120,h-15);
 		g2d.setColor(Color.red);
 		g2d.drawString("left right up down space",15,h-35);
 		g2d.drawString("R - Restart Demo",15,h-15);
@@ -152,7 +156,7 @@ public class Demo {
 			double x = body.getPosition().getX();
 			double y = body.getPosition().getY();
 			if (x > xmax || x < xmin || y > ymax || y < ymin) {
-				score++;
+				count++;
 				world.remove(body);
 				if (world.getBodies().size() <= numrocks)
 					world.add(newAsteroid());
@@ -164,9 +168,9 @@ public class Demo {
 	}
 
 	protected Asteroid newAsteroid() {
-		// difficulty increases with score
-		float vx = (float)((1+score/100)*(5 - Math.random()*10));
-		float vy = (float)((1+score/100)*(5 - Math.random()*10));
+		// difficulty increases with count
+		float vx = (float)((1+count/100)*(5 - Math.random()*10));
+		float vy = (float)((1+count/100)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(5*Math.random())) {
 			case 1: rock = new HexAsteroid(range(20,30)); break;

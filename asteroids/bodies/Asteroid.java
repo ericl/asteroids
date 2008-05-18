@@ -3,10 +3,11 @@
  */
 
 package asteroids.bodies;
+import asteroids.display.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 
-public abstract class Asteroid extends Body {
+public abstract class Asteroid extends Body implements Visible {
 
 	public Asteroid(Polygon shape) {
 		super(shape, shape.getArea());
