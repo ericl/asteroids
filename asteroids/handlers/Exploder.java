@@ -22,6 +22,7 @@ public class Exploder implements CollisionListener {
 			tryExplode(event.getBodyB(), event.getBodyA(), event);
 	}
 
+	// I'm fairly sure this doesn't need to be synchronized
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		e.collided(event);

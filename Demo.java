@@ -74,23 +74,24 @@ public class Demo {
 	 * Obviously this is beyond the scope of this demo.
 	 */
 	protected void mainLoop() {
-		long renderTime = 0, logicTime = 0;
+		long renderTime = 0, logicTime = 0, beforeRender, beforeLogic;
 		float dt = 0;
 		Timer t = new Timer(60f);
 		while (running) {
-			long Xbegin = System.currentTimeMillis();
-			long beforeRender = System.currentTimeMillis();
-			d.drawWorld(world);
-			drawGUI(dt, renderTime, logicTime);
-			d.show();
-			renderTime = System.currentTimeMillis() - beforeRender;
-			ship.decrThrust();
-			dt = t.tick();
-			long beforeLogic = System.currentTimeMillis();
-			for (int i=0;i<5;i++)
-				world.step(dt);
-			logicTime = System.currentTimeMillis() - beforeLogic;
-			update();
+			synchronized (world) {
+				beforeRender = System.currentTimeMillis();
+				d.drawWorld(world);
+				drawGUI(dt, renderTime, logicTime);
+				d.show();
+				renderTime = System.currentTimeMillis() - beforeRender;
+				ship.decrThrust();
+				dt = t.tick();
+				beforeLogic = System.currentTimeMillis();
+				for (int i=0;i<5;i++)
+					world.step(dt);
+				logicTime = System.currentTimeMillis() - beforeLogic;
+				update();
+			}
 		}
 	}
 
@@ -98,7 +99,9 @@ public class Demo {
 	 * Resets game within demo.
 	 */
 	protected void init() {
-		world.clear();
+		synchronized (world) {
+			world.clear();
+		}
 		score = null;
 		xo = width/2;
 		yo = height/2;

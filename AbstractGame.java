@@ -13,17 +13,12 @@ public abstract class AbstractGame {
 	private World world;
 
 	public void mainLoop() {
-		try {
-			Timer timer = new Timer(60f);
-			while (true) {
-				doPhysics(timer.tick());
-				doGraphics();
-				doInput();
-			}
-		} catch (NullPointerException e) {
-			System.err.println("Caught a probable concurrency error.");
+		Timer timer = new Timer(60f);
+		while (true) synchronized (world) {
+			doPhysics(timer.tick());
+			doGraphics();
+			doInput();
 		}
-		mainLoop();
 	}
 
 	private void doPhysics(float timestep) {
