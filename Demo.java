@@ -181,6 +181,8 @@ public class Demo {
 		}
 		if (oneIn(200))
 			rock = new CircleAsteroid(range(100,300));
+		// workaround for rogue collisions
+		rock.setMaxVelocity(count/10, count/10);
 		rock.setRestitution(0.2f);
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
 		Vector2f vo = getOffscreenCoords(rock.getRadius());

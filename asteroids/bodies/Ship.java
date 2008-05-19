@@ -29,9 +29,8 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	}
 
 	public void collided(CollisionEvent event) {
-		// note that this is hugely dependent on framerate
-		if (!survived(event.getPenetrationDepth()))
-			explode = true;
+		hull -= Math.pow(MathUtil.sub(event.getBodyA().getVelocity(), event.getBodyB().getVelocity()).length() / 100, 2);
+		explode = hull < 0;
 	}
 
 	public boolean canExplode() {
@@ -64,11 +63,6 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	
 	public void decrThrust() {
 		thrust--;
-	}
-
-	public boolean survived(float damage) {
-		hull -= Math.abs(damage);
-		return hull > 0;
 	}
 
 	public double getDamage() {
