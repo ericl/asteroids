@@ -26,6 +26,7 @@ public class Display {
 	private long resizetime = Long.MAX_VALUE;
 	private float xo, yo;
 	private double sx = 1, sy = 1;
+	private boolean noaa, notex, nobg, nofilter;
 	private Image orig, bg;
 	private MediaTracker tracker;
 	private HashMap<String,BufferedImage> cache;
@@ -41,6 +42,37 @@ public class Display {
 		cache = new HashMap<String,BufferedImage>();
 		strategy = frame.getBufferStrategy();
 		buf = (Graphics2D)strategy.getDrawGraphics();
+		frame.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				switch (e.getKeyChar()) {
+					case 'a': noaa = !noaa; break;
+					case 't': notex = !notex; break;
+					case 'b': nobg = !nobg; break;
+					case 'f': nofilter = !nofilter; break;
+					case '1': high(); break;
+					case '2': med(); break;
+					case '3': bare(); break;
+				}
+			}
+			private void high() {
+				noaa = false;
+				notex = false;
+				nobg = false;
+				nofilter = false;
+			}
+			private void med() {
+				noaa = true;
+				notex = false;
+				nobg = false;
+				nofilter = true;
+			}
+			private void bare() {
+				noaa = true;
+				notex = true;
+				nobg = true;
+				nofilter = true;
+			}
+		});
 		frame.addComponentListener(new ComponentListener() {
 			public void componentResized(ComponentEvent e) {
 				resizetime = System.currentTimeMillis();
@@ -73,11 +105,19 @@ public class Display {
 	 */
 	public void drawWorld(World world) {
 		BodyList bodies = world.getBodies();
-		for (int i=0; i < bodies.size(); i++)
-			if (bodies.get(i) instanceof Textured)
-				drawTextured((Textured)bodies.get(i));
-			else if (bodies.get(i) instanceof Drawable)
-				drawDrawable((Drawable)bodies.get(i));
+		for (int i=0; i < bodies.size(); i++) {
+			if (notex) {
+				if (bodies.get(i) instanceof Drawable)
+					drawDrawable((Drawable)bodies.get(i));
+				else if (bodies.get(i) instanceof Textured)
+					drawTextured((Textured)bodies.get(i));
+			} else {
+				if (bodies.get(i) instanceof Textured)
+					drawTextured((Textured)bodies.get(i));
+				else if (bodies.get(i) instanceof Drawable)
+					drawDrawable((Drawable)bodies.get(i));
+			}
+		}
 	}
 
 	/**
@@ -135,17 +175,20 @@ public class Display {
 
 	public void clearBuffer() {
 		buf = (Graphics2D)strategy.getDrawGraphics();
-		if (bg == null) {
+		if (bg == null || nobg) {
 			buf.setColor(Color.white);
 			buf.fillRect(0, 0, (int)(sx*width), (int)(sy*height));
 		} else
 			buf.drawImage(bg,0,0,frame);
 		buf.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_ON);
+		 (noaa ? RenderingHints.VALUE_ANTIALIAS_OFF :
+		       RenderingHints.VALUE_ANTIALIAS_ON));
 		buf.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		 (nofilter ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR :
+			         RenderingHints.VALUE_INTERPOLATION_BILINEAR));
 		buf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		 (noaa ? RenderingHints.VALUE_TEXT_ANTIALIAS_OFF :
+		       RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
 	}
 
 	/**
