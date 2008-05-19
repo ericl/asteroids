@@ -14,10 +14,14 @@ public abstract class AbstractGame {
 
 	public void mainLoop() {
 		Timer timer = new Timer(60f);
-		while (true) synchronized (world) {
-			doPhysics(timer.tick());
-			doGraphics();
-			doInput();
+		float dt;
+		while (true) {
+			dt = timer.tick();
+			synchronized (world) {
+				doPhysics(dt);
+				doGraphics();
+				doInput();
+			}
 		}
 	}
 

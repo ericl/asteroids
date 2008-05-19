@@ -20,7 +20,6 @@ import java.awt.event.KeyEvent;
 public class Demo {
 	protected JFrame frame;
 	protected Display d;
-	protected boolean running;
 	protected World world;
 	protected float border = 300, buf = 500;
 	protected int numrocks = 50, count;
@@ -42,7 +41,6 @@ public class Demo {
 		width = 500;
 		height = 500;
 		frame.setSize(width, height);
-		running = true;
 		
 		int x = (int)(Toolkit.getDefaultToolkit().
 			getScreenSize().getWidth()-width)/2;
@@ -75,9 +73,11 @@ public class Demo {
 	 */
 	protected void mainLoop() {
 		long renderTime = 0, logicTime = 0, beforeRender, beforeLogic;
-		float dt = 0;
 		Timer t = new Timer(60f);
-		while (running) {
+		float dt;
+		while (true) {
+			// do the sleeping outside the synchronized part
+			dt = t.tick();
 			synchronized (world) {
 				beforeRender = System.currentTimeMillis();
 				d.drawWorld(world);
@@ -85,7 +85,6 @@ public class Demo {
 				d.show();
 				renderTime = System.currentTimeMillis() - beforeRender;
 				ship.decrThrust();
-				dt = t.tick();
 				beforeLogic = System.currentTimeMillis();
 				for (int i=0;i<5;i++)
 					world.step(dt);
@@ -101,20 +100,20 @@ public class Demo {
 	protected void init() {
 		synchronized (world) {
 			world.clear();
+			score = null;
+			xo = width/2;
+			yo = height/2;
+			d.setCenter(v(xo, yo));
+			count = 0;
+			world.setGravity(0,0);
+			for (int i=0; i < numrocks; i++)
+				world.add(newAsteroid());
+			world.add(new Europa(150));
+			ship = new Ship(world);
+			frame.addKeyListener(ship);
+			ship.setPosition((xo+width/2),(yo+height/2));
+			world.add(ship);
 		}
-		score = null;
-		xo = width/2;
-		yo = height/2;
-		d.setCenter(v(xo, yo));
-		count = 0;
-		world.setGravity(0,0);
-		for (int i=0; i < numrocks; i++)
-			world.add(newAsteroid());
-		world.add(new Europa(150));
-		ship = new Ship(world);
-		frame.addKeyListener(ship);
-		ship.setPosition((xo+width/2),(yo+height/2));
-		world.add(ship);
 	}
 
 	protected void drawGUI(float frameAverage, long renderTime, long logicTime) {
