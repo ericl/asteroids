@@ -198,7 +198,9 @@ public class Display {
 	 */
 	public void setBackground(String path) {
 		try {
-			orig = frame.getToolkit().getImage(path);
+			String dir = getClass().getResource("/asteroids/").toString();
+			// for some reason BufferedImages are *very* slow here
+			orig = frame.getToolkit().getImage(new URL(dir+path));
 			tracker.addImage(orig, 0);
 			rescaleBackground();
 		} catch (Exception e) {

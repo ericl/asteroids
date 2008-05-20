@@ -1,3 +1,4 @@
+package asteroids;
 import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,7 +11,7 @@ import asteroids.display.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
-public abstract class AbstractGame {
+public abstract class AbstractGame extends KeyAdapter {
 	protected final Display display;
 	protected final JFrame frame;
 	protected final World world;
@@ -24,11 +25,7 @@ public abstract class AbstractGame {
 		int y = (int)(Toolkit.getDefaultToolkit().
 			getScreenSize().getHeight()-h)/2;
 		frame.setLocation(x,y);
-		frame.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent event) {
-				keyHit(event);	
-			}
-		});
+		frame.addKeyListener(this);
 		display = new Display(frame);
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
@@ -62,6 +59,5 @@ public abstract class AbstractGame {
 
 	protected void preWorld() {}
 	protected void postWorld() {}
-	protected void keyHit(KeyEvent event) {}
 	protected abstract void update();
 }

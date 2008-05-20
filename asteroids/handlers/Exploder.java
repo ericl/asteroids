@@ -50,7 +50,7 @@ public class Exploder implements CollisionListener {
 		float res = (body.getRestitution() + other.getRestitution())/2;
 		float mf = Math.min(other.getMass() / body.getMass() * res, 3);
 		float vx = body.getVelocity().getX() + mf * other.getVelocity().getX();
-		float vy = body.getVelocity().getY() + mf * other.getVelocity().getY();
+		float vy = -body.getVelocity().getY() + mf * other.getVelocity().getY();
 		float sx, sy;
 		double theta = Math.random()*2*Math.PI;
 		double tstep = 2*Math.PI / f.size();
@@ -59,14 +59,16 @@ public class Exploder implements CollisionListener {
 			sy = body.getPosition().getY();
 			if (b instanceof Visible) {
 				sx += ((Visible)b).getRadius()*(float)Math.sin(theta);
-				sy += ((Visible)b).getRadius()*(float)Math.cos(theta);
+				sy -= ((Visible)b).getRadius()*(float)Math.cos(theta);
 			} else {
 				sx += 20*(float)Math.sin(theta);
-				sy += 20*(float)Math.cos(theta);
+				sy -= 20*(float)Math.cos(theta);
 			}
 			sx += (float)(20*Math.random()) - 10;
-			sy += (float)(20*Math.random()) - 10;
+			sy -= (float)(20*Math.random()) - 10;
 			b.setRotation((float)(2 * Math.PI * Math.random()));
+			b.adjustAngularVelocity((float)Math.random()
+			    * body.getAngularVelocity());
 			b.adjustVelocity(MathUtil.scale(direction(theta),10));
 			b.adjustVelocity(v(vx,vy));
 			b.setPosition(sx, sy);

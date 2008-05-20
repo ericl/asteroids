@@ -1,3 +1,4 @@
+package asteroids.test;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
@@ -42,7 +43,7 @@ public class RotateTest {
 		Rock1 r = new Rock1(range(30,60));
 		Sphere1 s = new Sphere1(range(31,41));
 		d = new Display(frame);
-		d.setCenter(new Vector2f(-90,0));
+		d.setCenter(new Vector2f(160,250));
 		float rot = 0;
 		float xx = 50, yy = 50;
 		float x2 = 300, y2 = 300;

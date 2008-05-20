@@ -11,14 +11,21 @@ import net.phys2d.math.*;
 public class Scenario {
 	private World world;
 	private Ship ship;
-	private int count, score;
-	private int width = 500, height = 500;
+	private final int WIDTH = 500, HEIGHT = 500;
+	private final int BORDER = 300, BUF = 500;
+	private final int NUMROCKS = 50;
+	private int count, score = -1;
 	private float xo, yo;
-	private int border = 300, buf = 500;
-	private int numrocks;
+	public static String[] ids = {"circles", "hex", "large", "basic", "rocky"};
+	private String id;
 
 	public Scenario(World w, Ship s, String id) {
-		if (!id.equals("basic"))
+		this.id = id;
+		boolean ok = false;
+		for (int i=0; i < ids.length; i++)
+			if (id.equals(ids[i]))
+				ok = true;
+		if (!ok)
 			throw new IllegalArgumentException("Unknown id " + id);
 		world = w;
 		ship = s;
@@ -31,7 +38,6 @@ public class Scenario {
 			world.add(ship);
 			count = 0;
 			score = -1;
-			numrocks = 50;
 		}
 	}
 
@@ -44,12 +50,12 @@ public class Scenario {
 	}
 
 	public void update() {
-		xo = ship.getPosition().getX() - (float)width/2;
-		yo = ship.getPosition().getY() - (float)height/2;
-		double xmax = xo + width + border + buf;
-		double xmin = xo - border - buf;
-		double ymax = yo + height + border + buf;
-		double ymin = yo - border - buf;
+		xo = ship.getPosition().getX() - (float)WIDTH/2;
+		yo = ship.getPosition().getY() - (float)HEIGHT/2;
+		double xmax = xo + WIDTH + BORDER + BUF;
+		double xmin = xo - BORDER - BUF;
+		double ymax = yo + HEIGHT + BORDER + BUF;
+		double ymin = yo - BORDER - BUF;
 		synchronized (world) {
 			BodyList bodies = world.getBodies();
 			for (int i=0; i < bodies.size(); i++) {
@@ -62,7 +68,7 @@ public class Scenario {
 				}
 			}
 		}
-		if (world.getBodies().size() <= numrocks)
+		if (world.getBodies().size() <= NUMROCKS)
 			world.add(newAsteroid());
 		if (done() && score < 0)
 			score = count;
@@ -72,14 +78,23 @@ public class Scenario {
 		// difficulty increases with count
 		float vx = (float)((1+count/100)*(5 - Math.random()*10));
 		float vy = (float)((1+count/100)*(5 - Math.random()*10));
-		Asteroid rock;
-		switch ((int)(5*Math.random())) {
-			case 1: rock = new HexAsteroid(range(20,30)); break;
-			case 2: rock = new Rock2(range(20,30)); break;
-			default: rock = new CircleAsteroid(range(20,30)); break;
-		}
-		if (oneIn(200))
-			rock = new CircleAsteroid(range(100,300));
+		Asteroid rock = null;
+		if (id.equals("basic")) {
+			switch ((int)(5*Math.random())) {
+				case 1: rock = new HexAsteroid(range(20,30)); break;
+				case 2: rock = new Rock2(range(20,30)); break;
+				default: rock = new CircleAsteroid(range(20,30)); break;
+			}
+			if (oneIn(200))
+				rock = new CircleAsteroid(range(100,300));
+		} else if (id.equals("circles"))
+			rock = new CircleAsteroid(range(30,40));
+		else if (id.equals("large"))
+			rock = new CircleAsteroid(range(100,200));
+		else if (id.equals("hex"))
+			rock = new HexAsteroid(range(10,50));
+		else if (id.equals("rocky"))
+			rock = new Rock2(40);
 		// workaround for rogue collisions
 		rock.setMaxVelocity(count/10, count/10);
 		rock.setRestitution(0.2f);
@@ -97,16 +112,16 @@ public class Scenario {
 		float x = 1, y = 1;
 		// this is centered about the screen origin
 		while(onScreen(v(x,y),r)) {
-			x = (float)(Math.random()*2*(width + border) - width - border);
-			y = (float)(Math.random()*2*(height + border) - height - border);
+			x = (float)(Math.random()*2*(WIDTH + BORDER) - WIDTH - BORDER);
+			y = (float)(Math.random()*2*(HEIGHT + BORDER) - HEIGHT - BORDER);
 		}
-		return v(x+xo+width/2+r,y+yo+height/2+r);
+		return v(x+xo+WIDTH/2+r,y+yo+HEIGHT/2+r);
 	}
 
 	// precondition: v is absolute vector from display origin
 	protected boolean onScreen(ROVector2f v, float r) {
-		float w2 = (width/2 + r);
-		float h2 = (height/2 + r);
+		float w2 = (WIDTH/2 + r);
+		float h2 = (HEIGHT/2 + r);
 		float x = v.getX();
 		float y = v.getY();
 		return x > -w2-r && x < w2 && y > -h2-r && y < h2;

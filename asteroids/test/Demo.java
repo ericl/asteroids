@@ -1,3 +1,4 @@
+package asteroids.test;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
@@ -59,7 +60,7 @@ public class Demo {
 	
 		d = new Display(frame);
 		world.addListener(new Exploder(world, d));
-		d.setBackground("opo9929b.jpg");
+		d.setBackground("pixmaps/opo9929b.jpg");
 		init();
 		mainLoop();
 	}

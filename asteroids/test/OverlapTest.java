@@ -2,6 +2,7 @@
  * [make this work well]
  */
 
+package asteroids.test;
 import asteroids.*;
 import asteroids.handlers.*;
 import asteroids.display.*;
@@ -38,7 +39,7 @@ public class OverlapTest {
 		
 		frame.setLocation(x,y);
 		d = new Display(frame);
-		d.setCenter(new Vector2f(0,0));
+		d.setCenter(new Vector2f(250,250));
 		final World world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 
 		Body s = new HexAsteroid(40);

@@ -1,3 +1,4 @@
+package asteroids;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -23,10 +24,8 @@ public class Asteroids extends AbstractGame {
 
 	public Asteroids() {
 		super("Asteroids", WIDTH, HEIGHT);
-		ship = new Ship(world);
-		frame.addKeyListener(ship);
-		scenario = new Scenario(world, ship, "basic");
-		scenario.start();
+		frame.addKeyListener(ship = new Ship(world));
+		newGame();
 	}
 
 	protected void update() {
@@ -43,29 +42,34 @@ public class Asteroids extends AbstractGame {
 		shipStatus(g2d);
 	}
 
-	protected void keyHit(KeyEvent event) {
+	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'r': scenario.start(); break;
+			case 'r': newGame(); break;
 			case 'm': verbosity++; break;
 		}
+	}
+
+	public void newGame() {
+		String id = Scenario.ids[(int)(Scenario.ids.length*Math.random())];
+		scenario = new Scenario(world, ship, id);
+		scenario.start();
 	}
 
 	private void shipStatus(Graphics2D g2d) {
 		g2d.setColor(Color.gray);
 		if (verbosity % 2 == 0) {
 			g2d.drawString("Armor: " +
-			(int)(ship.getDamage()*1000)/10+"%",WIDTH-95,HEIGHT-35);
-			g2d.drawString("Speed: " +
-			(int)(10*ship.getVelocity().length())/10f,WIDTH-95,HEIGHT-15);
+			(int)(ship.getDamage()*1000)/10+"%",WIDTH-110,HEIGHT-35);
+			g2d.drawString("Asteroids: " + scenario.score(),WIDTH-110,HEIGHT-15);
 		} else {
 			g2d.drawString("Armor: " +
 			(int)(ship.getDamage()*1000)/10+"%",WIDTH-110,HEIGHT-95);
 			g2d.drawString("Speed: " +
 			(int)(1000*ship.getVelocity().length())/1000f,WIDTH-110,HEIGHT-75);
 			g2d.drawString("Xcoord: " +
-			(int)(ship.getPosition().getX() - WIDTH/2),WIDTH-110,HEIGHT-55);
+			(int)(ship.getPosition().getX()),WIDTH-110,HEIGHT-55);
 			g2d.drawString("Ycoord: " +
-			(int)(-ship.getPosition().getY() + HEIGHT/2),WIDTH-110,HEIGHT-35);
+			(int)(-ship.getPosition().getY()),WIDTH-110,HEIGHT-35);
 			g2d.drawString("Asteroids: " + scenario.score(),WIDTH-110,HEIGHT-15);
 		}
 	}

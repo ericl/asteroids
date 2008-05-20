@@ -28,8 +28,9 @@ public class Rock2 extends TexturedAsteroid implements Explodable {
 
 	public List<Body> explode() {
 		List<Body> f = new ArrayList<Body>(5);
+		int max = (int)(3 + 2*Math.random());
 		if (getRadius() > 10)
-			for (int i=0; i < 3; i++)
+			for (int i=0; i < max; i++)
 				f.add(new Rock1(getRadius() / 2));	
 		return f;
 	}
