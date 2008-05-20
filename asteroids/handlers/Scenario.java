@@ -11,11 +11,11 @@ import net.phys2d.math.*;
 public class Scenario {
 	private World world;
 	private Ship ship;
-	private int count = 0, score = -1;
+	private int count, score;
 	private int width = 500, height = 500;
 	private float xo, yo;
 	private int border = 300, buf = 500;
-	private int numrocks = 50;
+	private int numrocks;
 
 	public Scenario(World w, Ship s, String id) {
 		if (!id.equals("basic"))
@@ -29,6 +29,9 @@ public class Scenario {
 			world.clear();
 			ship.reset();
 			world.add(ship);
+			count = 0;
+			score = -1;
+			numrocks = 50;
 		}
 	}
 
