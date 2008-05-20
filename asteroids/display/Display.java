@@ -89,8 +89,8 @@ public class Display {
 	 * @param center The vector x*y representing the center of the display.
 	 */
 	public void setCenter(ROVector2f center) {
-		xo = center.getX();
-		yo = center.getY();
+		xo = center.getX() - width / 2;
+		yo = center.getY() - height / 2;
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class Display {
 	public void clearBuffer() {
 		buf = (Graphics2D)strategy.getDrawGraphics();
 		if (bg == null || nobg) {
-			buf.setColor(Color.white);
+			buf.setColor(Color.black);
 			buf.fillRect(0, 0, (int)(sx*width), (int)(sy*height));
 		} else
 			buf.drawImage(bg,0,0,frame);
@@ -202,6 +202,7 @@ public class Display {
 			tracker.addImage(orig, 0);
 			rescaleBackground();
 		} catch (Exception e) {
+			System.err.println(e);
 			System.err.println("Invalid background path.");
 		}
 	}
@@ -236,6 +237,7 @@ public class Display {
 				i = ImageIO.read(new URL(dir+path));
 				cache.put(path, i);
 			} catch (Exception e) {
+				System.err.println(e);
 				System.err.println("Invalid image path.");
 			}
 		return i;

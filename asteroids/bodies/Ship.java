@@ -21,6 +21,17 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	private long lastFired;
 	private World world;
 
+	public void reset() {
+		setRotation(0);
+		setPosition(0,0);
+		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
+		adjustAngularVelocity(-getAngularVelocity());
+		accel = torque = lastFired = 0;
+		fire = explode = false;
+		hull = 1;
+		thrust = 0;
+	}
+
 	public Ship(World w) {
 		super("Your ship", shape, 1000f);
 		world = w;
@@ -57,20 +68,8 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		return v(33,32);
 	}
 
-	public void incrThrust() {
-		thrust = 5;
-	}
-	
-	public void decrThrust() {
-		thrust--;
-	}
-
 	public double getDamage() {
 		return hull;
-	}
-
-	public void setDamage(double condition) {
-		hull = condition;
 	}
 
 	public void drawTo(Graphics2D g2d, float xo, float yo) {
@@ -86,9 +85,8 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		g2d.fillPolygon(xcoords, ycoords, verts.length);
 	}
 
-	// the ship is all important
 	public float getRadius() {
-		return Float.POSITIVE_INFINITY;
+		return 45;
 	}
 	
 	public void keyPressed(KeyEvent e) {
@@ -113,6 +111,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 
 	// be careful not to use methods that do not account for varying dt!
 	public void endFrame() {
+		thrust--;
 		accel();
 		torque();
 		fire();
@@ -120,7 +119,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 
 	private void accel() {
 		if (accel > 0)
-			incrThrust();
+			thrust = 5;
 		Vector2f dir = direction(getRotation());
 		addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
 	}

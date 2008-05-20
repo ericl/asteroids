@@ -64,13 +64,6 @@ public class Demo {
 		mainLoop();
 	}
 
-	/*
-	 * (Adaptive timing loop copied from AbstractDemo)
-	 * Currently rendering takes 4x as long as a the 5 step physics update
-	 * We want the physics to be asynchronous so that the game
-	 * will play at the same speed no matter the frame rate.
-	 * Obviously this is beyond the scope of this demo.
-	 */
 	protected void mainLoop() {
 		long renderTime = 0, logicTime = 0, beforeRender, beforeLogic;
 		Timer t = new Timer(60f);
@@ -84,7 +77,6 @@ public class Demo {
 				drawGUI(dt, renderTime, logicTime);
 				d.show();
 				renderTime = System.currentTimeMillis() - beforeRender;
-				ship.decrThrust();
 				beforeLogic = System.currentTimeMillis();
 				for (int i=0;i<5;i++)
 					world.step(dt);
@@ -100,10 +92,11 @@ public class Demo {
 	protected void init() {
 		synchronized (world) {
 			world.clear();
+			frame.removeKeyListener(ship);
 			score = null;
 			xo = width/2;
 			yo = height/2;
-			d.setCenter(v(xo, yo));
+			d.setCenter(v(width, height));
 			count = 0;
 			world.setGravity(0,0);
 			for (int i=0; i < numrocks; i++)
@@ -166,7 +159,7 @@ public class Demo {
 		}
 		xo = ship.getPosition().getX() - (float)width/2;
 		yo = ship.getPosition().getY() - (float)height/2;
-		d.setCenter(v(xo, yo));
+		d.setCenter(ship.getPosition());
 	}
 
 	protected Asteroid newAsteroid() {
