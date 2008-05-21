@@ -37,7 +37,8 @@ public class Asteroids extends AbstractGame {
 		Graphics2D g2d = display.getGraphics();
 		if (scenario.done()) {
 			g2d.setColor(Color.gray);
-			g2d.drawString("Score: " + scenario.score(), WIDTH/2-27, HEIGHT/2+5);
+			g2d.drawString("Score: " + scenario.score(),
+			WIDTH/2-27, HEIGHT/2+5);
 		}
 		shipStatus(g2d);
 	}
@@ -51,8 +52,12 @@ public class Asteroids extends AbstractGame {
 
 	public void newGame() {
 		String id = Scenario.ids[(int)(Scenario.ids.length*Math.random())];
-		scenario = new Scenario(world, ship, id);
-		scenario.start();
+		// switching scenarios would give inconsistent output
+		// (e.g. zero score for an instant)
+		synchronized (world) {
+			scenario = new Scenario(world, ship, id);
+			scenario.start();
+		}
 	}
 
 	private void shipStatus(Graphics2D g2d) {

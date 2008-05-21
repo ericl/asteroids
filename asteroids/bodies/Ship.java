@@ -138,7 +138,8 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		float ax = (float)(20*Math.sin(getRotation()));
 		float ay = (float)(20*Math.cos(getRotation()));
 		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
-		c.adjustVelocity(v(20*ax,20*-ay));
+		c.adjustVelocity(v(10*ax,10*-ay));
+		c.adjustVelocity((Vector2f)getVelocity());
 		c.addExcludedBody(this);
 		world.add(c);
 	}

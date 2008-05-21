@@ -9,6 +9,27 @@ import java.util.*;
 public class Exploder implements CollisionListener {
 	private World world;
 	private Display display;
+	
+	// fragments move outwards with this velocity
+	static float RADIAL_VELOCITY = 5;
+
+	// collisions of this depth are allowed to occur offscreen
+	static float MIN_STUCK_DEPTH = 5;
+
+	// velocity imparted is at max this times the original
+	static float MAX_MOMENTUM_MULTIPLIER = 3;
+
+	// number of bodies in the world before explosions are suppressed
+	static float MAX_BODIES = 100;
+
+	// randomness of angles, in radians
+	static float MAX_ANGLE_DEVIATION = .7f;
+
+	// randomness of radius, in pixels
+	static float MAX_RADIAL_DEVIATION = 10;
+
+	// min collision depth to break up an asteroid
+	static float ASTEROID_DURABILITY = .1f;
 
 	public Exploder(World w, Display d) {
 		world = w;
@@ -22,63 +43,48 @@ public class Exploder implements CollisionListener {
 			tryExplode(event.getBodyB(), event.getBodyA(), event);
 	}
 
-	// I'm fairly sure this doesn't need to be synchronized
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		e.collided(event);
-		/*
-		 * Don't destroy bodies outside the field of vision:
-		 *   1. the game is too easy with tiny bits floating everywhere
-		 *   2. it causes physics slowdowns with no visible reason
-		 * High energy collisions are allowed to avoid "stuck" bodies.
-		 */
-		if (!e.canExplode() ||
-				body instanceof Visible &&
-				!display.isVisible(body.getPosition(),((Visible)body).getRadius()) &&
-				event.getPenetrationDepth() < 5)
+		if (!e.canExplode()
+				|| !display.isVisible(body.getPosition(), e.getRadius())
+				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)
 			return;
 		List<Body> f = e.explode();
 		world.remove(body);
-		if (world.getBodies().size() > 100 || f == null || f.size() < 1)
+		if (world.getBodies().size() > MAX_BODIES || f == null || f.size() < 1)
 			return;
 		for (Body j : f)
 			for (Body k : f)
 				if (j != k)
 					j.addExcludedBody(k);
-		float x = body.getPosition().getX();
-		float y = body.getPosition().getY();
-		float res = (body.getRestitution() + other.getRestitution())/2;
-		float mf = Math.min(other.getMass() / body.getMass() * res, 3);
-		float vx = body.getVelocity().getX() + mf * other.getVelocity().getX();
-		float vy = -body.getVelocity().getY() + mf * other.getVelocity().getY();
-		float sx, sy;
+		float J = Math.min(other.getMass() / body.getMass() *
+		           (body.getRestitution() + other.getRestitution()) / 2,
+				   MAX_MOMENTUM_MULTIPLIER);
+		float vx = body.getVelocity().getX() + J * other.getVelocity().getX();
+		float vy = -body.getVelocity().getY() + J * other.getVelocity().getY();
+		float sx, sy, radius;
 		double theta = Math.random()*2*Math.PI;
 		double tstep = 2*Math.PI / f.size();
 		for (Body b : f) {
 			sx = body.getPosition().getX();
 			sy = body.getPosition().getY();
-			if (b instanceof Visible) {
-				sx += ((Visible)b).getRadius()*(float)Math.sin(theta);
-				sy -= ((Visible)b).getRadius()*(float)Math.cos(theta);
-			} else {
-				sx += 20*(float)Math.sin(theta);
-				sy -= 20*(float)Math.cos(theta);
-			}
-			sx += (float)(20*Math.random()) - 10;
-			sy -= (float)(20*Math.random()) - 10;
+			sx += e.getRadius() * (float)Math.sin(theta) / 2;
+			sy -= e.getRadius() * (float)Math.cos(theta) / 2;
+			sx += range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
+			sy -= range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
 			b.setRotation((float)(2 * Math.PI * Math.random()));
-			b.adjustAngularVelocity((float)Math.random()
-			    * body.getAngularVelocity());
-			b.adjustVelocity(MathUtil.scale(direction(theta),10));
+			b.adjustAngularVelocity(range(
+			   -body.getAngularVelocity(), body.getAngularVelocity()));
+			b.adjustVelocity(MathUtil.scale(direction(theta), RADIAL_VELOCITY));
 			b.adjustVelocity(v(vx,vy));
 			b.setPosition(sx, sy);
-			theta += tstep + Math.random() - .5;
-		}
-		for (Body b : f)
+			theta += tstep + range(-MAX_ANGLE_DEVIATION,MAX_ANGLE_DEVIATION);
 			world.add(b);
+		}
 	}
 
 	public static boolean worthyCollision(CollisionEvent e) {
-		return Math.abs(e.getPenetrationDepth()) > .1;
+		return Math.abs(e.getPenetrationDepth()) > ASTEROID_DURABILITY;
 	}
 }
