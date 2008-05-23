@@ -20,15 +20,15 @@ public class PolyAsteroid extends Asteroid implements Drawable {
 		centroid = new Polygon(raw).getCentroid();
 	}
 
-	public void drawTo(Graphics2D g2d, float xo, float yo) {
+	public void drawTo(Graphics2D g2d, ROVector2f o) {
 		Polygon poly = (Polygon)getShape();
 		g2d.setColor(color);
 		ROVector2f[] verts = poly.getVertices(getPosition(), getRotation());
 		int[] xcoords = new int[verts.length];
 		int[] ycoords = new int[verts.length];
 		for (int i=0; i < verts.length; i++) {
-			xcoords[i] = (int)(verts[i].getX() - xo);
-			ycoords[i] = (int)(verts[i].getY() - yo);
+			xcoords[i] = (int)(verts[i].getX() - o.getX());
+			ycoords[i] = (int)(verts[i].getY() - o.getY());
 		}
 		g2d.fillPolygon(xcoords, ycoords, verts.length);
 	}

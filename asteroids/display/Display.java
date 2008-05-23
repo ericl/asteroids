@@ -1,9 +1,11 @@
 package asteroids.display;
+import javax.swing.JSplitPane;
 import java.awt.RenderingHints;
 import java.awt.MediaTracker;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.Image;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Font;
@@ -14,70 +16,48 @@ import javax.imageio.*;
 import java.util.*;
 import java.io.*;
 import java.net.URL;
+import static asteroids.Util.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.*;
 
 public class Display {
 	private Frame frame;
-	private BufferStrategy strategy;
-	private Graphics2D buf;
-	private int width, height;
+	private JSplitPane jsplit;
+	private BufferStrategy strategyA, strategyB;
+	private Canvas A, B;
+	private Graphics2D bufA, bufB;
+	private Vector2f dim, oA = v(0,0), oB = v(0,0), scale = v(1,1);
 	private long resizetime = Long.MAX_VALUE;
-	private float xo, yo;
-	private double sx = 1, sy = 1;
-	private boolean noaa, notex, nobg, nofilter;
 	private Image orig, bg;
 	private MediaTracker tracker;
 	private HashMap<String,BufferedImage> cache;
 
-	public Display(Frame f) {
+	public Display(Frame f, JSplitPane j) {
 		frame = f;
-		width = frame.getWidth();
-		height = frame.getHeight();
+		jsplit = j;
+		A = (Canvas)j.getLeftComponent();
+		B = (Canvas)j.getRightComponent();
+		dim = v(frame.getWidth()/2, frame.getHeight());
 		frame.setIgnoreRepaint(true);
+		A.setIgnoreRepaint(true);
+		B.setIgnoreRepaint(true);
 		frame.setVisible(true);
-		frame.createBufferStrategy(2);
+		A.createBufferStrategy(2);
+		B.createBufferStrategy(2);
 		tracker = new MediaTracker(frame);
 		cache = new HashMap<String,BufferedImage>();
-		strategy = frame.getBufferStrategy();
-		buf = (Graphics2D)strategy.getDrawGraphics();
-		frame.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				switch (e.getKeyChar()) {
-					case 'a': noaa = !noaa; break;
-					case 't': notex = !notex; break;
-					case 'b': nobg = !nobg; break;
-					case 'f': nofilter = !nofilter; break;
-					case '1': high(); break;
-					case '2': med(); break;
-					case '3': bare(); break;
-				}
-			}
-			private void high() {
-				noaa = false;
-				notex = false;
-				nobg = false;
-				nofilter = false;
-			}
-			private void med() {
-				noaa = true;
-				notex = false;
-				nobg = false;
-				nofilter = true;
-			}
-			private void bare() {
-				noaa = true;
-				notex = true;
-				nobg = true;
-				nofilter = true;
-			}
-		});
+		strategyA = A.getBufferStrategy();
+		strategyB = B.getBufferStrategy();
+		bufA = (Graphics2D)strategyA.getDrawGraphics();
+		bufB = (Graphics2D)strategyB.getDrawGraphics();
 		frame.addComponentListener(new ComponentListener() {
 			public void componentResized(ComponentEvent e) {
 				resizetime = System.currentTimeMillis();
-				sx = frame.getSize().getWidth() / width;
-				sy = frame.getSize().getHeight() / height;
+				double sx = frame.getSize().getWidth() / dim.getX() / 2;
+				double sy = frame.getSize().getHeight() / dim.getY();
+				scale = v(sx, sy);
+				jsplit.setDividerLocation(.5);
 			}
 			public void componentMoved(ComponentEvent e) {}
 			public void componentShown(ComponentEvent e) {}
@@ -88,16 +68,9 @@ public class Display {
 	/**
 	 * @param center The vector x*y representing the center of the display.
 	 */
-	public void setCenter(ROVector2f center) {
-		xo = center.getX() - width / 2;
-		yo = center.getY() - height / 2;
-	}
-
-	/**
-	 * @return The vector x*y representing the center of the display.
-	 */
-	public Vector2f getCenter() {
-		return new Vector2f(xo, yo);
+	public void setCenter(ROVector2f centerA, ROVector2f centerB) {
+		oA = MathUtil.sub(centerA, MathUtil.scale(dim, .5f));
+		oB = MathUtil.sub(centerB, MathUtil.scale(dim, .5f));
 	}
 
 	/**
@@ -105,19 +78,11 @@ public class Display {
 	 */
 	public void drawWorld(World world) {
 		BodyList bodies = world.getBodies();
-		for (int i=0; i < bodies.size(); i++) {
-			if (notex) {
-				if (bodies.get(i) instanceof Drawable)
-					drawDrawable((Drawable)bodies.get(i));
-				else if (bodies.get(i) instanceof Textured)
-					drawTextured((Textured)bodies.get(i));
-			} else {
-				if (bodies.get(i) instanceof Textured)
-					drawTextured((Textured)bodies.get(i));
-				else if (bodies.get(i) instanceof Drawable)
-					drawDrawable((Drawable)bodies.get(i));
-			}
-		}
+		for (int i=0; i < bodies.size(); i++)
+			if (bodies.get(i) instanceof Textured)
+				drawTextured((Textured)bodies.get(i));
+			else if (bodies.get(i) instanceof Drawable)
+				drawDrawable((Drawable)bodies.get(i));
 	}
 
 	/**
@@ -125,8 +90,10 @@ public class Display {
 	 * @param thing The drawable object.
 	 */
 	public void drawDrawable(Drawable thing) {
-		if (isVisible(thing.getPosition(), thing.getRadius()))
-			thing.drawTo(buf, xo, yo);
+		if (isVisible(oA, dim, thing.getPosition(), thing.getRadius()))
+			thing.drawTo(bufA, oA);
+		if (isVisible(oB, dim, thing.getPosition(), thing.getRadius()))
+			thing.drawTo(bufB, oB);
 	}
 
 	/**
@@ -134,27 +101,40 @@ public class Display {
 	 * @param thing The textured object to be drawn.
 	 */
 	public void drawTextured(Textured thing) {
-		if (!isVisible(thing.getPosition(), thing.getRadius()))
-			return;
-		BufferedImage i = loadImage(thing.getTexturePath());
-		float x = thing.getPosition().getX() - xo;
-		float y = thing.getPosition().getY() - yo;
-		float scale = thing.getTextureScaleFactor();
-		Vector2f c = thing.getTextureCenter();
-		// TODO: find some way to cache the rotated images
-		AffineTransform trans = AffineTransform.getTranslateInstance
-			(x-c.getX()*scale, y-c.getY()*scale);
-		trans.concatenate(AffineTransform.getScaleInstance(scale, scale));
-		trans.concatenate(AffineTransform.getRotateInstance
-			(thing.getRotation(), c.getX(), c.getY()));
-		buf.drawImage(i, trans, null);
+		if (isVisible(oA, dim, thing.getPosition(), thing.getRadius())) {
+			BufferedImage i = loadImage(thing.getTexturePath());
+			float x = thing.getPosition().getX() - oA.getX();
+			float y = thing.getPosition().getY() - oA.getY();
+			float scale = thing.getTextureScaleFactor();
+			Vector2f c = thing.getTextureCenter();
+			AffineTransform trans = AffineTransform.getTranslateInstance
+				(x-c.getX()*scale, y-c.getY()*scale);
+			trans.concatenate(AffineTransform.getScaleInstance(scale, scale));
+			trans.concatenate(AffineTransform.getRotateInstance
+				(thing.getRotation(), c.getX(), c.getY()));
+			bufA.drawImage(i, trans, null);
+		}
+		if (isVisible(oB, dim, thing.getPosition(), thing.getRadius())) {
+			BufferedImage i = loadImage(thing.getTexturePath());
+			float x = thing.getPosition().getX() - oB.getX();
+			float y = thing.getPosition().getY() - oB.getY();
+			float scale = thing.getTextureScaleFactor();
+			Vector2f c = thing.getTextureCenter();
+			AffineTransform trans = AffineTransform.getTranslateInstance
+				(x-c.getX()*scale, y-c.getY()*scale);
+			trans.concatenate(AffineTransform.getScaleInstance(scale, scale));
+			trans.concatenate(AffineTransform.getRotateInstance
+				(thing.getRotation(), c.getX(), c.getY()));
+			bufB.drawImage(i, trans, null);
+		}
 	}
 
 	/**
-	 * @return Valid Graphics2D for current frame only.
+	 * @return Valid Graphics2D[] for current frame only.
 	 */
-	public Graphics2D getGraphics() {
-		return buf;
+	public Graphics2D[] getGraphics() {
+		Graphics2D[] g2ds = {bufA, bufB};
+		return g2ds;
 	}
 
 	/**
@@ -162,33 +142,40 @@ public class Display {
 	 * resets the offscreen buffer to the background.
 	 */
 	public void show() {
-		buf.dispose();
-		strategy.show();
+		bufA.dispose();
+		bufB.dispose();
+		strategyA.show();
+		strategyB.show();
 		clearBuffer();
 		// don't rescale the background while resizing
 		if (System.currentTimeMillis() - resizetime > 100) {
 			rescaleBackground();
 			resizetime = Long.MAX_VALUE;
 		}
-		buf.scale(sx,sy);
+		bufA.scale(scale.getX(), scale.getY());
+		bufB.scale(scale.getX(), scale.getY());
 	}
 
 	public void clearBuffer() {
-		buf = (Graphics2D)strategy.getDrawGraphics();
-		if (bg == null || nobg) {
-			buf.setColor(Color.black);
-			buf.fillRect(0, 0, (int)(sx*width), (int)(sy*height));
-		} else
-			buf.drawImage(bg,0,0,frame);
-		buf.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		 (noaa ? RenderingHints.VALUE_ANTIALIAS_OFF :
-		       RenderingHints.VALUE_ANTIALIAS_ON));
-		buf.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-		 (nofilter ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR :
-			         RenderingHints.VALUE_INTERPOLATION_BILINEAR));
-		buf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-		 (noaa ? RenderingHints.VALUE_TEXT_ANTIALIAS_OFF :
-		       RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+		bufA = (Graphics2D)strategyA.getDrawGraphics();
+		bufB = (Graphics2D)strategyB.getDrawGraphics();
+		if (bg == null) {
+			bufA.setColor(Color.black);
+			bufB.setColor(Color.black);
+			int sx = (int)(scale.getX()*dim.getX());
+			int sy = (int)(scale.getY()*dim.getY());
+			bufA.fillRect(0, 0, sx, sy);
+			bufB.fillRect(0, 0, sx, sy);
+		} else {
+			bufA.drawImage(bg,0,0,frame);
+			bufB.drawImage(bg,0,0,frame);
+		}
+		bufA.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		bufA.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		bufA.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		bufB.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		bufB.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		bufB.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
 	/**
@@ -212,8 +199,9 @@ public class Display {
 	private void rescaleBackground() {
 		if (orig == null)
 			return;
-		bg = orig.getScaledInstance(
-		    (int)(sx*width),(int)(sy*height),Image.SCALE_FAST);
+		int sx = (int)(scale.getX()*dim.getX());
+		int sy = (int)(scale.getY()*dim.getY());
+		bg = orig.getScaledInstance(sx, sy, Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
 		try {
 			tracker.waitForID(0);
@@ -223,12 +211,23 @@ public class Display {
 	}
 
 	/**
+	 * @param xo The center of the screen.
+	 * @param yo The center of the screen.
+	 * @param v The absolute location of the object.
+	 * @param r The visible radius of the object.
+	 */
+	public static boolean isVisible(ROVector2f o, ROVector2f dim, ROVector2f v, float r) {
+		Vector2f rel = MathUtil.sub(v, o);
+		return rel.getX() > -r && rel.getX() < dim.getX()+r && rel.getY() > -r && rel.getY() < dim.getY()+r;
+	}
+
+	/**
+	 * Shortcut for dual-head setup only.
 	 * @param v The absolute location of the object.
 	 * @param r The visible radius of the object.
 	 */
 	public boolean isVisible(ROVector2f v, float r) {
-		float x = v.getX() - xo, y = v.getY() - yo;
-		return x > -r && x < width+r && y > -r && y < height+r;
+		return isVisible(oA, dim, v, r) || isVisible(oB, dim, v, r);
 	}
 
 	private BufferedImage loadImage(String path) {

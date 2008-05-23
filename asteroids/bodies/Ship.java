@@ -12,14 +12,14 @@ import java.awt.event.KeyEvent;
 
 public class Ship extends Body implements Drawable, Textured, Explodable, KeyListener {
 	
-	private static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
-	private static Shape shape = new Polygon(poly);
-	private double hull = 1;
-	private int thrust;
-	private float accel, torque;
-	private boolean fire, explode;
-	private long lastFired;
-	private World world;
+	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
+	protected static Shape shape = new Polygon(poly);
+	protected double hull = 1;
+	protected int thrust;
+	protected float accel, torque;
+	protected boolean fire, explode;
+	protected long lastFired;
+	protected World world;
 
 	public void reset() {
 		setRotation(0);
@@ -75,15 +75,15 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		return hull < 0 ? 0 : hull;
 	}
 
-	public void drawTo(Graphics2D g2d, float xo, float yo) {
+	public void drawTo(Graphics2D g2d, ROVector2f o) {
 		Polygon poly = (Polygon)getShape();
 		g2d.setColor(Color.black);
 		ROVector2f[] verts = poly.getVertices(getPosition(), getRotation());
 		int[] xcoords = new int[verts.length];
 		int[] ycoords = new int[verts.length];
 		for (int i=0; i < verts.length; i++) {
-			xcoords[i] = (int)(verts[i].getX() - xo);
-			ycoords[i] = (int)(verts[i].getY() - yo);
+			xcoords[i] = (int)(verts[i].getX() - o.getX());
+			ycoords[i] = (int)(verts[i].getY() - o.getY());
 		}
 		g2d.fillPolygon(xcoords, ycoords, verts.length);
 	}
@@ -114,27 +114,29 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 
 	// be careful not to use methods that do not account for varying dt!
 	public void endFrame() {
+		float v = getVelocity().length();
+		setDamping(v < 40 ? 0 : v < 100 ? .4f : 1f);
 		thrust--;
 		accel();
 		torque();
 		fire();
 	}
 
-	private void accel() {
+	protected void accel() {
 		if (accel > 0)
 			thrust = 5;
 		Vector2f dir = direction(getRotation());
 		addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
 	}
 
-	private void torque() {
+	protected void torque() {
 		// unfortunately setTorque() gives unpredictable results with changing dt
 		adjustAngularVelocity(getMass()*torque);
 	}
 
-	private void fire() {
+	protected void fire() {
 		long timenow = System.currentTimeMillis();
-		if (canExplode() || !fire || timenow - lastFired < 500)
+		if (canExplode() || !fire || timenow - lastFired < 150)
 			return;
 		lastFired = timenow;
 		Body c = new Sphere1(3, 70f);

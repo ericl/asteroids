@@ -20,11 +20,11 @@ public class CircleAsteroid extends Asteroid implements Drawable, Explodable {
 		super(new Circle(radius), fixedmass);
 	}
 
-	public void drawTo(Graphics2D g2d, float xo, float yo) {
+	public void drawTo(Graphics2D g2d, ROVector2f o) {
 		Circle circle = (Circle)getShape();
 		g2d.setColor(getRadius() < 100 ? Color.ORANGE : Color.darkGray);
-		float x = getPosition().getX() - xo;
-		float y = getPosition().getY() - yo;
+		float x = getPosition().getX() - o.getX();
+		float y = getPosition().getY() - o.getY();
 		float r = circle.getRadius();
 		g2d.fillOval((int) (x-r),(int) (y-r),(int) (r*2),(int) (r*2));
 	}
@@ -39,7 +39,7 @@ public class CircleAsteroid extends Asteroid implements Drawable, Explodable {
 	}
 
 	public boolean canExplode() {
-		return explode;
+		return getRadius() < 100 ? explode : explode ? oneIn(10) : false;
 	}
 
 	public Body getRemnant() {
