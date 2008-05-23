@@ -50,37 +50,52 @@ public class Exploder implements CollisionListener {
 				|| !display.isVisible(body.getPosition(), e.getRadius())
 				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)
 			return;
-		List<Body> f = e.explode();
+		List<Body> f = e.getFragments();
+		Body rem = e.getRemnant();
 		world.remove(body);
-		if (world.getBodies().size() > MAX_BODIES || f == null || f.size() < 1)
+		if (world.getBodies().size() > MAX_BODIES)
 			return;
-		for (Body j : f)
-			for (Body k : f)
-				if (j != k)
-					j.addExcludedBody(k);
 		float J = Math.min(other.getMass() / body.getMass() *
-		           (body.getRestitution() + other.getRestitution()) / 2,
+				   (body.getRestitution() + other.getRestitution()) / 2,
 				   MAX_MOMENTUM_MULTIPLIER);
-		float vx = body.getVelocity().getX() + J * other.getVelocity().getX();
-		float vy = -body.getVelocity().getY() + J * other.getVelocity().getY();
-		float sx, sy, radius;
-		double theta = Math.random()*2*Math.PI;
-		double tstep = 2*Math.PI / f.size();
-		for (Body b : f) {
-			sx = body.getPosition().getX();
-			sy = body.getPosition().getY();
-			sx += e.getRadius() * (float)Math.sin(theta) / 2;
-			sy -= e.getRadius() * (float)Math.cos(theta) / 2;
-			sx += range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
-			sy -= range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
-			b.setRotation((float)(2 * Math.PI * Math.random()));
-			b.adjustAngularVelocity(range(
-			   -body.getAngularVelocity(), body.getAngularVelocity()));
-			b.adjustVelocity(MathUtil.scale(direction(theta), RADIAL_VELOCITY));
-			b.adjustVelocity(v(vx,vy));
-			b.setPosition(sx, sy);
-			theta += tstep + range(-MAX_ANGLE_DEVIATION,MAX_ANGLE_DEVIATION);
-			world.add(b);
+		Vector2f v = MathUtil.sub(body.getVelocity(), (MathUtil.scale(other.getVelocity(), -J)));
+		if (f != null) {
+			for (Body j : f) {
+				for (Body k : f) 
+					if (j != k)
+						j.addExcludedBody(k);
+				if (rem != null) {
+					rem.addExcludedBody(j);
+					j.addExcludedBody(rem);
+				}
+			}
+			float sx, sy, radius;
+			double theta = Math.random()*2*Math.PI;
+			double tstep = 2*Math.PI / f.size();
+			for (Body b : f) {
+				sx = body.getPosition().getX();
+				sy = body.getPosition().getY();
+				sx += e.getRadius() * (float)Math.sin(theta) / 2;
+				sy -= e.getRadius() * (float)Math.cos(theta) / 2;
+				sx += range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
+				sy -= range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
+				b.setRotation((float)(2 * Math.PI * Math.random()));
+				b.adjustAngularVelocity(range(
+				   -body.getAngularVelocity(), body.getAngularVelocity()));
+				b.adjustVelocity(MathUtil.scale(direction(theta), RADIAL_VELOCITY));
+				b.adjustVelocity(v);
+				b.setPosition(sx, sy);
+				theta += tstep + range(-MAX_ANGLE_DEVIATION,MAX_ANGLE_DEVIATION);
+				world.add(b);
+			}
+		}
+		if (rem != null) {
+			rem.setPosition(body.getPosition().getX(),
+			                body.getPosition().getY());
+			rem.adjustVelocity(v);
+			rem.setRotation(body.getRotation());
+			rem.adjustAngularVelocity(body.getAngularVelocity());
+			world.add(rem);
 		}
 	}
 

@@ -42,12 +42,16 @@ public class CircleAsteroid extends Asteroid implements Drawable, Explodable {
 		return explode;
 	}
 
-	public List<Body> explode() {
+	public Body getRemnant() {
+		return getRadius() > 15 ? new CircleAsteroid(getRadius() / 2) : null;
+	}
+
+	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(4);
-		int max = getRadius() > 30 ? 5 : 4;
+		int max = (int)(getRadius() > 30 ? range(4,6) : range(3,4));
 		if (getRadius() > 10)
 			for (int i=0; i < max; i++)
-				f.add(new CircleAsteroid(getRadius() / 2));	
+				f.add(new CircleAsteroid(getRadius() / 3));	
 		return f;
 	}
 }

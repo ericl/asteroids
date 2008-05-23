@@ -51,12 +51,16 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		return 1.0f;
 	}
 
-	public List<Body> explode() {
+	public Body getRemnant() {
+		return null;
+	}
+
+	public List<Body> getFragments() {
 		HexAsteroid hull = new HexAsteroid(21);
 		hull.setColor(Color.DARK_GRAY);
 		// not realistic, but looks better onscreen
 		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
-		return hull.explode();
+		return hull.getFragments();
 	}
 
 	public String getTexturePath() {
@@ -130,7 +134,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 
 	private void fire() {
 		long timenow = System.currentTimeMillis();
-		if (canExplode() || !fire || timenow - lastFired < 150)
+		if (canExplode() || !fire || timenow - lastFired < 500)
 			return;
 		lastFired = timenow;
 		Body c = new Sphere1(3, 70f);

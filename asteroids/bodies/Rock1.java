@@ -25,7 +25,11 @@ public class Rock1 extends TexturedAsteroid implements Explodable {
 		return explode;
 	}
 
-	public List<Body> explode() {
+	public Body getRemnant() {
+		return null;
+	}
+
+	public List<Body> getFragments() {
 		return null;
 	}
 }

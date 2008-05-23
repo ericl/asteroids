@@ -97,7 +97,6 @@ public class Scenario {
 			rock = new Rock2(40);
 		// workaround for rogue collisions
 		rock.setMaxVelocity(count/10, count/10);
-		rock.setRestitution(0.2f);
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
 		Vector2f vo = getOffscreenCoords(rock.getRadius());
 		rock.setPosition(vo.getX(), vo.getY());

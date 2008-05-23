@@ -15,7 +15,12 @@ public interface Explodable extends Visible {
 	/**
 	 * @return Fragments from exploding the body.
 	 */
-	public List<Body> explode();
+	public List<Body> getFragments();
+
+	/**
+	 * @return Largest fragment of the body, null if none.
+	 */
+	public Body getRemnant();
 
 	/**
 	 * Notification that the explodable object has been hit.

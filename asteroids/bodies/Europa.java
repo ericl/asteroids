@@ -34,7 +34,7 @@ public class Europa extends CircleAsteroid implements Textured {
 		return "pixmaps/europa.png";
 	}
 
-	public List<Body> explode() {
+	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(6);
 		if (getRadius() > 10)
 			for (int i=0; i < 6; i++)

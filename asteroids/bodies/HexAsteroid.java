@@ -27,7 +27,11 @@ public class HexAsteroid extends PolyAsteroid implements Explodable {
 			explode = true;
 	}
 
-	public List<Body> explode() {
+	public Body getRemnant() {
+		return getRadius() > 15 ? new HexAsteroid(getRadius() / 2) : null;
+	}
+
+	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(6);
 		HexAsteroid tmp;
 		if (getRadius() > 10)
