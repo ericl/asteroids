@@ -10,7 +10,7 @@ import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
-public class MPAsteroids extends AbstractGame {
+public class MPAsteroids extends MPGame {
 	public static final int WIDTH = 500;
 	public static final int HEIGHT = 500;
 	protected final Ship ship1, ship2;
@@ -25,7 +25,8 @@ public class MPAsteroids extends AbstractGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", WIDTH, HEIGHT);
-		display.setBackground("pixmaps/opo9929b.jpg");
+		super.init();
+		getDisplay().setBackground("pixmaps/opo9929b.jpg");
 		frame.addKeyListener(ship2 = new Ship(world));
 		frame.addKeyListener(ship1 = new Ship2(world));
 		ships[0] = ship1;
@@ -35,11 +36,11 @@ public class MPAsteroids extends AbstractGame {
 
 	protected void update() {
 		scenario.update();
-		display.setCenter(ship1.getPosition(), ship2.getPosition());
+		getDisplay().setCenter(ship1.getPosition(), ship2.getPosition());
 	}
 
-	protected void postWorld(Display display) {
-		Graphics2D[] g2ds = display.getGraphics();
+	protected void postWorld() {
+		Graphics2D[] g2ds = getDisplay().getAllGraphics();
 		for (Graphics2D g2d : g2ds)
 			if (scenario.done()) {
 				g2d.setColor(Color.black);
@@ -72,7 +73,7 @@ public class MPAsteroids extends AbstractGame {
 		if (verbosity % 2 == 0) {
 			g2d.drawString("Armor: " +
 			(int)(ship.getDamage()*1000)/10+"%",WIDTH-110,HEIGHT-59);
-			g2d.drawString("MPAsteroids: " + scenario.score(),WIDTH-110,HEIGHT-39);
+			g2d.drawString("Asteroids: " + scenario.score(),WIDTH-110,HEIGHT-39);
 		} else {
 			g2d.drawString("Armor: " +
 			(int)(ship.getDamage()*1000)/10+"%",WIDTH-110,HEIGHT-119);

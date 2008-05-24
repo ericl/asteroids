@@ -58,7 +58,7 @@ public class Demo {
 			}
 		});
 	
-		d = new Display(frame);
+		d = new BasicDisplay(frame);
 		world.addListener(new Exploder(world, d));
 		d.setBackground("pixmaps/opo9929b.jpg");
 		init();

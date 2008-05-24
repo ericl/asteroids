@@ -47,7 +47,7 @@ public class Exploder implements CollisionListener {
 		Explodable e = (Explodable)body;
 		e.collided(event);
 		if (!e.canExplode()
-				|| !display.isVisible(body.getPosition(), e.getRadius())
+				|| !display.inView(body.getPosition(), e.getRadius())
 				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)
 			return;
 		List<Body> f = e.getFragments();

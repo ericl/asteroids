@@ -19,6 +19,7 @@ public class Asteroids extends AbstractGame {
 
 	public static void main(String[] args) {
 		AbstractGame game = new Asteroids();
+		game.init();
 		game.mainLoop();
 	}
 
@@ -30,11 +31,11 @@ public class Asteroids extends AbstractGame {
 
 	protected void update() {
 		scenario.update();
-		display.setCenter(ship.getPosition());
+		getDisplay().setCenter(ship.getPosition());
 	}
 
 	protected void postWorld() {
-		Graphics2D g2d = display.getGraphics();
+		Graphics2D g2d = getDisplay().getGraphics();
 		if (scenario.done()) {
 			g2d.setColor(Color.gray);
 			g2d.drawString("Score: " + scenario.score(),
@@ -51,11 +52,11 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public void newGame() {
-		String id = Scenario.ids[(int)(Scenario.ids.length*Math.random())];
+		String id = Field.ids[(int)range(0,Field.ids.length)];
 		// switching scenarios would give inconsistent output
 		// (e.g. zero score for an instant)
 		synchronized (world) {
-			scenario = new Scenario(world, ship, id);
+			scenario = new Field(world, v(WIDTH,HEIGHT), ship, id);
 			scenario.start();
 		}
 	}

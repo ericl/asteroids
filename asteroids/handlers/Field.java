@@ -17,6 +17,21 @@ public class Field implements Scenario {
 	public static String[] ids = {"circles", "hex", "large", "basic", "rocky"};
 	protected String id;
 
+	public Field(World w, Vector2f wxh, Ship ship, String id) {
+		this.id = id;
+		ships = new Ship[1];
+		ships[0] = ship;
+		density = new Integer[ships.length];
+		dim = wxh;
+		boolean ok = false;
+		for (int i=0; i < ids.length; i++)
+			if (id.equals(ids[i]))
+				ok = true;
+		if (!ok)
+			throw new IllegalArgumentException("Unknown id " + id);
+		world = w;
+	}
+
 	public Field(World w, Vector2f wxh, Ship[] shiparray, String id) {
 		this.id = id;
 		ships = shiparray;
@@ -64,7 +79,7 @@ public class Field implements Scenario {
 				if (body instanceof Asteroid) {
 					boolean outOfRange = true;
 					for (int j=0; j < ships.length; j++)
-						if (Display.isVisible(ships[j].getPosition(), dim,
+						if (isVisible(ships[j].getPosition(), dim,
 								body.getPosition(), BORDER+BUF)) {
 							density[j]++;
 							outOfRange = false;
@@ -130,7 +145,7 @@ public class Field implements Scenario {
 			v = MathUtil.sub(target, v(-x-r, -y-r));
 			failed = false;
 			for (Ship ship : ships)
-				if (Display.isVisible(MathUtil.sub(ship.getPosition(), center),dim,v,r)) {
+				if (isVisible(MathUtil.sub(ship.getPosition(), center),dim,v,r)) {
 					failed = true;
 					break;
 				}

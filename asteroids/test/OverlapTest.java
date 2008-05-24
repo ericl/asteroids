@@ -38,7 +38,7 @@ public class OverlapTest {
 			getScreenSize().getHeight()-width)/2;
 		
 		frame.setLocation(x,y);
-		d = new Display(frame);
+		d = new BasicDisplay(frame);
 		d.setCenter(new Vector2f(250,250));
 		final World world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 
@@ -64,7 +64,7 @@ public class OverlapTest {
 		f.setPosition(150,200);
 		g.setPosition(150,400);
 		z.setPosition(150,300);
-		d.clearBuffer();
+		d.show();
 		try {
 			Thread.sleep(100);
 		} catch (Exception e) {}
