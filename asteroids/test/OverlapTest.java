@@ -40,7 +40,7 @@ public class OverlapTest {
 		frame.setLocation(x,y);
 		d = new BasicDisplay(frame);
 		d.setCenter(new Vector2f(250,250));
-		final World world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
+		World world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 
 		Body s = new HexAsteroid(40);
 		Body t = new CircleAsteroid(40);
@@ -56,6 +56,7 @@ public class OverlapTest {
 		world.add(f);
 		world.add(g);
 		world.add(z);
+		z.adjustVelocity(v(80,-20));
 		world.addListener(new Exploder(world, d));
 		s.setPosition(350,150);
 		t.setPosition(350,150);
@@ -65,16 +66,11 @@ public class OverlapTest {
 		g.setPosition(150,400);
 		z.setPosition(150,300);
 		d.show();
-		try {
-			Thread.sleep(100);
-		} catch (Exception e) {}
+		Timer timer = new Timer(60f);
 		while (true) {
 			d.drawWorld(world);
 			d.show();
-			world.step();
-			try {
-				Thread.sleep(35);
-			} catch (Exception e) {}
+			world.step(timer.tick());
 		}
 	}
 }

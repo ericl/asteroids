@@ -8,6 +8,7 @@ import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import javax.swing.JFrame;
+import java.awt.Rectangle;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
@@ -39,16 +40,13 @@ public class Demo {
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
 		frame = new JFrame("Asteroid Field Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		width = 500;
-		height = 500;
+		width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+		height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		frame.setSize(width, height);
-		
-		int x = (int)(Toolkit.getDefaultToolkit().
-			getScreenSize().getWidth()-width)/2;
-		int y = (int)(Toolkit.getDefaultToolkit().
-			getScreenSize().getHeight()-width)/2;
-		
-		frame.setLocation(x,y);
+		frame.setMaximizedBounds(new Rectangle(frame.getToolkit().getScreenSize()));
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setLocationByPlatform(true);
+		frame.setUndecorated(true);
 
 		frame.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -57,7 +55,6 @@ public class Demo {
 				}
 			}
 		});
-	
 		d = new BasicDisplay(frame);
 		world.addListener(new Exploder(world, d));
 		d.setBackground("pixmaps/opo9929b.jpg");
@@ -115,11 +112,11 @@ public class Demo {
 		Graphics2D g2d = d.getGraphics();
 		g2d.setFont(new Font("SanSerif", Font.PLAIN, 12));
 		g2d.setColor(Color.orange);
-		g2d.drawString("FPS: "+(int)(1/frameAverage),10,40);
-		g2d.drawString("Arbiters: "+world.getArbiters().size(),10,60);
-		g2d.drawString("Bodies: "+world.getBodies().size(),10,80);
-		g2d.drawString("Render time: "+renderTime+"ms",10,100);
-		g2d.drawString("Logic time: "+logicTime+"ms",10,120);
+		g2d.drawString("FPS: "+(int)(1/frameAverage),10,20);
+		g2d.drawString("Arbiters: "+world.getArbiters().size(),10,40);
+		g2d.drawString("Bodies: "+world.getBodies().size(),10,60);
+		g2d.drawString("Render time: "+renderTime+"ms",10,80);
+		g2d.drawString("Logic time: "+logicTime+"ms",10,100);
 		if (ship.canExplode()) {
 			g2d.setColor(Color.black);
 			if (score == null)
@@ -128,7 +125,7 @@ public class Demo {
 		}
 		g2d.setColor(Color.gray);
 		int w = width, h = height;
-		g2d.drawString("Armor: " + (int)(ship.getDamage()*1000)/10+"%",w-120,h-95);
+		g2d.drawString("Armor: " + (ship.getDamage()*1000)/10,w-120,h-95);
 		g2d.drawString("Speed: " + ship.getVelocity().length(),w-120,h-75);
 		g2d.drawString("Xcoord: " + (int)(xo - width/2),w-120,h-55);
 		g2d.drawString("Ycoord: " + (int)(-yo + height/2),w-120,h-35);

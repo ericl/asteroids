@@ -178,7 +178,8 @@ public class MPDisplay extends Display {
 			return;
 		int sx = (int)(scale.getX()*dim.getX());
 		int sy = (int)(scale.getY()*dim.getY());
-		bg = orig.getScaledInstance(sx, sy, Image.SCALE_FAST);
+		int bgscale = Math.max(sx, sy);
+		bg = orig.getScaledInstance(bgscale, bgscale, Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
 		try {
 			tracker.waitForID(0);

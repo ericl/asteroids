@@ -77,7 +77,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	}
 
 	public double getDamage() {
-		return hull < 0 ? 0 : hull;
+		return invincible ? Double.POSITIVE_INFINITY : hull < 0 ? 0 : hull;
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {

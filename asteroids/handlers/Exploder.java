@@ -20,23 +20,22 @@ public class Exploder implements CollisionListener {
 			world = w;
 			display = d;
 		}
-		public Map<Long, CollisionGroup> grabMap(long gid) {
+		public CollisionGroup get(long gid) {
 			// rather than figure out what needs to be discarded
 			// it's easier to drop the whole map after inactivity
-			if (System.currentTimeMillis() - mapTime > 5000)
-				tmpMap = null;
-			mapTime = System.currentTimeMillis();
-			if (tmpMap == null)
+			if (tmpMap == null || System.currentTimeMillis() - mapTime > 5000)
 				tmpMap = new HashMap<Long,CollisionGroup>(1000);
+			mapTime = System.currentTimeMillis();
 			if (!tmpMap.containsKey(gid))
 				tmpMap.put(gid, new CollisionGroup(world,display,gid));
-			return tmpMap;
+			return tmpMap.get(gid);
 		}
 	}
 
 	/**
 	 * In the case of two large asteroids colliding head on:
 	 * True - one of the two will explode and pass right through the other
+	 *        this also happens to solve the stuck-bodies problem
 	 * False - the physics engine will hang for a while on a large explosion
 	 */
 	static boolean DOUBLE_GROUP = true;
@@ -57,6 +56,10 @@ public class Exploder implements CollisionListener {
 
 	public void collisionOccured(CollisionEvent event) {
 		if (event.getBodyA() instanceof Explodable)
+			((Explodable)event.getBodyA()).collided(event);
+		if (event.getBodyB() instanceof Explodable)
+			((Explodable)event.getBodyB()).collided(event);
+		if (event.getBodyA() instanceof Explodable)
 			tryExplode(event.getBodyA(), event.getBodyB(), event);
 		if (event.getBodyB() instanceof Explodable)
 			tryExplode(event.getBodyB(), event.getBodyA(), event);
@@ -64,7 +67,6 @@ public class Exploder implements CollisionListener {
 
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
-		e.collided(event);
 		if (!e.canExplode()
 				|| !display.inView(body.getPosition(), e.getRadius())
 				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)
@@ -75,17 +77,19 @@ public class Exploder implements CollisionListener {
 		long gid = e.getGID();
 		List<Body> f = e.getFragments();
 		Body rem = e.getRemnant();
-		Map<Long,CollisionGroup> map = cmap.grabMap(gid);
-		CollisionGroup group = map.get(gid);
+		CollisionGroup group = cmap.get(gid);
 		group.add(rem);
-		if (DOUBLE_GROUP)
+		if (DOUBLE_GROUP && other instanceof Explodable
+				&& ((Explodable)other).canExplode())
 			group.add(other);
 		float J = Math.min(other.getMass() / body.getMass() *
 				   (body.getRestitution() + other.getRestitution()) / 2,
 				   MAX_MOMENTUM_MULTIPLIER);
 		Vector2f v = MathUtil.sub(body.getVelocity(),
 			(MathUtil.scale(other.getVelocity(), -J)));
-		if (!group.canExplode(e))
+		if (!group.canExplode(e)
+			// special case for direct user-action
+				&& !(other instanceof Sphere1) && !(other instanceof Ship))
 			return;
 		group.remove(body);
 		if (f != null) {
@@ -103,7 +107,8 @@ public class Exploder implements CollisionListener {
 				b.setRotation((float)(2 * Math.PI * Math.random()));
 				b.adjustAngularVelocity(range(
 				   -body.getAngularVelocity(), body.getAngularVelocity()));
-				b.adjustVelocity(MathUtil.scale(direction(theta), RADIAL_VELOCITY));
+				b.adjustVelocity(
+					MathUtil.scale(direction(theta), RADIAL_VELOCITY));
 				b.adjustVelocity(v);
 				b.setPosition(sx, sy);
 				theta += tstep + range(-MAX_ANGLE_DEVIATION,MAX_ANGLE_DEVIATION);
@@ -112,7 +117,8 @@ public class Exploder implements CollisionListener {
 		}
 		
 		if (rem != null) {
-			rem.setPosition(body.getPosition().getX(), body.getPosition().getY());
+			rem.setPosition(body.getPosition().getX(),
+				body.getPosition().getY());
 			rem.adjustVelocity(v);
 			rem.setRotation(body.getRotation());
 			rem.adjustAngularVelocity(body.getAngularVelocity());
@@ -129,11 +135,9 @@ public class Exploder implements CollisionListener {
 class CollisionGroup {
 	// queue of this collision's smallest fragments
 	private PriorityQueue<Asteroid> prio = new PriorityQueue<Asteroid>();
-	// temporary queue to avoid looking through prio too much
-	private Queue<Asteroid> onscreen = new LinkedList<Asteroid>();
 	// all the fragments of this collision group
 	private Set<Asteroid> set = new HashSet<Asteroid>();
-	private long gid, lastTime = 0;
+	private long gid;
 	private World world;
 	private Display display;
 
@@ -153,8 +157,7 @@ class CollisionGroup {
 			c.setGID(gid);
 			set.add(c);
 			for (Body x : set)
-				for (Body y : set)
-					x.addExcludedBody(y);
+				x.addExcludedBody(b);
 			prio.add(c);
 		}
 	}
@@ -167,24 +170,25 @@ class CollisionGroup {
 
 	// all this processing still uses little cpu vs rendering
 	public boolean canExplode(Explodable e) {
-		if (System.currentTimeMillis() - lastTime > 1000) {
-			while (!onscreen.isEmpty())
-				prio.add(onscreen.remove());
-			lastTime = System.currentTimeMillis();
-		}
 		if (!set.contains(e) || set.size() < SOFT_GROUP_LIMIT
 				&& world.getBodies().size() < SOFT_WORLD_LIMIT)
 			return true;
 		int num = 10*(set.size() - SOFT_GROUP_LIMIT) /
 		          (HARD_GROUP_LIMIT - SOFT_GROUP_LIMIT);
 		Asteroid c;
+		Queue<Asteroid> onscreen = new LinkedList<Asteroid>();
 		for (int i=0; i < num && !prio.isEmpty(); i++) {
 			c = prio.poll();
 			if (!display.inView(c.getPosition(), c.getRadius())) {
 				world.remove(c);
-				remove(c);
+				set.remove(c);
 			} else
 				onscreen.add(c);
+		}
+		while (!onscreen.isEmpty()) {
+			c = onscreen.remove();
+			set.add(c);
+			prio.add(c);
 		}
 		return set.size() < HARD_GROUP_LIMIT;
 	}
