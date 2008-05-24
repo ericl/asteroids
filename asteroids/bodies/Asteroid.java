@@ -7,7 +7,18 @@ import asteroids.display.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 
-public abstract class Asteroid extends Body implements Visible {
+public abstract class Asteroid extends Body implements Visible, Comparable, Explodable {
+	protected long gid = -1;
+
+	public void setGID(long id) {
+		gid = id;
+	}
+
+	public long getGID() {
+		if (gid < 0)
+			gid = System.nanoTime();
+		return gid;
+	}
 
 	public Asteroid(Polygon shape) {
 		super(shape, shape.getArea());
@@ -25,4 +36,8 @@ public abstract class Asteroid extends Body implements Visible {
 	 * Maximum visible radius of the asteroid.
 	 */
 	public abstract float getRadius();
+
+	public int compareTo(Object other) {
+		return (int)(((Asteroid)other).getRadius() - getRadius());
+	}
 }

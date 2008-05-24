@@ -4,7 +4,7 @@ import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
 
-public class TexturedAsteroid extends PolyAsteroid implements Textured {
+public abstract class TexturedAsteroid extends PolyAsteroid implements Textured {
 	private String img;
 
 	/**

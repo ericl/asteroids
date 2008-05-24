@@ -104,6 +104,7 @@ public class Demo {
 				world.add(newAsteroid());
 			world.add(new Europa(150));
 			ship = new Ship(world);
+			ship.setInvincible(true);
 			frame.addKeyListener(ship);
 			ship.setPosition((xo+width/2),(yo+height/2));
 			world.add(ship);
@@ -165,19 +166,16 @@ public class Demo {
 
 	protected Asteroid newAsteroid() {
 		// difficulty increases with count
-		float vx = (float)((1+count/100)*(5 - Math.random()*10));
-		float vy = (float)((1+count/100)*(5 - Math.random()*10));
+		float vx = (float)((20+count/100)*(5 - Math.random()*10));
+		float vy = (float)((20+count/100)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(5*Math.random())) {
 			case 1: rock = new HexAsteroid(range(20,30)); break;
 			case 2: rock = new Rock2(range(20,30)); break;
 			default: rock = new CircleAsteroid(range(20,30)); break;
 		}
-		if (oneIn(200))
+		if (oneIn(7))
 			rock = new CircleAsteroid(range(100,300));
-		// workaround for rogue collisions
-		rock.setMaxVelocity(count/10, count/10);
-		rock.setRestitution(0.2f);
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
 		Vector2f vo = getOffscreenCoords(rock.getRadius());
 		rock.setPosition(vo.getX(), vo.getY());

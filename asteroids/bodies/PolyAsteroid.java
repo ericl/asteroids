@@ -6,7 +6,7 @@ import net.phys2d.raw.shapes.*;
 import java.awt.Graphics2D;
 import java.awt.Color;
 
-public class PolyAsteroid extends Asteroid implements Drawable {
+public abstract class PolyAsteroid extends Asteroid implements Drawable {
 	private float radius;
 	private Vector2f centroid;
 	protected float ratio;

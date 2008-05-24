@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Color;
 import java.util.*;
 
-public class HexAsteroid extends PolyAsteroid implements Explodable {
+public class HexAsteroid extends PolyAsteroid {
 	protected boolean explode;
 
 	// kinda like a smashed hexagon

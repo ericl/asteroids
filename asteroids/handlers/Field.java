@@ -14,7 +14,8 @@ public class Field implements Scenario {
 	protected Ship[] ships;
 	protected World world;
 	protected int count, score = -1;
-	public static String[] ids = {"circles", "hex", "large", "basic", "rocky"};
+	public static String[] ids = {"circles", "hex", "large",
+	                              "basic", "rocky", "icey"};
 	protected String id;
 
 	public Field(World w, Vector2f wxh, Ship ship, String id) {
@@ -110,6 +111,7 @@ public class Field implements Scenario {
 			switch ((int)(5*Math.random())) {
 				case 1: rock = new HexAsteroid(range(20,30)); break;
 				case 2: rock = new Rock2(range(20,30)); break;
+				case 3: rock = new IceAsteroid(range(20,70)); break;
 				default: rock = new CircleAsteroid(range(20,30)); break;
 			}
 			if (oneIn(200))
@@ -122,6 +124,8 @@ public class Field implements Scenario {
 			rock = new HexAsteroid(range(10,50));
 		else if (id.equals("rocky"))
 			rock = new Rock2(40);
+		else if (id.equals("icey"))
+			rock = new IceAsteroid(range(10,90));
 		// workaround for rogue collisions
 		rock.setMaxVelocity(10+count/10, 10+count/10);
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
@@ -145,7 +149,7 @@ public class Field implements Scenario {
 			v = MathUtil.sub(target, v(-x-r, -y-r));
 			failed = false;
 			for (Ship ship : ships)
-				if (isVisible(MathUtil.sub(ship.getPosition(), center),dim,v,r)) {
+				if (isVisible(MathUtil.sub(ship.getPosition(),center),dim,v,r)) {
 					failed = true;
 					break;
 				}

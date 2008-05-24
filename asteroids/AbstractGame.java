@@ -12,7 +12,7 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 
 public abstract class AbstractGame extends KeyAdapter {
-	private Display display;
+	protected Display display;
 	protected JFrame frame;
 	protected World world;
 

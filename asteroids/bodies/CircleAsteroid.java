@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Color;
 import java.util.*;
 
-public class CircleAsteroid extends Asteroid implements Drawable, Explodable {
+public class CircleAsteroid extends Asteroid implements Drawable {
 	protected boolean explode;
 
 	public CircleAsteroid(float radius) {

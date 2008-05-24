@@ -18,8 +18,9 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	protected int thrust;
 	protected float accel, torque;
 	protected boolean fire, explode;
-	protected long lastFired;
+	protected long lastFired, gid = -1;
 	protected World world;
+	protected boolean invincible;
 
 	public void reset() {
 		setRotation(0);
@@ -38,13 +39,17 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		setRotDamping(4000);
 	}
 
+	public void setInvincible(boolean b) {
+		invincible = b;		
+	}
+
 	public void collided(CollisionEvent event) {
 		hull -= Math.pow(MathUtil.sub(event.getBodyA().getVelocity(), event.getBodyB().getVelocity()).length() / 100, 2);
 		explode = hull < 0;
 	}
 
 	public boolean canExplode() {
-		return explode;
+		return explode && !invincible;
 	}
 
 	public float getTextureScaleFactor() {
@@ -152,5 +157,15 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 
 	public void keyTyped(KeyEvent e) {
 		// don't care
+	}
+
+	public long getGID() {
+		if (gid < 0)
+			gid = System.nanoTime();
+		return gid;
+	}
+
+	public void setGID(long id) {
+		gid = id;
 	}
 }

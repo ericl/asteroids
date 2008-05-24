@@ -83,7 +83,7 @@ public class MPAsteroids extends MPGame {
 			(int)(ship.getPosition().getX()),WIDTH-110,HEIGHT-79);
 			g2d.drawString("Ycoord: " +
 			(int)(-ship.getPosition().getY()),WIDTH-110,HEIGHT-59);
-			g2d.drawString("MPAsteroids: " + scenario.score(),WIDTH-110,HEIGHT-39);
+			g2d.drawString("Asteroids: " + scenario.score(),WIDTH-110,HEIGHT-39);
 		}
 	}
 }
