@@ -2,6 +2,7 @@ package asteroids.test;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
+import asteroids.weapons.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
@@ -152,7 +153,8 @@ public class Demo {
 			double x = body.getPosition().getX();
 			double y = body.getPosition().getY();
 			if (x > xmax || x < xmin || y > ymax || y < ymin) {
-				count++;
+				if(!(body instanceof Weapon))
+					count++;
 				world.remove(body);
 				if (world.getBodies().size() <= numrocks)
 					world.add(newAsteroid());

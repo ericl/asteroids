@@ -1,3 +1,9 @@
+
+/*
+ * Obsolete
+ */
+
+
 package asteroids.bodies;
 import asteroids.display.*;
 import net.phys2d.raw.*;

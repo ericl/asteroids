@@ -1,5 +1,6 @@
 package asteroids.bodies;
 import asteroids.display.*;
+import asteroids.weapons.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
@@ -20,6 +21,8 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	private boolean fire, explode;
 	private long lastFired;
 	private World world;
+	private Laser laser = new Laser();
+	private WeaponsSys lasersys = new WeaponsSys(laser);
 
 	public void reset() {
 		setRotation(0);
@@ -94,7 +97,10 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 			case KeyEvent.VK_RIGHT: torque = .00008f; break;
 			case KeyEvent.VK_UP: accel = 10; break;
 			case KeyEvent.VK_DOWN: accel = -5; break;
-			case KeyEvent.VK_SPACE: fire = true; break;
+			case KeyEvent.VK_SPACE: fire(); break;
+//				fire = true;
+//				fire();
+//				break;
 		}
 	}
 
@@ -113,7 +119,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		thrust--;
 		accel();
 		torque();
-		fire();
+		//fire();
 	}
 
 	private void accel() {
@@ -129,18 +135,24 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	}
 
 	private void fire() {
-		long timenow = System.currentTimeMillis();
-		if (canExplode() || !fire || timenow - lastFired < 150)
-			return;
-		lastFired = timenow;
-		Body c = new Sphere1(3, 70f);
-		c.setRotation(getRotation());
-		float ax = (float)(20*Math.sin(getRotation()));
-		float ay = (float)(20*Math.cos(getRotation()));
-		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
-		c.adjustVelocity(v(20*ax,20*-ay));
-		c.addExcludedBody(this);
-		world.add(c);
+		
+		if(canExplode()) return;
+		lasersys.fire(this, world);
+//		Laser c = new Laser();
+//		long timenow = System.currentTimeMillis();
+//		if (canExplode() || !fire || timenow - lastFired < (c.getReloadTime()))
+//			return;
+//		lastFired = timenow;
+
+//		Body c = new Sphere1(3, 70f);
+//		c.setRotation(getRotation());
+//		float ax = (float)(20*Math.sin(getRotation()));
+//		float ay = (float)(20*Math.cos(getRotation()));
+//		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
+//		c.adjustVelocity(v(20*ax,20*-ay));
+//		c.addExcludedBody(this);
+//		world.add(c);
+		
 	}
 
 	public void keyTyped(KeyEvent e) {
