@@ -1,13 +1,5 @@
 package asteroids.bodies;
-import asteroids.display.*;
-import static asteroids.Util.*;
 import net.phys2d.raw.*;
-import net.phys2d.math.*;
-import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.util.*;
-import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
 public class Ship2 extends Ship {
@@ -38,6 +30,6 @@ public class Ship2 extends Ship {
 
 	public void reset() {
 		super.reset();
-		setPosition(-300,0);
+		setPosition(-100,0);
 	}
 }

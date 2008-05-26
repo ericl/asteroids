@@ -3,9 +3,6 @@ import static asteroids.Util.*;
 import asteroids.handlers.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
 import java.util.*;
 
 public class Rock2 extends TexturedAsteroid {
@@ -27,7 +24,7 @@ public class Rock2 extends TexturedAsteroid {
 	}
 
 	public Body getRemnant() {
-		return getRadius() > 15 ? new Rock2(getRadius() * 2 / 3) : null;
+		return getRadius() > 20 ? new Rock2(getRadius() * 2 / 3) : null;
 	}
 
 	public List<Body> getFragments() {

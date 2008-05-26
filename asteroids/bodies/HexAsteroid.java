@@ -3,9 +3,6 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
 import java.util.*;
 
 public class HexAsteroid extends PolyAsteroid {

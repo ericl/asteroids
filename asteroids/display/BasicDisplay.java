@@ -1,54 +1,35 @@
 package asteroids.display;
-import javax.swing.JSplitPane;
-import java.awt.RenderingHints;
-import java.awt.MediaTracker;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
-import java.awt.Image;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.awt.geom.*;
-import javax.imageio.*;
-import java.util.*;
-import java.io.*;
 import java.net.URL;
 import static asteroids.Util.*;
-import net.phys2d.raw.shapes.*;
+import static net.phys2d.math.MathUtil.*;
 import net.phys2d.math.*;
-import net.phys2d.raw.*;
 
 public class BasicDisplay extends Display {
-	protected Frame frame;
 	protected BufferStrategy strategy;
 	protected Graphics2D buf;
-	protected Vector2f dim, o = v(0,0), scale = v(1,1);
+	protected Vector2f origin = v(0,0);
+	protected double scale = 1;
 	protected long resizetime = Long.MAX_VALUE;
 	protected Image orig, bg;
 
-	public BasicDisplay(Frame f) {
-		frame = f;
-		dim = v(frame.getWidth(), frame.getHeight());
+	public BasicDisplay(Frame f, Dimension d) {
+		super(f, d);
 		frame.setIgnoreRepaint(true);
-		frame.setVisible(true);
 		frame.createBufferStrategy(2);
-		tracker = new MediaTracker(frame);
-		cache = new HashMap<String,BufferedImage>();
 		strategy = frame.getBufferStrategy();
 		buf = (Graphics2D)strategy.getDrawGraphics();
-		frame.addComponentListener(new ComponentListener() {
+		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
+				double sx = frame.getSize().getWidth() / ORIGINAL_WIDTH;
+				double sy = frame.getSize().getHeight() / ORIGINAL_HEIGHT;
+				scale = Math.min(sx, sy);
+				dim.setSize(ORIGINAL_WIDTH*sx/scale,ORIGINAL_HEIGHT*sy/scale);
 				resizetime = System.currentTimeMillis();
-				double sx = frame.getSize().getWidth() / dim.getX();
-				double sy = frame.getSize().getHeight() / dim.getY();
-				scale = v(sx, sy);
 			}
-			public void componentMoved(ComponentEvent e) {}
-			public void componentShown(ComponentEvent e) {}
-			public void componentHidden(ComponentEvent e) {}
 		});
 	}
 
@@ -56,23 +37,27 @@ public class BasicDisplay extends Display {
 	 * @param center The vector x*y representing the center of the display.
 	 */
 	public void setCenter(ROVector2f center) {
-		o = MathUtil.sub(center, MathUtil.scale(dim, .5f));
+		origin = sub(center, scale(v(dim), .5f));
 	}
 
 	public void drawDrawable(Drawable thing) {
-		if (isVisible(o, dim, thing.getPosition(), thing.getRadius()))
-			thing.drawTo(buf, o);
+		if (inView(thing.getPosition(), thing.getRadius()))
+			thing.drawTo(buf, origin);
 	}
 
 	public boolean inView(ROVector2f test, float r) {
+		return inViewFrom(origin, test, r);
+	}
+
+	public boolean inViewFrom(ROVector2f o, ROVector2f test, float r) {
 		return isVisible(o, dim, test, r);
 	}
 
 	public void drawTextured(Textured thing) {
-		if (isVisible(o, dim, thing.getPosition(), thing.getRadius())) {
+		if (inView(thing.getPosition(), thing.getRadius())) {
 			BufferedImage i = loadImage(thing.getTexturePath());
-			float x = thing.getPosition().getX() - o.getX();
-			float y = thing.getPosition().getY() - o.getY();
+			float x = thing.getPosition().getX() - origin.getX();
+			float y = thing.getPosition().getY() - origin.getY();
 			float scale = thing.getTextureScaleFactor();
 			Vector2f c = thing.getTextureCenter();
 			AffineTransform trans = AffineTransform.getTranslateInstance
@@ -97,15 +82,15 @@ public class BasicDisplay extends Display {
 			rescaleBackground();
 			resizetime = Long.MAX_VALUE;
 		}
-		buf.scale(scale.getX(), scale.getY());
+		buf.scale(scale, scale);
 	}
 
 	public void clearBuffer() {
 		buf = (Graphics2D)strategy.getDrawGraphics();
 		if (bg == null) {
 			buf.setColor(Color.black);
-			int sx = (int)(scale.getX()*dim.getX());
-			int sy = (int)(scale.getY()*dim.getY());
+			int sx = (int)(scale*dim.getWidth());
+			int sy = (int)(scale*dim.getHeight());
 			buf.fillRect(0, 0, sx, sy);
 		} else {
 			buf.drawImage(bg,0,0,frame);
@@ -134,8 +119,8 @@ public class BasicDisplay extends Display {
 	protected void rescaleBackground() {
 		if (orig == null)
 			return;
-		int sx = (int)(scale.getX()*dim.getX());
-		int sy = (int)(scale.getY()*dim.getY());
+		int sx = (int)(scale*dim.getWidth());
+		int sy = (int)(scale*dim.getHeight());
 		int bgscale = Math.max(sx, sy);
 		bg = orig.getScaledInstance(bgscale, bgscale, Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
@@ -143,6 +128,17 @@ public class BasicDisplay extends Display {
 			tracker.waitForID(0);
 		} catch (Exception e) {
 			System.err.println("E: what?");
+		}
+	}
+
+	public ROVector2f getOffscreenCoords(float r, float b, ROVector2f o) {
+		ROVector2f v = o;
+		while (true) {
+			float x = range(-b-dim.getWidth(), b+dim.getWidth());
+			float y = range(-b-dim.getHeight(), b+dim.getHeight());
+			v = MathUtil.sub(o, v(-x-r, -y-r));
+			if (!inView(v,r))
+				return v;
 		}
 	}
 }

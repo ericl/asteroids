@@ -1,20 +1,31 @@
 package asteroids.display;
-import java.awt.Image;
-import java.awt.Color;
 import java.awt.MediaTracker;
-import java.awt.Font;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Frame;
 import java.awt.image.*;
 import java.net.URL;
 import javax.imageio.*;
 import java.util.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
 public abstract class Display {
 	protected MediaTracker tracker;
 	protected HashMap<String,BufferedImage> cache;
+	protected Frame frame;
+	protected final Dimension dim;
+	protected final int ORIGINAL_WIDTH, ORIGINAL_HEIGHT;
+
+	public Display(Frame f, Dimension d) {
+		frame = f;
+		dim = d;
+		ORIGINAL_WIDTH = (int)dim.getWidth();
+		ORIGINAL_HEIGHT = (int)dim.getHeight();
+		cache = new HashMap<String,BufferedImage>();
+		tracker = new MediaTracker(frame);
+		frame.setVisible(true);
+	}
 
 	/**
 	 * Draws all drawable bodies in the world to an offscreen buffer.
@@ -52,7 +63,7 @@ public abstract class Display {
 	public abstract void show();
 
 	/**
-	 * @return Valid Graphics2D object for the current frame.
+	 * @return Valid Graphics2D for the current frame.
 	 */
 	public abstract Graphics2D getGraphics();
 
@@ -62,6 +73,11 @@ public abstract class Display {
 	 * @param r The radius of the object.
 	 */
 	public abstract boolean inView(ROVector2f test, float r);
+
+	/**
+	 * @param o The origin used for testing viewability.
+	 */
+	public abstract boolean inViewFrom(ROVector2f o, ROVector2f test, float r);
 
 	/**
 	 * Sets the background image, which will be drawn scaled to the offscreen
@@ -82,5 +98,35 @@ public abstract class Display {
 				System.err.println("Invalid image path.");
 			}
 		return i;
+	}
+
+
+	/**
+	 * @param o The center of the screen.
+	 * @param dim The dimensions of the screen.
+	 * @param v The absolute location of the object.
+	 * @param r The visible radius of the object.
+	 */
+	protected static boolean isVisible(ROVector2f o, Dimension dim,
+			ROVector2f v, float r) {
+		Vector2f rel = MathUtil.sub(v, o);
+		return rel.getX() > -r && rel.getX() < dim.getWidth()+r
+			&& rel.getY() > -r && rel.getY() < dim.getHeight()+r;
+	}
+
+	/**
+	 * Get offscreen coords for a shape of radius r.
+	 * @param r The radius of the new object.
+	 * @param b The maximum distance from the display boundary.
+	 * @param o The origin of the area to be considered.
+	 */
+	public abstract ROVector2f getOffscreenCoords( float r, float b, ROVector2f o);
+
+	public int w(int modifier) {
+		return (int)(dim.getWidth()+modifier);
+	}
+
+	public int h(int modifier) {
+		return (int)(dim.getHeight()+modifier);
 	}
 }

@@ -1,16 +1,13 @@
 package asteroids.bodies;
-import asteroids.handlers.*;
-import asteroids.display.*;
-import net.phys2d.raw.*;
-import net.phys2d.math.*;
-import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
 import java.util.*;
+import asteroids.display.*;
+import asteroids.handlers.*;
+import net.phys2d.math.*;
+import net.phys2d.raw.*;
 
 public class Europa extends CircleAsteroid implements Textured {
 	private float sphereradius;
-	private int explode = 0;
+	private double crust = 10;
 
 	public Europa(float radius) {
 		super(radius, Body.INFINITE_MASS);
@@ -22,12 +19,15 @@ public class Europa extends CircleAsteroid implements Textured {
 	}
 
 	public void collided(CollisionEvent event) {
-		if (Exploder.worthyCollision(event))
-			explode++;
+		crust -= Exploder.getDamage(event, this);
+	}
+
+	public String getPercentDamage() {
+		return (int)(crust*100)/10 + "%";
 	}
 
 	public boolean canExplode() {
-		return explode > 50+5000*Math.random();
+		return crust < 0;
 	}
 
 	public String getTexturePath() {
@@ -40,6 +40,10 @@ public class Europa extends CircleAsteroid implements Textured {
 			for (int i=0; i < 6; i++)
 				f.add(new HexAsteroid(50));	
 		return f;
+	}
+
+	public Body getRemnant() {
+		return new IceAsteroid(getRadius() * 3 / 4);
 	}
 	
 	public float getTextureScaleFactor() {

@@ -2,6 +2,7 @@ package asteroids.handlers;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
+import static net.phys2d.math.MathUtil.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import java.util.*;
@@ -32,14 +33,7 @@ public class Exploder implements CollisionListener {
 		}
 	}
 
-	/**
-	 * In the case of two large asteroids colliding head on:
-	 * True - one of the two will explode and pass right through the other
-	 *        this also happens to solve the stuck-bodies problem
-	 * False - the physics engine will hang for a while on a large explosion
-	 */
 	static boolean DOUBLE_GROUP = true;
-
 	static int HARD_WORLD_LIMIT = 250;
 	static float RADIAL_VELOCITY = 5;
 	static float MIN_STUCK_DEPTH = 5;
@@ -74,26 +68,28 @@ public class Exploder implements CollisionListener {
 		world.remove(body);
 		if (world.getBodies().size() > HARD_WORLD_LIMIT)
 			return;
+
 		long gid = e.getGID();
 		List<Body> f = e.getFragments();
-		Body rem = e.getRemnant();
 		CollisionGroup group = cmap.get(gid);
+		Body rem = e.getRemnant();
 		group.add(rem);
 		if (DOUBLE_GROUP && other instanceof Explodable
 				&& ((Explodable)other).canExplode())
 			group.add(other);
+		if (!(other instanceof Ship)
+				&& !(other instanceof Sphere1)
+				&& !(body instanceof Ship)
+				&& !group.canExplode(e))
+			return;
+		group.remove(body);
+
 		float J = Math.min(other.getMass() / body.getMass() *
 				   (body.getRestitution() + other.getRestitution()) / 2,
 				   MAX_MOMENTUM_MULTIPLIER);
-		Vector2f v = MathUtil.sub(body.getVelocity(),
-			(MathUtil.scale(other.getVelocity(), -J)));
-		if (!group.canExplode(e)
-			// special case for direct user-action
-				&& !(other instanceof Sphere1) && !(other instanceof Ship))
-			return;
-		group.remove(body);
+		Vector2f v = sub(body.getVelocity(),(scale(other.getVelocity(),-J)));
 		if (f != null) {
-			float sx, sy, radius;
+			float sx, sy;
 			double theta = Math.random()*2*Math.PI;
 			double tstep = 2*Math.PI / f.size();
 			for (Body b : f) {
@@ -107,15 +103,13 @@ public class Exploder implements CollisionListener {
 				b.setRotation((float)(2 * Math.PI * Math.random()));
 				b.adjustAngularVelocity(range(
 				   -body.getAngularVelocity(), body.getAngularVelocity()));
-				b.adjustVelocity(
-					MathUtil.scale(direction(theta), RADIAL_VELOCITY));
+				b.adjustVelocity(scale(direction(theta), RADIAL_VELOCITY));
 				b.adjustVelocity(v);
 				b.setPosition(sx, sy);
 				theta += tstep + range(-MAX_ANGLE_DEVIATION,MAX_ANGLE_DEVIATION);
 				world.add(b);
 			}
 		}
-		
 		if (rem != null) {
 			rem.setPosition(body.getPosition().getX(),
 				body.getPosition().getY());
@@ -129,9 +123,19 @@ public class Exploder implements CollisionListener {
 	public static boolean worthyCollision(CollisionEvent e) {
 		return Math.abs(e.getPenetrationDepth()) > ASTEROID_DURABILITY;
 	}
+
+	public static double getDamage(CollisionEvent e, Body victim) {
+		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
+		double vmult = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
+		return Math.min(other.getMass(),1000) * vmult / 1e7;
+	}
 }
 
-
+/**
+ * The cpu used by this is tiny compared to that of the
+ * display and physics engine. Therefore we may as well
+ * try to make it look good.
+ */
 class CollisionGroup {
 	// queue of this collision's smallest fragments
 	private PriorityQueue<Asteroid> prio = new PriorityQueue<Asteroid>();
@@ -141,9 +145,11 @@ class CollisionGroup {
 	private World world;
 	private Display display;
 
-	static int SOFT_GROUP_LIMIT = 35;
-	static int HARD_GROUP_LIMIT = 50;
-	static int SOFT_WORLD_LIMIT = 175;
+	static int LOWER_GROUP_LIMIT = 35;
+	static int UPPER_GROUP_LIMIT = 50;
+	static int LOWER_WORLD_LIMIT = 175;
+	static int UPPER_WORLD_LIMIT = 200;
+	static int MAX_OFFSCREEN_SEARCH = 15;
 
 	public CollisionGroup(World world, Display display, long gid) {
 		this.gid = gid;
@@ -170,13 +176,15 @@ class CollisionGroup {
 
 	// all this processing still uses little cpu vs rendering
 	public boolean canExplode(Explodable e) {
-		if (!set.contains(e) || set.size() < SOFT_GROUP_LIMIT
-				&& world.getBodies().size() < SOFT_WORLD_LIMIT)
+		if (!set.contains(e) || set.size() < LOWER_GROUP_LIMIT
+				&& world.getBodies().size() < LOWER_WORLD_LIMIT)
 			return true;
-		int num = 10*(set.size() - SOFT_GROUP_LIMIT) /
-		          (HARD_GROUP_LIMIT - SOFT_GROUP_LIMIT);
+
+		int num = MAX_OFFSCREEN_SEARCH*(set.size() - LOWER_GROUP_LIMIT) /
+		          (UPPER_GROUP_LIMIT - LOWER_GROUP_LIMIT);
 		Asteroid c;
 		Queue<Asteroid> onscreen = new LinkedList<Asteroid>();
+		// look for small offscreen objects to remove
 		for (int i=0; i < num && !prio.isEmpty(); i++) {
 			c = prio.poll();
 			if (!display.inView(c.getPosition(), c.getRadius())) {
@@ -185,11 +193,10 @@ class CollisionGroup {
 			} else
 				onscreen.add(c);
 		}
-		while (!onscreen.isEmpty()) {
-			c = onscreen.remove();
-			set.add(c);
-			prio.add(c);
-		}
-		return set.size() < HARD_GROUP_LIMIT;
+		while (!onscreen.isEmpty())
+			prio.add(onscreen.remove());
+		return set.size() <= UPPER_GROUP_LIMIT + Math.sqrt(e.getRadius())
+			&& world.getBodies().size()
+			<= UPPER_WORLD_LIMIT + Math.sqrt(e.getRadius());
 	}
 }

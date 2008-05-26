@@ -1,75 +1,57 @@
 package asteroids.display;
 import javax.swing.JSplitPane;
-import java.awt.RenderingHints;
-import java.awt.MediaTracker;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
-import java.awt.Image;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.awt.geom.*;
-import javax.imageio.*;
-import java.util.*;
-import java.io.*;
 import java.net.URL;
 import static asteroids.Util.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
-import net.phys2d.raw.*;
 
 public class MPDisplay extends Display {
-	private Frame frame;
-	private JSplitPane jsplit;
-	private BufferStrategy strategyA, strategyB;
-	private Canvas A, B;
-	private Graphics2D bufA, bufB;
-	private Vector2f dim, oA = v(0,0), oB = v(0,0), scale = v(1,1);
-	private long resizetime = Long.MAX_VALUE;
-	private Image orig, bg;
+	protected JSplitPane jsplit;
+	protected BufferStrategy strategyA, strategyB;
+	protected Canvas A, B;
+	protected Graphics2D bufA, bufB;
+	protected Vector2f oA = v(0,0), oB = v(0,0);
+	protected double scale = 1;
+	protected long resizetime = Long.MAX_VALUE;
+	protected Image orig, bg;
 
-	public MPDisplay(Frame f, JSplitPane j) {
-		frame = f;
+	public MPDisplay(Frame f, JSplitPane j, Dimension d) {
+		super(f, d);
 		jsplit = j;
 		A = (Canvas)j.getLeftComponent();
 		B = (Canvas)j.getRightComponent();
-		dim = v(frame.getWidth()/2, frame.getHeight());
 		frame.setIgnoreRepaint(true);
 		A.setIgnoreRepaint(true);
 		B.setIgnoreRepaint(true);
-		frame.setVisible(true);
 		A.createBufferStrategy(2);
 		B.createBufferStrategy(2);
 		tracker = new MediaTracker(frame);
-		cache = new HashMap<String,BufferedImage>();
 		strategyA = A.getBufferStrategy();
 		strategyB = B.getBufferStrategy();
 		bufA = (Graphics2D)strategyA.getDrawGraphics();
 		bufB = (Graphics2D)strategyB.getDrawGraphics();
-		frame.addComponentListener(new ComponentListener() {
+		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
+				double sx = frame.getSize().getWidth() / ORIGINAL_WIDTH / 2;
+				double sy = frame.getSize().getHeight() / ORIGINAL_HEIGHT;
+				scale = Math.min(sx, sy);
+				dim.setSize(ORIGINAL_WIDTH*sx/scale,ORIGINAL_HEIGHT*sy/scale);
 				resizetime = System.currentTimeMillis();
-				double sx = frame.getSize().getWidth() / dim.getX() / 2;
-				double sy = frame.getSize().getHeight() / dim.getY();
-				scale = v(sx, sy);
 				jsplit.setDividerLocation(.5);
 			}
-			public void componentMoved(ComponentEvent e) {}
-			public void componentShown(ComponentEvent e) {}
-			public void componentHidden(ComponentEvent e) {}
 		});
 	}
 
 	public void setCenter(ROVector2f centerA) {
-		oA = MathUtil.sub(centerA, MathUtil.scale(dim, .5f));
+		oA = MathUtil.sub(centerA, MathUtil.scale(v(dim), .5f));
 	}
 
 	public void setCenter(ROVector2f centerA, ROVector2f centerB) {
-		oA = MathUtil.sub(centerA, MathUtil.scale(dim, .5f));
-		oB = MathUtil.sub(centerB, MathUtil.scale(dim, .5f));
+		oA = MathUtil.sub(centerA, MathUtil.scale(v(dim), .5f));
+		oB = MathUtil.sub(centerB, MathUtil.scale(v(dim), .5f));
 	}
 
 	public void drawDrawable(Drawable thing) {
@@ -128,8 +110,8 @@ public class MPDisplay extends Display {
 			rescaleBackground();
 			resizetime = Long.MAX_VALUE;
 		}
-		bufA.scale(scale.getX(), scale.getY());
-		bufB.scale(scale.getX(), scale.getY());
+		bufA.scale(scale, scale);
+		bufB.scale(scale, scale);
 	}
 
 	public void clearBuffer() {
@@ -138,8 +120,8 @@ public class MPDisplay extends Display {
 		if (bg == null) {
 			bufA.setColor(Color.black);
 			bufB.setColor(Color.black);
-			int sx = (int)(scale.getX()*dim.getX());
-			int sy = (int)(scale.getY()*dim.getY());
+			int sx = (int)(scale*dim.getWidth());
+			int sy = (int)(scale*dim.getHeight());
 			bufA.fillRect(0, 0, sx, sy);
 			bufB.fillRect(0, 0, sx, sy);
 		} else {
@@ -173,11 +155,11 @@ public class MPDisplay extends Display {
 		}
 	}
 
-	private void rescaleBackground() {
+	protected void rescaleBackground() {
 		if (orig == null)
 			return;
-		int sx = (int)(scale.getX()*dim.getX());
-		int sy = (int)(scale.getY()*dim.getY());
+		int sx = (int)(scale*dim.getWidth());
+		int sy = (int)(scale*dim.getHeight());
 		int bgscale = Math.max(sx, sy);
 		bg = orig.getScaledInstance(bgscale, bgscale, Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
@@ -188,14 +170,22 @@ public class MPDisplay extends Display {
 		}
 	}
 
-	public static boolean isVisible(ROVector2f o, ROVector2f dim,
-			ROVector2f v, float r) {
-		Vector2f rel = MathUtil.sub(v, o);
-		return rel.getX() > -r && rel.getX() < dim.getX()+r
-			&& rel.getY() > -r && rel.getY() < dim.getY()+r;
+	public boolean inView(ROVector2f v, float r) {
+		return inViewFrom(oA, v, r) || inViewFrom(oB, v, r);
 	}
 
-	public boolean inView(ROVector2f v, float r) {
-		return isVisible(oA, dim, v, r) || isVisible(oB, dim, v, r);
+	public boolean inViewFrom(ROVector2f o, ROVector2f v, float r) {
+		return isVisible(o, dim, v, r);
+	}
+
+	public ROVector2f getOffscreenCoords(float r, float b, ROVector2f o) {
+		ROVector2f v = o;
+		while (true) {
+			float x = range(-r-b-dim.getWidth(), r+b+dim.getWidth());
+			float y = range(-r-b-dim.getHeight(), r+b+dim.getHeight());
+			v = MathUtil.sub(o, v(-x, -y));
+			if (!inView(v,r))
+				return v;
+		}
 	}
 }

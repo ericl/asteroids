@@ -2,20 +2,9 @@ package asteroids.test;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
-import net.phys2d.raw.shapes.*;
-import net.phys2d.raw.strategies.*;
-import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import javax.swing.JFrame;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Toolkit;
-import java.awt.Graphics2D;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
 
 public class RotateTest {
 	protected JFrame frame;
@@ -23,7 +12,7 @@ public class RotateTest {
 	protected int width, height;
 
 	public static void main(String[] args) {
-		RotateTest demo = new RotateTest();
+		new RotateTest();
 	}
 
 	public RotateTest() {
@@ -42,10 +31,9 @@ public class RotateTest {
 
 		Rock1 r = new Rock1(range(30,60));
 		Sphere1 s = new Sphere1(range(31,41));
-		d = new BasicDisplay(frame);
+		d = new BasicDisplay(frame, new Dimension(width, height));
 		d.setCenter(new Vector2f(160,250));
 		float rot = 0;
-		float xx = 50, yy = 50;
 		float x2 = 300, y2 = 300;
 		while (true) {
 			r.setPosition(--x2,y2);

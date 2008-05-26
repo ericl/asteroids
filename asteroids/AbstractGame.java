@@ -2,11 +2,8 @@ package asteroids;
 import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.event.*;
-import net.phys2d.math.*;
 import net.phys2d.raw.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
-import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
@@ -15,45 +12,87 @@ public abstract class AbstractGame extends KeyAdapter {
 	protected Display display;
 	protected JFrame frame;
 	protected World world;
+	protected final Dimension dim;
+	protected volatile boolean pause;
+	private MainLoop mainLoop;
 
-	public AbstractGame(String title, int w, int h) {
+	private class MainLoop extends Thread {
+		public void run() {
+			if (display == null)
+				throw new IllegalStateException("Display not initialized.");
+			Timer timer = new Timer(60f);
+			float dt;
+			while (true) {
+				dt = timer.tick();
+				while (pause) try {
+					Thread.sleep(Long.MAX_VALUE);
+				} catch (InterruptedException e) {
+					timer.reset();
+				}
+				synchronized (world) {
+					update();
+					doGraphics();
+					doPhysics(dt);
+				}
+			}
+		}
+	}
+
+	public AbstractGame(String title, Dimension d) {
+		dim = d;
 		frame = new JFrame(title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(w,h);
+		frame.setSize(dim);
 		frame.setLocationByPlatform(true);
 		frame.addKeyListener(this);
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
-	}
-
-	// makes window visible
-	public void init() {
-		display = new BasicDisplay(frame);
+		mainLoop = new MainLoop();
+		display = makeDisplay();
+		frame.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				unpause();
+			}
+			public void focusLost(FocusEvent e) {
+				pause();
+			}
+		});
 		world.addListener(new Exploder(world, display));
 	}
 
-	public Display getDisplay() {
-		return display;
+	public void mainLoop() {
+		mainLoop.start();
 	}
 
-	public void setDisplay(Display d) {
-		display = d;
+	protected Display makeDisplay() {
+		return new BasicDisplay(frame, dim);
 	}
 
-	protected void mainLoop() {
-		if (display == null)
-			throw new IllegalStateException("Display not initialized.");
-		Timer timer = new Timer(60f);
-		float dt;
-		while (true) {
-			dt = timer.tick();
-			synchronized (world) {
-				update();
-				doGraphics();
-				doPhysics(dt);
+	protected void unpause() {
+		if (pause) {
+			pause = false;
+			mainLoop.interrupt();
+		}
+	}
+
+	protected void pause() {
+		if (!pause) {
+			pause = true;
+			synchronized (display) {
+				Graphics2D g2d = display.getGraphics();
+				g2d.setColor(new Color(100,100,100,100));
+				g2d.fillRect(0,0,display.w(0),display.h(0));
+				g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
+				g2d.setColor(Color.RED);
+				g2d.drawString("PAUSED",20,display.h(-20));
+				display.show();
 			}
 		}
 	}
+
+	protected void preWorld() {}
+	protected void postWorld() {}
+	protected void update() {}
 
 	private void doPhysics(float timestep) {
 		for (int i=0; i < 5; i++)
@@ -61,13 +100,11 @@ public abstract class AbstractGame extends KeyAdapter {
 	}
 
 	private void doGraphics() {
-		display.show();
-		preWorld();
-		display.drawWorld(world);
-		postWorld();
+		synchronized (display) {
+			display.show();
+			preWorld();
+			display.drawWorld(world);
+			postWorld();
+		}
 	}
-
-	protected void preWorld() {}
-	protected void postWorld() {}
-	protected abstract void update();
 }

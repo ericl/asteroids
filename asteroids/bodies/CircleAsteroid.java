@@ -11,6 +11,7 @@ import java.util.*;
 
 public class CircleAsteroid extends Asteroid implements Drawable {
 	protected boolean explode;
+	private Color color = Color.orange;
 
 	public CircleAsteroid(float radius) {
 		super(new Circle(radius), (float)Math.pow(radius,2));
@@ -20,9 +21,13 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 		super(new Circle(radius), fixedmass);
 	}
 
+	public void setColor(Color c) {
+		color = c;
+	}
+
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
 		Circle circle = (Circle)getShape();
-		g2d.setColor(getRadius() < 100 ? Color.ORANGE : Color.darkGray);
+		g2d.setColor(getRadius() < 100 ? color : Color.darkGray);
 		float x = getPosition().getX() - o.getX();
 		float y = getPosition().getY() - o.getY();
 		float r = circle.getRadius();
@@ -43,15 +48,20 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 	}
 
 	public Body getRemnant() {
-		return getRadius() > 15 ? new CircleAsteroid(getRadius() / 2) : null;
+		CircleAsteroid x = new CircleAsteroid(getRadius() / 2);
+		x.setColor(color);
+		return getRadius() > 15 ? x : null;
 	}
 
 	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(4);
 		int max = (int)(getRadius() > 30 ? range(4,6) : range(3,4));
+		CircleAsteroid x = null;
 		if (getRadius() > 10)
-			for (int i=0; i < max; i++)
-				f.add(new CircleAsteroid(getRadius() / 3));	
+			for (int i=0; i < max; i++) {
+				f.add(x = new CircleAsteroid(getRadius() / 3));
+				x.setColor(color);
+			}
 		return f;
 	}
 }

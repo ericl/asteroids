@@ -3,8 +3,6 @@
  */
 
 package asteroids.display;
-import net.phys2d.raw.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 
 public interface Textured extends Visible {

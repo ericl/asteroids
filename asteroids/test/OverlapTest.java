@@ -3,18 +3,15 @@
  */
 
 package asteroids.test;
-import asteroids.*;
 import asteroids.handlers.*;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import javax.swing.JFrame;
-import java.awt.Frame;
-import java.awt.Toolkit;
+import java.awt.*;
 
 public class OverlapTest {
 	protected JFrame frame;
@@ -22,7 +19,7 @@ public class OverlapTest {
 	protected int width, height;
 
 	public static void main(String[] args) {
-		OverlapTest demo = new OverlapTest();
+		new OverlapTest();
 	}
 
 	public OverlapTest() {
@@ -38,7 +35,7 @@ public class OverlapTest {
 			getScreenSize().getHeight()-width)/2;
 		
 		frame.setLocation(x,y);
-		d = new BasicDisplay(frame);
+		d = new BasicDisplay(frame, new Dimension(width, height));
 		d.setCenter(new Vector2f(250,250));
 		World world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 
@@ -49,6 +46,9 @@ public class OverlapTest {
 		Body f = new CircleAsteroid(30);
 		Body g = new CircleAsteroid(30);
 		Body z = new CircleAsteroid(130);
+		Body q1 = new CircleAsteroid(130);
+		Body q2 = new CircleAsteroid(130);
+		world.enableRestingBodyDetection(.1f, .1f, .1f);
 		world.add(s);
 		world.add(t);
 		world.add(a);
@@ -56,6 +56,8 @@ public class OverlapTest {
 		world.add(f);
 		world.add(g);
 		world.add(z);
+		world.add(q1);
+		world.add(q2);
 		z.adjustVelocity(v(80,-20));
 		world.addListener(new Exploder(world, d));
 		s.setPosition(350,150);
@@ -65,6 +67,8 @@ public class OverlapTest {
 		f.setPosition(150,200);
 		g.setPosition(150,400);
 		z.setPosition(150,300);
+		q1.setPosition(300,-180);
+		q2.setPosition(300,-120);
 		d.show();
 		Timer timer = new Timer(60f);
 		while (true) {

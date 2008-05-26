@@ -4,9 +4,7 @@
  */
 
 package asteroids.display;
-import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import net.phys2d.raw.shapes.*;
 import java.awt.Graphics2D;
 
 public interface Drawable extends Visible {

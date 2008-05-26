@@ -2,9 +2,6 @@ package asteroids.bodies;
 import asteroids.display.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
 import java.util.*;
 
 public class Sphere1 extends CircleAsteroid implements Textured {

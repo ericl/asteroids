@@ -7,7 +7,9 @@ import asteroids.display.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 
-public abstract class Asteroid extends Body implements Visible, Comparable, Explodable {
+public abstract class Asteroid extends Body
+		implements Visible, Comparable<Asteroid>, Explodable {
+
 	protected long gid = -1;
 
 	public void setGID(long id) {
@@ -37,7 +39,7 @@ public abstract class Asteroid extends Body implements Visible, Comparable, Expl
 	 */
 	public abstract float getRadius();
 
-	public int compareTo(Object other) {
-		return (int)(((Asteroid)other).getRadius() - getRadius());
+	public int compareTo(Asteroid other) {
+		return (int)(other.getRadius() - getRadius());
 	}
 }

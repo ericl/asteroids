@@ -1,40 +1,30 @@
 package asteroids;
-import javax.swing.JFrame;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.*;
-import java.awt.event.*;
-import net.phys2d.math.*;
-import net.phys2d.raw.*;
-import net.phys2d.raw.shapes.*;
-import net.phys2d.raw.strategies.*;
-import asteroids.bodies.*;
 import asteroids.display.*;
-import asteroids.handlers.*;
-import static asteroids.Util.*;
 
 public abstract class MPGame extends AbstractGame {
 	protected JSplitPane jsplit;
+	protected MPDisplay display;
 
-	public MPGame(String title, int w, int h) {
-		super(title, w*2, h);
+	public MPGame(String title, Dimension dim) {
+		super(title, dim);
+		display = (MPDisplay)super.display;
+	}
+
+	protected Display makeDisplay() {
 		Canvas a, b;
 		jsplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-		                           a = new Canvas(), b = new Canvas());
-		a.setSize(w,h);
-		b.setSize(w,h);
-		jsplit.setSize(w*2, h);
+		         a = new Canvas(), b = new Canvas());
+		a.setSize(dim);
+		b.setSize(dim);
+		a.setMinimumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
+		b.setMinimumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
+		jsplit.setSize(new Dimension((int)dim.getWidth()*2,(int)dim.getHeight()));
+		frame.setSize(new Dimension((int)dim.getWidth()*2,(int)dim.getHeight()));
 		jsplit.setDividerLocation(.5);
 		jsplit.setVisible(true);
 		frame.add(jsplit);
-	}
-
-	public void init() {
-		setDisplay(new MPDisplay(frame, jsplit));
-		world.addListener(new Exploder(world, getDisplay()));
-	}
-
-	public MPDisplay getDisplay() {
-		return (MPDisplay)super.getDisplay();
+		return new MPDisplay(frame, jsplit, dim);
 	}
 }

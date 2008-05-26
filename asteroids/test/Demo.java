@@ -3,35 +3,46 @@ import asteroids.display.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import javax.swing.JFrame;
-import java.awt.Rectangle;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Toolkit;
-import java.awt.Graphics2D;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 
 public class Demo {
 	protected JFrame frame;
 	protected Display d;
+	protected Europa object;
+	protected long maxRenderTime = 0, maxLogicTime = 0,
+		renderTime = 0, logicTime = 0, beforeRender, beforeLogic;
+	protected Average render, logic, fps, arbiters, bodies;
+	protected long numFrames = 0;
 	protected World world;
 	protected float border = 300, buf = 500;
-	protected int numrocks = 50, count;
+	protected int numrocks = 30, count;
 	protected String score;
 	protected Ship ship;
 	protected float xo, yo;
 	protected int width, height;
+	private boolean failed;
+
+	private class Average {
+		private double a;
+		private int n;
+
+		public void add(double x) {
+			n++;
+			a -= a/n - x/n;
+		}
+
+		public double getAvg() {
+			return a;
+		}
+	}
 
 	public static void main(String[] args) {
-		Demo demo = new Demo();
+		new Demo();
 	}
 
 	public Demo() {
@@ -43,7 +54,8 @@ public class Demo {
 		width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		frame.setSize(width, height);
-		frame.setMaximizedBounds(new Rectangle(frame.getToolkit().getScreenSize()));
+		frame.setMaximizedBounds(
+			new Rectangle(frame.getToolkit().getScreenSize()));
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setLocationByPlatform(true);
 		frame.setUndecorated(true);
@@ -55,7 +67,7 @@ public class Demo {
 				}
 			}
 		});
-		d = new BasicDisplay(frame);
+		d = new BasicDisplay(frame, new Dimension(width, height));
 		world.addListener(new Exploder(world, d));
 		d.setBackground("pixmaps/opo9929b.jpg");
 		init();
@@ -63,16 +75,23 @@ public class Demo {
 	}
 
 	protected void mainLoop() {
-		long renderTime = 0, logicTime = 0, beforeRender, beforeLogic;
 		Timer t = new Timer(60f);
 		float dt;
 		while (true) {
 			// do the sleeping outside the synchronized part
 			dt = t.tick();
 			synchronized (world) {
+				if (object.canExplode())
+					failed = true;
+				logic.add(logicTime);
+				render.add(renderTime);
+				if (renderTime > maxRenderTime)
+					maxRenderTime = renderTime;
+				if (logicTime > maxLogicTime)
+					maxLogicTime = logicTime;
 				beforeRender = System.currentTimeMillis();
 				d.drawWorld(world);
-				drawGUI(dt, renderTime, logicTime);
+				drawGUI(dt);
 				d.show();
 				renderTime = System.currentTimeMillis() - beforeRender;
 				beforeLogic = System.currentTimeMillis();
@@ -88,7 +107,15 @@ public class Demo {
 	 * Resets game within demo.
 	 */
 	protected void init() {
+		maxRenderTime = 0;
+		maxLogicTime = 0;
+		logic = new Average();
+		fps = new Average();
+		render = new Average();
+		arbiters = new Average();
+		bodies = new Average();
 		synchronized (world) {
+			failed = false;
 			world.clear();
 			frame.removeKeyListener(ship);
 			score = null;
@@ -99,8 +126,10 @@ public class Demo {
 			world.setGravity(0,0);
 			for (int i=0; i < numrocks; i++)
 				world.add(newAsteroid());
-			world.add(new Europa(150));
+			world.add(object = new Europa(150));
+			object.setPosition((xo+width/2),(yo+height/2));
 			ship = new Ship(world);
+			ship.addExcludedBody(object);
 			ship.setInvincible(true);
 			frame.addKeyListener(ship);
 			ship.setPosition((xo+width/2),(yo+height/2));
@@ -108,23 +137,32 @@ public class Demo {
 		}
 	}
 
-	protected void drawGUI(float frameAverage, long renderTime, long logicTime) {
+	protected void drawGUI(float frameAverage) {
 		Graphics2D g2d = d.getGraphics();
+		if ((1/frameAverage) < 1000)
+			fps.add(1/frameAverage);
+		arbiters.add(world.getArbiters().size());
+		bodies.add(world.getBodies().size());
 		g2d.setFont(new Font("SanSerif", Font.PLAIN, 12));
 		g2d.setColor(Color.orange);
-		g2d.drawString("FPS: "+(int)(1/frameAverage),10,20);
-		g2d.drawString("Arbiters: "+world.getArbiters().size(),10,40);
-		g2d.drawString("Bodies: "+world.getBodies().size(),10,60);
-		g2d.drawString("Render time: "+renderTime+"ms",10,80);
-		g2d.drawString("Logic time: "+logicTime+"ms",10,100);
-		if (ship.canExplode()) {
+		g2d.drawString("Avg FPS: "+(int)fps.getAvg()+"fps",10,20);
+		g2d.drawString("Avg Render time: "+(int)render.getAvg()+"ms",10,40);
+		g2d.drawString("Avg Logic time: "+(int)logic.getAvg()+"ms",10,60);
+		g2d.drawString("Avg Arbiters: "+(int)arbiters.getAvg(),10,80);
+		g2d.drawString("Avg Bodies: "+(int)bodies.getAvg(),10,100);
+		g2d.drawString("Max Render time: "+maxRenderTime+"ms",10,120);
+		g2d.drawString("Max Logic time: "+maxLogicTime+"ms",10,140);
+		if (ship.canExplode() || failed) {
+			world.remove(ship);
 			g2d.setColor(Color.black);
 			if (score == null)
 				score = "" + count;
 			g2d.drawString("Score: " + score,width/2-27,height/2+5);
 		}
-		g2d.setColor(Color.gray);
 		int w = width, h = height;
+		g2d.setColor(Color.red);
+		g2d.drawString("Europa: " + object.getPercentDamage(),w-120,h-115);
+		g2d.setColor(Color.gray);
 		g2d.drawString("Armor: " + (ship.getDamage()*1000)/10,w-120,h-95);
 		g2d.drawString("Speed: " + ship.getVelocity().length(),w-120,h-75);
 		g2d.drawString("Xcoord: " + (int)(xo - width/2),w-120,h-55);
@@ -150,10 +188,13 @@ public class Demo {
 			double x = body.getPosition().getX();
 			double y = body.getPosition().getY();
 			if (x > xmax || x < xmin || y > ymax || y < ymin) {
-				count++;
-				world.remove(body);
-				if (world.getBodies().size() <= numrocks)
-					world.add(newAsteroid());
+				if (body != object) {
+					count++;
+					world.remove(body);
+					numrocks = 30+count/10;
+					if (world.getBodies().size() <= numrocks)
+						world.add(newAsteroid());
+				}
 			}
 		}
 		xo = ship.getPosition().getX() - (float)width/2;
@@ -163,16 +204,20 @@ public class Demo {
 
 	protected Asteroid newAsteroid() {
 		// difficulty increases with count
-		float vx = (float)((20+count/100)*(5 - Math.random()*10));
-		float vy = (float)((20+count/100)*(5 - Math.random()*10));
+		float vx = (float)((15+count/100)*(5 - Math.random()*10));
+		float vy = (float)((15+count/100)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(5*Math.random())) {
 			case 1: rock = new HexAsteroid(range(20,30)); break;
 			case 2: rock = new Rock2(range(20,30)); break;
 			default: rock = new CircleAsteroid(range(20,30)); break;
 		}
-		if (oneIn(7))
+		int chance = 100-count/30;
+		if (oneIn(chance < 7 ? 7 : chance))
 			rock = new CircleAsteroid(range(100,300));
+//		// for easy visualization, ok?
+//		if (rock instanceof CircleAsteroid)
+//			((CircleAsteroid)rock).setColor(randomColor().darker().darker());
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
 		Vector2f vo = getOffscreenCoords(rock.getRadius());
 		rock.setPosition(vo.getX(), vo.getY());

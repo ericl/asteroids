@@ -1,5 +1,6 @@
 package asteroids;
 import net.phys2d.math.*;
+import java.awt.*;
 
 public class Util {
 	private Util() {
@@ -10,8 +11,22 @@ public class Util {
 		return new Vector2f(x.floatValue(), y.floatValue());
 	}
 
-	public static float range(float minR, float maxR) {
-		return (float)(minR+(maxR-minR)*Math.random());
+	public static Dimension d(Number x, Number y) {
+		return new Dimension(x.intValue(), y.intValue());
+	}
+
+	public static Vector2f v(Dimension d) {
+		return v(d.getWidth(), d.getHeight());
+	}
+
+	public static Dimension d(Vector2f d) {
+		return d(d.getX(), d.getY());
+	}
+
+	public static float range(Number minR, Number maxR) {
+		float min = minR.floatValue();
+		float max = maxR.floatValue();
+		return (float)(min+(max-min)*Math.random());
 	}
 
 	public static Vector2f direction(Number rotation) {
@@ -23,16 +38,7 @@ public class Util {
 		return num*Math.random() < 1;
 	}
 
-	/**
-	 * @param o The center of the screen.
-	 * @param dim The dimensions of the screen.
-	 * @param v The absolute location of the object.
-	 * @param r The visible radius of the object.
-	 */
-	public static boolean isVisible(ROVector2f o, ROVector2f dim,
-			ROVector2f v, float r) {
-		Vector2f rel = MathUtil.sub(v, o);
-		return rel.getX() > -r && rel.getX() < dim.getX()+r
-			&& rel.getY() > -r && rel.getY() < dim.getY()+r;
+	public static Color randomColor() {
+		return new Color((int)range(1,255),(int)range(1,255),(int)range(1,255));
 	}
 }

@@ -4,40 +4,41 @@ import asteroids.display.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import java.util.*;
 
 public class Field implements Scenario {
-	protected final int BORDER = 300, BUF = 500;
-	protected final int MIN_DENSITY = 30;
-	protected final Vector2f dim;
+	protected int BORDER = 300, BUF = 500;
+	protected int MIN_DENSITY = 50;
 	protected Integer[] density;
 	protected Ship[] ships;
 	protected World world;
+	protected Display display;
 	protected int count, score = -1;
 	public static String[] ids = {"circles", "hex", "large",
 	                              "basic", "rocky", "icey"};
 	protected String id;
 
-	public Field(World w, Vector2f wxh, Ship ship, String id) {
+	public Field(World w, Display d, Ship ship, String id) {
 		this.id = id;
+		this.display = d;
 		ships = new Ship[1];
 		ships[0] = ship;
 		density = new Integer[ships.length];
-		dim = wxh;
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id.equals(ids[i]))
 				ok = true;
+		if (id.equals("icey"))
+			MIN_DENSITY *= 2;
 		if (!ok)
 			throw new IllegalArgumentException("Unknown id " + id);
 		world = w;
 	}
 
-	public Field(World w, Vector2f wxh, Ship[] shiparray, String id) {
+	public Field(World w, Display d, Ship[] shiparray, String id) {
+		this.display = d;
 		this.id = id;
 		ships = shiparray;
 		density = new Integer[ships.length];
-		dim = wxh;
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id.equals(ids[i]))
@@ -80,7 +81,7 @@ public class Field implements Scenario {
 				if (body instanceof Asteroid) {
 					boolean outOfRange = true;
 					for (int j=0; j < ships.length; j++)
-						if (isVisible(ships[j].getPosition(), dim,
+						if (display.inViewFrom(ships[j].getPosition(),
 								body.getPosition(), BORDER+BUF)) {
 							density[j]++;
 							outOfRange = false;
@@ -104,8 +105,6 @@ public class Field implements Scenario {
 
 	protected Asteroid newAsteroid(ROVector2f origin) {
 		// difficulty increases with count
-		float vx = (float)((10+count/100)*(5 - Math.random()*10));
-		float vy = (float)((10+count/100)*(5 - Math.random()*10));
 		Asteroid rock = null;
 		if (id.equals("basic")) {
 			switch ((int)(5*Math.random())) {
@@ -129,31 +128,11 @@ public class Field implements Scenario {
 		// workaround for rogue collisions
 		rock.setMaxVelocity(10+count/10, 10+count/10);
 		rock.adjustAngularVelocity((float)(2*Math.random()-1));
-		ROVector2f vo = getOffscreenCoords(rock.getRadius(), origin);
+		ROVector2f vo = display.getOffscreenCoords(
+			rock.getRadius(), BORDER, origin);
 		rock.setPosition(vo.getX(), vo.getY());
 		rock.adjustVelocity(v(range(-count/20-10,count/20+10),
 		                      range(count/-20-10,count/20+10)));
 		return rock;
-	}
-
-	/**
-	 * Get offscreen coords for a shape of radius r.
-	 */
-	protected ROVector2f getOffscreenCoords(float r, ROVector2f target) {
-		ROVector2f v = target;
-		ROVector2f center = MathUtil.scale(dim, .5f);
-		boolean failed = true;
-		while (failed) {
-			float x = range(-BORDER-dim.getX(), BORDER+dim.getX());
-			float y = range(-BORDER-dim.getY(), BORDER+dim.getY());
-			v = MathUtil.sub(target, v(-x-r, -y-r));
-			failed = false;
-			for (Ship ship : ships)
-				if (isVisible(MathUtil.sub(ship.getPosition(),center),dim,v,r)) {
-					failed = true;
-					break;
-				}
-		}
-		return v;
 	}
 }

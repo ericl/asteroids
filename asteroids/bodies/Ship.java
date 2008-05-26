@@ -1,16 +1,18 @@
 package asteroids.bodies;
-import asteroids.display.*;
-import static asteroids.Util.*;
-import net.phys2d.raw.*;
-import net.phys2d.math.*;
-import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
 import java.awt.Color;
-import java.util.*;
-import java.awt.event.KeyListener;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.*;
+import asteroids.display.*;
+import asteroids.handlers.Exploder;
+import net.phys2d.math.*;
+import net.phys2d.raw.*;
+import net.phys2d.raw.shapes.*;
+import static asteroids.Util.*;
 
-public class Ship extends Body implements Drawable, Textured, Explodable, KeyListener {
+public class Ship extends Body
+		implements Drawable, Textured, Explodable, KeyListener {
 	
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	protected static Shape shape = new Polygon(poly);
@@ -21,6 +23,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	protected long lastFired, gid = -1;
 	protected World world;
 	protected boolean invincible;
+	public int deaths;
 
 	public void reset() {
 		setRotation(0);
@@ -44,7 +47,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	}
 
 	public void collided(CollisionEvent event) {
-		hull -= Math.pow(MathUtil.sub(event.getBodyA().getVelocity(), event.getBodyB().getVelocity()).length() / 100, 2);
+		hull -= Exploder.getDamage(event, this);
 		explode = hull < 0;
 	}
 
@@ -117,8 +120,8 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		}
 	}
 
-	// be careful not to use methods that do not account for varying dt!
 	public void endFrame() {
+		super.endFrame();
 		float v = getVelocity().length();
 		setDamping(v < 40 ? 0 : v < 100 ? .4f : 1f);
 		thrust--;
@@ -135,13 +138,13 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	}
 
 	protected void torque() {
-		// unfortunately setTorque() gives unpredictable results with changing dt
+		// setTorque() is unpredictable with varied dt
 		adjustAngularVelocity(getMass()*torque);
 	}
 
 	protected void fire() {
 		long timenow = System.currentTimeMillis();
-		if (canExplode() || !fire || timenow - lastFired < 150)
+		if (canExplode() || !fire || timenow - lastFired < 100)
 			return;
 		lastFired = timenow;
 		Body c = new Sphere1(3, 70f);
@@ -152,6 +155,9 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		c.adjustVelocity(v(10*ax,10*-ay));
 		c.adjustVelocity((Vector2f)getVelocity());
 		c.addExcludedBody(this);
+		BodyList list = getExcludedList();
+		for (int i=0; i < list.size(); i++)
+			c.addExcludedBody(list.get(i));
 		world.add(c);
 	}
 

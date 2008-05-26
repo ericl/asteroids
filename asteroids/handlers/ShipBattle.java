@@ -1,16 +1,12 @@
 package asteroids.handlers;
 import asteroids.bodies.*;
 import asteroids.display.*;
-import static asteroids.Util.*;
 import net.phys2d.raw.*;
-import net.phys2d.math.*;
-import java.util.*;
 
 public class ShipBattle extends Field {
-	protected final int MIN_DENSITY = 10;
 
-	public ShipBattle(World w, Vector2f wxh, Ship[] shiparray, String id) {
-		super(w, wxh, shiparray, id);
+	public ShipBattle(World w, Display d, Ship[] shiparray, String id) {
+		super(w, d, shiparray, id);
 	}
 
 	public boolean done() {
@@ -25,6 +21,7 @@ public class ShipBattle extends Field {
 		super.update();
 		for (Ship ship : ships)
 			if (ship.canExplode()) {
+				ship.deaths++;
 				ship.reset();
 				world.add(ship);
 			}
