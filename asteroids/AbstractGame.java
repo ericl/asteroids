@@ -12,6 +12,7 @@ public abstract class AbstractGame extends KeyAdapter {
 	protected Display display;
 	protected JFrame frame;
 	protected World world;
+	protected Pauser focus;
 	protected final Dimension dim;
 	protected volatile boolean pause;
 	private MainLoop mainLoop;
@@ -48,15 +49,9 @@ public abstract class AbstractGame extends KeyAdapter {
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
 		mainLoop = new MainLoop();
+		focus = new Pauser(frame, this);
 		display = makeDisplay();
-		frame.addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent e) {
-				unpause();
-			}
-			public void focusLost(FocusEvent e) {
-				pause();
-			}
-		});
+		frame.addFocusListener(focus);
 		world.addListener(new Exploder(world, display));
 	}
 
@@ -68,14 +63,14 @@ public abstract class AbstractGame extends KeyAdapter {
 		return new BasicDisplay(frame, dim);
 	}
 
-	protected void unpause() {
+	public void unpause() {
 		if (pause) {
 			pause = false;
 			mainLoop.interrupt();
 		}
 	}
 
-	protected void pause() {
+	public void pause() {
 		if (!pause) {
 			pause = true;
 			synchronized (display) {

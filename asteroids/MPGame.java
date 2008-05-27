@@ -2,6 +2,7 @@ package asteroids;
 import javax.swing.*;
 import java.awt.*;
 import asteroids.display.*;
+import asteroids.handlers.Pauser;
 
 public abstract class MPGame extends AbstractGame {
 	protected JSplitPane jsplit;
@@ -10,12 +11,16 @@ public abstract class MPGame extends AbstractGame {
 	public MPGame(String title, Dimension dim) {
 		super(title, dim);
 		display = (MPDisplay)super.display;
-	}
+	}	
 
 	protected Display makeDisplay() {
 		Canvas a, b;
 		jsplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		         a = new Canvas(), b = new Canvas());
+		focus.add(a);
+		focus.add(b);
+		a.addFocusListener(focus);
+		b.addFocusListener(focus);
 		a.setSize(dim);
 		b.setSize(dim);
 		a.setMinimumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
