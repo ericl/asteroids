@@ -26,5 +26,3 @@ public class Pauser extends FocusAdapter {
 		s.add(c);
 	}
 }
-
-	

@@ -11,8 +11,7 @@ import asteroids.handlers.*;
 import java.util.*;
 import static asteroids.Util.*;
 
-public class StarField 
-{
+public class StarField {
 	protected int border = 300, buf = 500;
 	protected LinkedList<Vector2f> stars = new LinkedList<Vector2f>();
 	public static final int WIDTH = 500;
@@ -20,38 +19,33 @@ public class StarField
 	protected final Ship ship;
 	private Display current;
 	
-	public StarField(Ship lawl, Display o)
-	{
-		ship = lawl;
+	public StarField(Ship s, Display o) {
+		ship = s;
 		current = o;
 	}
 	
-	public void starField()
-	{
-		Graphics2D lawl = current.getGraphics();
+	public void starField() {
+		Graphics2D graphics = current.getGraphics();
 		ListIterator<Vector2f> iter = stars.listIterator();
 		int numStars = 0;
-		lawl.setColor(Color.gray);
-		while(iter.hasNext())
-		{
+		graphics.setColor(Color.gray);
+		while (iter.hasNext()) {
 			Vector2f star = iter.next();
-			if(isVisible(ship.getPosition(), v(500,500), star, border+buf)){
+			if (isVisible(ship.getPosition(), v(500,500), star, border+buf))
 				numStars++;
-			}
 			else
-			{
 				iter.remove();
-			}
 		}
 		if (numStars < 500)
 			stars.add(getOffscreenCoords(10f));
-		for(Vector2f star : stars) {
+		for (Vector2f star : stars) {
 			Vector2f tmp = MathUtil.sub(star, ship.getPosition());
 			int radius = (int)range(2,4);
 			int disp = (int)(radius/2);
-			lawl.fillOval((int)tmp.getX()-disp, (int)tmp.getY()-disp, radius, radius);
+			graphics.fillOval((int)tmp.getX()-disp, (int)tmp.getY()-disp, radius, radius);
 		}
 	}
+
 	protected static boolean isVisible(ROVector2f o , ROVector2f dim, ROVector2f v, float r) {
 		Vector2f rel = MathUtil.sub(v,o);
 		return rel.getX() > -r && rel.getX() < dim.getX()+r && rel.getY() < dim.getY()+r;
@@ -69,7 +63,7 @@ public class StarField
 		// this is centered about the screen origin
 		float xo = ship.getPosition().getX();
 		float yo = ship.getPosition().getY();
-		while(onScreen(v(x,y),r)) {
+		while (onScreen(v(x,y),r)) {
 			x = (float)(Math.random()*2*(WIDTH + border) - WIDTH - border);
 			y = (float)(Math.random()*2*(HEIGHT + border) - HEIGHT - border);
 		}
