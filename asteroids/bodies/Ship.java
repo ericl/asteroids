@@ -54,7 +54,11 @@ public class Ship extends Body
 	public boolean canExplode() {
 		return explode && !invincible;
 	}
-
+	
+	public int getTrust()
+	{
+		return thrust;
+	}
 	public float getTextureScaleFactor() {
 		return 1.0f;
 	}
