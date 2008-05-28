@@ -97,12 +97,6 @@ public class BasicDisplay extends Display {
 		}
 		buf.setRenderingHint(RenderingHints.KEY_RENDERING,
 			RenderingHints.VALUE_RENDER_SPEED);
-//		buf.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//			RenderingHints.VALUE_ANTIALIAS_OFF);
-//		buf.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-//			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//		buf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
 	public void setBackground(String path) {
@@ -124,30 +118,10 @@ public class BasicDisplay extends Display {
 		int max = Math.max(sx, sy);
 		bg = loadImage(bgpath).getScaledInstance(max, max, Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
-		// wait for the bg since its flickering is very noticable
-		try {
+		try { // bg flickering is especially noticable
 			tracker.waitForID(0);
 		} catch (Exception e) {
 			System.err.println("E: what?");
 		}
-	}
-
-	public ROVector2f getOffscreenCoords(float r, float b, ROVector2f o) {
-		ROVector2f v = o;
-		while (true) {
-			float x = range(-b-dim.getWidth(), b+dim.getWidth());
-			float y = range(-b-dim.getHeight(), b+dim.getHeight());
-			v = MathUtil.sub(o, v(-x-r, -y-r));
-			if (!inView(v,r))
-				return v;
-		}
-	}
-
-	public ROVector2f getRandomCoords(float b, ROVector2f o) {
-		ROVector2f v;
-		float x = range(-b-dim.getWidth(), b+dim.getWidth());
-		float y = range(-b-dim.getHeight(), b+dim.getHeight());
-		v = MathUtil.sub(o, v(-x,-y));
-		return v;
 	}
 }

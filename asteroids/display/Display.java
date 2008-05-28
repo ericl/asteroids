@@ -1,4 +1,6 @@
 package asteroids.display;
+import static asteroids.Util.*;
+import static net.phys2d.math.MathUtil.*;
 import java.awt.*;
 import java.net.URL;
 import java.util.*;
@@ -114,12 +116,26 @@ public abstract class Display {
 	 * @param b The maximum distance from the display boundary.
 	 * @param o The origin of the area to be considered.
 	 */
-	public abstract ROVector2f getOffscreenCoords(float r, float b, ROVector2f o);
+	public ROVector2f getOffscreenCoords(float r, float b, ROVector2f o) {
+		ROVector2f v = o;
+		while (true) {
+			float x = range(-b-dim.getWidth()/2, b+dim.getWidth()*3/2);
+			float y = range(-b-dim.getHeight()/2, b+dim.getHeight()*3/2);
+			v = MathUtil.sub(o, v(-x-r, -y-r));
+			if (!inView(v,r))
+				return v;
+		}
+	}
 
 	/**
-	 * Same as getOffscreenCoords but allowing onscreen coords.
+	 * Like getOffscreenCoords, but more random and allows onscreen coords.
 	 */
-	public abstract ROVector2f getRandomCoords(float b, ROVector2f o);
+	public ROVector2f getRandomCoords(float b, ROVector2f o) {
+		float x = range(-b-dim.getWidth()/2, b+dim.getWidth()*3/2);
+		float y = range(-b-dim.getHeight()/2, b+dim.getHeight()*3/2);
+		ROVector2f v = scale(sub(o, v(-x,-y)), range(.5,2));
+		return v;
+	}
 
 	public int w(int modifier) {
 		return (int)(dim.getWidth()+modifier);

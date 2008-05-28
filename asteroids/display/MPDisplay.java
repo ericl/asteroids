@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.awt.geom.*;
 import static asteroids.Util.*;
+import static net.phys2d.math.MathUtil.*;
 import net.phys2d.math.*;
 
 public class MPDisplay extends Display {
@@ -46,12 +47,12 @@ public class MPDisplay extends Display {
 	}
 
 	public void setCenter(ROVector2f centerA) {
-		oA = MathUtil.sub(centerA, MathUtil.scale(v(dim), .5f));
+		oA = sub(centerA, scale(v(dim), .5f));
 	}
 
 	public void setCenter(ROVector2f centerA, ROVector2f centerB) {
-		oA = MathUtil.sub(centerA, MathUtil.scale(v(dim), .5f));
-		oB = MathUtil.sub(centerB, MathUtil.scale(v(dim), .5f));
+		oA = sub(centerA, scale(v(dim), .5f));
+		oB = sub(centerB, scale(v(dim), .5f));
 	}
 
 	public void drawDrawable(Drawable thing) {
@@ -129,18 +130,6 @@ public class MPDisplay extends Display {
 			RenderingHints.VALUE_RENDER_SPEED);
 		bufB.setRenderingHint(RenderingHints.KEY_RENDERING,
 			RenderingHints.VALUE_RENDER_SPEED);
-//		bufA.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//			RenderingHints.VALUE_ANTIALIAS_OFF);
-//		bufA.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-//			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//		bufA.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//		bufB.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//			RenderingHints.VALUE_ANTIALIAS_OFF);
-//		bufB.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-//			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//		bufB.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
 	public void setBackground(String path) {
@@ -175,24 +164,5 @@ public class MPDisplay extends Display {
 
 	public boolean inViewFrom(ROVector2f o, ROVector2f v, float r) {
 		return isVisible(o, dim, v, r);
-	}
-
-	public ROVector2f getOffscreenCoords(float r, float b, ROVector2f o) {
-		ROVector2f v = o;
-		while (true) {
-			float x = range(-b-dim.getWidth(), b+dim.getWidth());
-			float y = range(-b-dim.getHeight(), b+dim.getHeight());
-			v = MathUtil.sub(o, v(-x-r, -y-r));
-			if (!inView(v,r))
-				return v;
-		}
-	}
-
-	public ROVector2f getRandomCoords(float b, ROVector2f o) {
-		ROVector2f v;
-		float x = range(-b-dim.getWidth(), b+dim.getWidth());
-		float y = range(-b-dim.getHeight(), b+dim.getHeight());
-		v = MathUtil.sub(o, v(-x,-y));
-		return v;
 	}
 }
