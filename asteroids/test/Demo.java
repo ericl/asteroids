@@ -2,7 +2,6 @@ package asteroids.test;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
-import asteroids.handlers.Timer;
 import static asteroids.Util.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
@@ -10,6 +9,7 @@ import net.phys2d.math.*;
 import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.event.*;
+import asteroids.handlers.Timer;
 
 public class Demo {
 	protected JFrame frame;
@@ -190,7 +190,7 @@ public class Demo {
 			double x = body.getPosition().getX();
 			double y = body.getPosition().getY();
 			if (x > xmax || x < xmin || y > ymax || y < ymin) {
-				if (body != object) {
+				if (body != object && !(body instanceof Weapon)) {
 					count++;
 					world.remove(body);
 					numrocks = 30+count/10;
