@@ -112,9 +112,6 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 			case KeyEvent.VK_UP: accel = 10; break;
 			case KeyEvent.VK_DOWN: accel = -5; break;
 			case KeyEvent.VK_SPACE: fire(); break;
-// fire = true;
-// fire();
-// break;
 		}
 	}
 
@@ -135,7 +132,6 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		thrust--;
 		accel();
 		torque();
-		// fire();
 	}
 
 	protected void accel() {
