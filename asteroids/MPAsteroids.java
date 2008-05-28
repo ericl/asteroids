@@ -46,7 +46,7 @@ public class MPAsteroids extends MPGame {
 		shipStatus(g2ds[1], ship2);
 	}
 
-	protected void pause() {
+	public void pause() {
 		if (!pause) {
 			pause = true;
 			synchronized (display) {

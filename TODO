@@ -1,5 +1,5 @@
 (high priority)
-- the jsplitpane/jframe loses its listeners when changing focus (sean)
+- key listener (sean)
 - high score tables (sean)
 - consistent artwork (will)
 - starfield (evan)
