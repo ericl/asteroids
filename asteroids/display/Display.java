@@ -1,28 +1,24 @@
 package asteroids.display;
-import java.awt.MediaTracker;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Frame;
-import java.awt.image.*;
+import java.awt.*;
 import java.net.URL;
-import javax.imageio.*;
 import java.util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
 public abstract class Display {
 	protected MediaTracker tracker;
-	protected HashMap<String,BufferedImage> cache;
+	protected HashMap<String,Image> cache;
 	protected Frame frame;
 	protected final Dimension dim;
 	protected final int ORIGINAL_WIDTH, ORIGINAL_HEIGHT;
+	protected final String dir = getClass().getResource("/asteroids/").toString();
 
 	public Display(Frame f, Dimension d) {
 		frame = f;
 		dim = d;
 		ORIGINAL_WIDTH = (int)dim.getWidth();
 		ORIGINAL_HEIGHT = (int)dim.getHeight();
-		cache = new HashMap<String,BufferedImage>();
+		cache = new HashMap<String,Image>();
 		tracker = new MediaTracker(frame);
 		frame.setVisible(true);
 	}
@@ -86,16 +82,14 @@ public abstract class Display {
 	 */
 	public abstract	void setBackground(String path);
 
-	protected BufferedImage loadImage(String path) {
-		BufferedImage i = cache.get(path);
+	protected Image loadImage(String path) {
+		Image i = cache.get(path);
 		if (i == null)
 			try {
-				String dir = getClass().getResource("/asteroids/").toString();
-				i = ImageIO.read(new URL(dir+path));
+				i = frame.getToolkit().createImage(new URL(dir+path));
 				cache.put(path, i);
 			} catch (Exception e) {
 				System.err.println(e);
-				System.err.println("Invalid image path.");
 			}
 		return i;
 	}
@@ -120,7 +114,12 @@ public abstract class Display {
 	 * @param b The maximum distance from the display boundary.
 	 * @param o The origin of the area to be considered.
 	 */
-	public abstract ROVector2f getOffscreenCoords( float r, float b, ROVector2f o);
+	public abstract ROVector2f getOffscreenCoords(float r, float b, ROVector2f o);
+
+	/**
+	 * Same as getOffscreenCoords but allowing onscreen coords.
+	 */
+	public abstract ROVector2f getRandomCoords(float b, ROVector2f o);
 
 	public int w(int modifier) {
 		return (int)(dim.getWidth()+modifier);

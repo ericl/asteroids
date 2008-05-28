@@ -6,9 +6,9 @@ import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
 public class Field implements Scenario {
-	protected int BORDER = 300, BUF = 500;
-	protected int MIN_DENSITY = 50;
-	protected Integer[] density;
+	protected final static int BORDER = 300, BUF = 500;
+	protected final static int MIN_DENSITY = 50;
+	protected int[] density;
 	protected Ship[] ships;
 	protected World world;
 	protected Display display;
@@ -22,13 +22,11 @@ public class Field implements Scenario {
 		this.display = d;
 		ships = new Ship[1];
 		ships[0] = ship;
-		density = new Integer[ships.length];
+		density = new int[ships.length];
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id.equals(ids[i]))
 				ok = true;
-		if (id.equals("icey"))
-			MIN_DENSITY *= 2;
 		if (!ok)
 			throw new IllegalArgumentException("Unknown id " + id);
 		world = w;
@@ -38,7 +36,7 @@ public class Field implements Scenario {
 		this.display = d;
 		this.id = id;
 		ships = shiparray;
-		density = new Integer[ships.length];
+		density = new int[ships.length];
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id.equals(ids[i]))

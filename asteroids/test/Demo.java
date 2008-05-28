@@ -2,6 +2,7 @@ package asteroids.test;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
+import asteroids.handlers.Timer;
 import static asteroids.Util.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
@@ -81,7 +82,7 @@ public class Demo {
 			// do the sleeping outside the synchronized part
 			dt = t.tick();
 			synchronized (world) {
-				if (object.canExplode())
+				if (object.getRemnant().canExplode())
 					failed = true;
 				logic.add(logicTime);
 				render.add(renderTime);
@@ -126,9 +127,10 @@ public class Demo {
 			world.setGravity(0,0);
 			for (int i=0; i < numrocks; i++)
 				world.add(newAsteroid());
-			world.add(object = new Europa(150));
+			world.add(object = new Europa());
 			object.setPosition((xo+width/2),(yo+height/2));
 			ship = new Ship(world);
+			object.getRemnant().addExcludedBody(ship);
 			ship.addExcludedBody(object);
 			ship.setInvincible(true);
 			frame.addKeyListener(ship);
@@ -204,8 +206,8 @@ public class Demo {
 
 	protected Asteroid newAsteroid() {
 		// difficulty increases with count
-		float vx = (float)((15+count/100)*(5 - Math.random()*10));
-		float vy = (float)((15+count/100)*(5 - Math.random()*10));
+		float vx = (float)((5+count/100)*(5 - Math.random()*10));
+		float vy = (float)((5+count/100)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(5*Math.random())) {
 			case 1: rock = new HexAsteroid(range(20,30)); break;

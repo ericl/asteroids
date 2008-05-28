@@ -12,6 +12,7 @@ public class MPAsteroids extends MPGame {
 	protected Ship[] ships = new Ship[2];
 	protected Scenario scenario;
 	protected int verbosity = 0;
+	protected StarField k;
 
 	public static void main(String[] args) {
 		AbstractGame game = new MPAsteroids();
@@ -20,17 +21,21 @@ public class MPAsteroids extends MPGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		display.setBackground("pixmaps/opo9929b.jpg");
 		frame.addKeyListener(ship2 = new Ship(world));
 		frame.addKeyListener(ship1 = new Ship2(world));
 		ships[0] = ship1;
 		ships[1] = ship2;
+		k = new StarField(ships, display);
 		newGame();
 	}
 
 	protected void update() {
 		scenario.update();
 		display.setCenter(ship1.getPosition(), ship2.getPosition());
+	}
+
+	protected void preWorld() {
+		k.starField();
 	}
 
 	protected void postWorld() {
@@ -46,22 +51,6 @@ public class MPAsteroids extends MPGame {
 		shipStatus(g2ds[1], ship2);
 	}
 
-	public void pause() {
-		if (!pause) {
-			pause = true;
-			synchronized (display) {
-				for (Graphics2D g2d : display.getAllGraphics()) {
-					g2d.setColor(new Color(100,100,100,100));
-					g2d.fillRect(0,0,display.w(0),display.h(0));
-					g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
-					g2d.setColor(Color.RED);
-					g2d.drawString("PAUSED",20,display.h(-20));
-					display.show();
-				}
-			}
-		}
-	}
-
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
 			case 'r': newGame(); break;
@@ -70,6 +59,7 @@ public class MPAsteroids extends MPGame {
 	}
 
 	public void newGame() {
+		k.init();
 		String id = ShipBattle.ids[(int)range(0,Field.ids.length)];
 		// switching scenarios would give inconsistent output
 		// (e.g. zero score for an instant)

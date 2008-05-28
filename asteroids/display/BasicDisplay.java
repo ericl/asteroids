@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.awt.geom.*;
-import java.net.URL;
 import static asteroids.Util.*;
 import static net.phys2d.math.MathUtil.*;
 import net.phys2d.math.*;
@@ -14,7 +13,8 @@ public class BasicDisplay extends Display {
 	protected Vector2f origin = v(0,0);
 	protected double scale = 1;
 	protected long resizetime = Long.MAX_VALUE;
-	protected Image orig, bg;
+	protected String bgpath;
+	protected Image bg;
 
 	public BasicDisplay(Frame f, Dimension d) {
 		super(f, d);
@@ -55,7 +55,7 @@ public class BasicDisplay extends Display {
 
 	public void drawTextured(Textured thing) {
 		if (inView(thing.getPosition(), thing.getRadius())) {
-			BufferedImage i = loadImage(thing.getTexturePath());
+			Image i = loadImage(thing.getTexturePath());
 			float x = thing.getPosition().getX() - origin.getX();
 			float y = thing.getPosition().getY() - origin.getY();
 			float scale = thing.getTextureScaleFactor();
@@ -95,20 +95,20 @@ public class BasicDisplay extends Display {
 		} else {
 			buf.drawImage(bg,0,0,frame);
 		}
-		buf.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_OFF);
-		buf.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		buf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		buf.setRenderingHint(RenderingHints.KEY_RENDERING,
+			RenderingHints.VALUE_RENDER_SPEED);
+//		buf.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//			RenderingHints.VALUE_ANTIALIAS_OFF);
+//		buf.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+//			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//		buf.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
 	public void setBackground(String path) {
 		try {
-			String dir = getClass().getResource("/asteroids/").toString();
-			// for some reason BufferedImages are *very* slow here
-			orig = frame.getToolkit().getImage(new URL(dir+path));
-			tracker.addImage(orig, 0);
+			bgpath = path;
+			tracker.addImage(loadImage(path), 0);
 			rescaleBackground();
 		} catch (Exception e) {
 			System.err.println(e);
@@ -117,13 +117,14 @@ public class BasicDisplay extends Display {
 	}
 
 	protected void rescaleBackground() {
-		if (orig == null)
+		if (bgpath == null)
 			return;
 		int sx = (int)(scale*dim.getWidth());
 		int sy = (int)(scale*dim.getHeight());
-		int bgscale = Math.max(sx, sy);
-		bg = orig.getScaledInstance(bgscale, bgscale, Image.SCALE_FAST);
+		int max = Math.max(sx, sy);
+		bg = loadImage(bgpath).getScaledInstance(max, max, Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
+		// wait for the bg since its flickering is very noticable
 		try {
 			tracker.waitForID(0);
 		} catch (Exception e) {
@@ -140,5 +141,13 @@ public class BasicDisplay extends Display {
 			if (!inView(v,r))
 				return v;
 		}
+	}
+
+	public ROVector2f getRandomCoords(float b, ROVector2f o) {
+		ROVector2f v;
+		float x = range(-b-dim.getWidth(), b+dim.getWidth());
+		float y = range(-b-dim.getHeight(), b+dim.getHeight());
+		v = MathUtil.sub(o, v(-x,-y));
+		return v;
 	}
 }

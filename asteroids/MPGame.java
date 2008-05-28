@@ -2,7 +2,6 @@ package asteroids;
 import javax.swing.*;
 import java.awt.*;
 import asteroids.display.*;
-import asteroids.handlers.Pauser;
 
 public abstract class MPGame extends AbstractGame {
 	protected JSplitPane jsplit;
@@ -31,5 +30,19 @@ public abstract class MPGame extends AbstractGame {
 		jsplit.setVisible(true);
 		frame.add(jsplit);
 		return new MPDisplay(frame, jsplit, dim);
+	}
+
+	public void pause() {
+		pause = true;
+		synchronized (display) {
+			for (Graphics2D g2d : display.getAllGraphics()) {
+				g2d.setColor(new Color(100,100,100,100));
+				g2d.fillRect(0,0,display.w(0),display.h(0));
+				g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
+				g2d.setColor(Color.RED);
+				g2d.drawString("PAUSED",20,display.h(-45));
+			}
+			display.show();
+		}
 	}
 }

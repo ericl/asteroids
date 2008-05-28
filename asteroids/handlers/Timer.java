@@ -1,4 +1,4 @@
-package asteroids.display;
+package asteroids.handlers;
 
 /**
  * Manages frame rate by blocking when called and returning the approximate

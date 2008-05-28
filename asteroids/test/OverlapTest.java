@@ -4,6 +4,7 @@
 
 package asteroids.test;
 import asteroids.handlers.*;
+import asteroids.handlers.Timer;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
