@@ -6,13 +6,14 @@ import java.awt.event.KeyListener;
 import java.util.*;
 import asteroids.display.*;
 import asteroids.handlers.Exploder;
-import asteroids.weapons.*;
-import static asteroids.Util.*;
-import net.phys2d.raw.*;
 import net.phys2d.math.*;
+import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
+import static asteroids.Util.*;
 
-public class Ship extends Body implements Drawable, Textured, Explodable, KeyListener {
+public class Ship extends Body
+		implements Drawable, Textured, Explodable, KeyListener {
+	
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	protected static Shape shape = new Polygon(poly);
 	protected double hull = 1;
@@ -23,8 +24,6 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	protected World world;
 	protected boolean invincible;
 	public int deaths;
-	protected Laser laser = new Laser();
-	protected WeaponsSys lasersys = new WeaponsSys(laser);
 
 	public void reset() {
 		setRotation(0);
@@ -111,10 +110,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 			case KeyEvent.VK_RIGHT: torque = .00008f; break;
 			case KeyEvent.VK_UP: accel = 10; break;
 			case KeyEvent.VK_DOWN: accel = -5; break;
-			case KeyEvent.VK_SPACE: fire(); break;
-// fire = true;
-// fire();
-// break;
+			case KeyEvent.VK_SPACE: fire = true; break;
 		}
 	}
 
@@ -135,7 +131,7 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 		thrust--;
 		accel();
 		torque();
-		// fire();
+		fire();
 	}
 
 	protected void accel() {
@@ -151,8 +147,22 @@ public class Ship extends Body implements Drawable, Textured, Explodable, KeyLis
 	}
 
 	protected void fire() {
-		if(canExplode()) return;
-		lasersys.fire(this, world);
+		long timenow = System.currentTimeMillis();
+		if (canExplode() || !fire || timenow - lastFired < 100)
+			return;
+		lastFired = timenow;
+		Body c = new Sphere1(3, 70f);
+		c.setRotation(getRotation());
+		float ax = (float)(20*Math.sin(getRotation()));
+		float ay = (float)(20*Math.cos(getRotation()));
+		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
+		c.adjustVelocity(v(10*ax,10*-ay));
+		c.adjustVelocity((Vector2f)getVelocity());
+		c.addExcludedBody(this);
+		BodyList list = getExcludedList();
+		for (int i=0; i < list.size(); i++)
+			c.addExcludedBody(list.get(i));
+		world.add(c);
 	}
 
 	public void keyTyped(KeyEvent e) {

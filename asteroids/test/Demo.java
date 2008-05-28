@@ -190,7 +190,7 @@ public class Demo {
 			double x = body.getPosition().getX();
 			double y = body.getPosition().getY();
 			if (x > xmax || x < xmin || y > ymax || y < ymin) {
-				if (body != object && !(body instanceof Weapon)) {
+				if (body != object) {
 					count++;
 					world.remove(body);
 					numrocks = 30+count/10;
