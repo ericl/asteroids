@@ -4,8 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.awt.geom.*;
-import java.net.URL;
 import static asteroids.Util.*;
+import static net.phys2d.math.MathUtil.*;
 import net.phys2d.math.*;
 
 public class MPDisplay extends Display {
@@ -16,7 +16,8 @@ public class MPDisplay extends Display {
 	protected Vector2f oA = v(0,0), oB = v(0,0);
 	protected double scale = 1;
 	protected long resizetime = Long.MAX_VALUE;
-	protected Image orig, bg;
+	protected String bgpath;
+	protected Image bg;
 
 	public MPDisplay(Frame f, JSplitPane j, Dimension d) {
 		super(f, d);
@@ -46,12 +47,12 @@ public class MPDisplay extends Display {
 	}
 
 	public void setCenter(ROVector2f centerA) {
-		oA = MathUtil.sub(centerA, MathUtil.scale(v(dim), .5f));
+		oA = sub(centerA, scale(v(dim), .5f));
 	}
 
 	public void setCenter(ROVector2f centerA, ROVector2f centerB) {
-		oA = MathUtil.sub(centerA, MathUtil.scale(v(dim), .5f));
-		oB = MathUtil.sub(centerB, MathUtil.scale(v(dim), .5f));
+		oA = sub(centerA, scale(v(dim), .5f));
+		oB = sub(centerB, scale(v(dim), .5f));
 	}
 
 	public void drawDrawable(Drawable thing) {
@@ -62,12 +63,12 @@ public class MPDisplay extends Display {
 	}
 
 	public void drawTextured(Textured thing) {
+		Image i = loadImage(thing.getTexturePath());
+		float scale = thing.getTextureScaleFactor();
+		Vector2f c = thing.getTextureCenter();
 		if (isVisible(oA, dim, thing.getPosition(), thing.getRadius())) {
-			BufferedImage i = loadImage(thing.getTexturePath());
 			float x = thing.getPosition().getX() - oA.getX();
 			float y = thing.getPosition().getY() - oA.getY();
-			float scale = thing.getTextureScaleFactor();
-			Vector2f c = thing.getTextureCenter();
 			AffineTransform trans = AffineTransform.getTranslateInstance
 				(x-c.getX()*scale, y-c.getY()*scale);
 			trans.concatenate(AffineTransform.getScaleInstance(scale, scale));
@@ -76,11 +77,8 @@ public class MPDisplay extends Display {
 			bufA.drawImage(i, trans, null);
 		}
 		if (isVisible(oB, dim, thing.getPosition(), thing.getRadius())) {
-			BufferedImage i = loadImage(thing.getTexturePath());
 			float x = thing.getPosition().getX() - oB.getX();
 			float y = thing.getPosition().getY() - oB.getY();
-			float scale = thing.getTextureScaleFactor();
-			Vector2f c = thing.getTextureCenter();
 			AffineTransform trans = AffineTransform.getTranslateInstance
 				(x-c.getX()*scale, y-c.getY()*scale);
 			trans.concatenate(AffineTransform.getScaleInstance(scale, scale));
@@ -128,26 +126,16 @@ public class MPDisplay extends Display {
 			bufA.drawImage(bg,0,0,frame);
 			bufB.drawImage(bg,0,0,frame);
 		}
-		bufA.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_OFF);
-		bufA.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		bufA.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		bufB.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_OFF);
-		bufB.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		bufB.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		bufA.setRenderingHint(RenderingHints.KEY_RENDERING,
+			RenderingHints.VALUE_RENDER_SPEED);
+		bufB.setRenderingHint(RenderingHints.KEY_RENDERING,
+			RenderingHints.VALUE_RENDER_SPEED);
 	}
 
 	public void setBackground(String path) {
 		try {
-			String dir = getClass().getResource("/asteroids/").toString();
-			// for some reason BufferedImages are *very* slow here
-			orig = frame.getToolkit().getImage(new URL(dir+path));
-			tracker.addImage(orig, 0);
+			bgpath = path;
+			tracker.addImage(loadImage(path), 0);
 			rescaleBackground();
 		} catch (Exception e) {
 			System.err.println(e);
@@ -156,12 +144,12 @@ public class MPDisplay extends Display {
 	}
 
 	protected void rescaleBackground() {
-		if (orig == null)
+		if (bgpath == null)
 			return;
 		int sx = (int)(scale*dim.getWidth());
 		int sy = (int)(scale*dim.getHeight());
-		int bgscale = Math.max(sx, sy);
-		bg = orig.getScaledInstance(bgscale, bgscale, Image.SCALE_FAST);
+		int max = Math.max(sx, sy);
+		bg = loadImage(bgpath).getScaledInstance(max, max, Image.SCALE_FAST);
 		tracker.addImage(bg, 0);
 		try {
 			tracker.waitForID(0);
@@ -176,16 +164,5 @@ public class MPDisplay extends Display {
 
 	public boolean inViewFrom(ROVector2f o, ROVector2f v, float r) {
 		return isVisible(o, dim, v, r);
-	}
-
-	public ROVector2f getOffscreenCoords(float r, float b, ROVector2f o) {
-		ROVector2f v = o;
-		while (true) {
-			float x = range(-r-b-dim.getWidth(), r+b+dim.getWidth());
-			float y = range(-r-b-dim.getHeight(), r+b+dim.getHeight());
-			v = MathUtil.sub(o, v(-x, -y));
-			if (!inView(v,r))
-				return v;
-		}
 	}
 }

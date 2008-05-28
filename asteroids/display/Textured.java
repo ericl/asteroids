@@ -28,11 +28,6 @@ public interface Textured extends Visible {
 	public float getTextureScaleFactor();
 
 	/**
-	 * @return Position as by body.getPosition()
-	 */
-	public ROVector2f getPosition();
-
-	/**
 	 * @return Rotation as by body.getRotation()
 	 */
 	public float getRotation();

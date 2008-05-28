@@ -6,12 +6,12 @@ import net.phys2d.math.*;
 import net.phys2d.raw.*;
 
 public class Europa extends CircleAsteroid implements Textured {
-	private float sphereradius;
+	private float sphereradius = 150;
 	private double crust = 10;
+	private IceAsteroid core = new IceAsteroid(140);
 
-	public Europa(float radius) {
-		super(radius, Body.INFINITE_MASS);
-		sphereradius = radius;
+	public Europa() {
+		super(150, Body.INFINITE_MASS);
 	}
 
 	public Vector2f getTextureCenter() {
@@ -42,8 +42,8 @@ public class Europa extends CircleAsteroid implements Textured {
 		return f;
 	}
 
-	public Body getRemnant() {
-		return new IceAsteroid(getRadius() * 3 / 4);
+	public Asteroid getRemnant() {
+		return core;
 	}
 	
 	public float getTextureScaleFactor() {

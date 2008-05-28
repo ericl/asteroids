@@ -10,6 +10,4 @@ import java.awt.Graphics2D;
 public interface Drawable extends Visible {
 
 	public void drawTo(Graphics2D g2d, ROVector2f o);
-
-	public ROVector2f getPosition();
 }

@@ -1,8 +1,6 @@
 package asteroids;
-import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
-import net.phys2d.math.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
@@ -23,6 +21,7 @@ public class Asteroids extends AbstractGame {
 	public Asteroids() {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		frame.addKeyListener(ship = new Ship(world));
+		k = new StarField(ship, display);
 		newGame();
 	}
 
@@ -53,12 +52,12 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public void newGame() {
+		k.init();
 		String id = Field.ids[(int)range(0,Field.ids.length)];
 		// switching scenarios would give inconsistent output
 		// (e.g. zero score for an instant)
 		synchronized (world) {
 			scenario = new Field(world, display, ship, id);
-			k = new StarField(ship, display);
 			scenario.start();
 		}
 	}

@@ -2,7 +2,6 @@ package asteroids.test;
 import asteroids.display.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
-import asteroids.weapons.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.strategies.*;
 import net.phys2d.raw.*;
@@ -10,6 +9,7 @@ import net.phys2d.math.*;
 import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.event.*;
+import asteroids.handlers.Timer;
 
 public class Demo {
 	protected JFrame frame;
@@ -27,6 +27,7 @@ public class Demo {
 	protected float xo, yo;
 	protected int width, height;
 	private boolean failed;
+	private StarField k;
 
 	private class Average {
 		private double a;
@@ -70,7 +71,6 @@ public class Demo {
 		});
 		d = new BasicDisplay(frame, new Dimension(width, height));
 		world.addListener(new Exploder(world, d));
-		d.setBackground("pixmaps/opo9929b.jpg");
 		init();
 		mainLoop();
 	}
@@ -82,7 +82,7 @@ public class Demo {
 			// do the sleeping outside the synchronized part
 			dt = t.tick();
 			synchronized (world) {
-				if (object.canExplode())
+				if (object.getRemnant().canExplode())
 					failed = true;
 				logic.add(logicTime);
 				render.add(renderTime);
@@ -127,9 +127,12 @@ public class Demo {
 			world.setGravity(0,0);
 			for (int i=0; i < numrocks; i++)
 				world.add(newAsteroid());
-			world.add(object = new Europa(150));
+			world.add(object = new Europa());
 			object.setPosition((xo+width/2),(yo+height/2));
 			ship = new Ship(world);
+			k = new StarField(ship, d);
+			k.init();
+			object.getRemnant().addExcludedBody(ship);
 			ship.addExcludedBody(object);
 			ship.setInvincible(true);
 			frame.addKeyListener(ship);
@@ -179,6 +182,7 @@ public class Demo {
 	 * Creates/deletes asteroids, manages ship position.
 	 */
 	protected void update() {
+		k.starField();
 		double xmax = xo + width + border + buf;
 		double xmin = xo - border - buf;
 		double ymax = yo + height + border + buf;
@@ -189,7 +193,7 @@ public class Demo {
 			double x = body.getPosition().getX();
 			double y = body.getPosition().getY();
 			if (x > xmax || x < xmin || y > ymax || y < ymin) {
-				if (body != object && !(body instanceof Weapon)) {
+				if (body != object) {
 					count++;
 					world.remove(body);
 					numrocks = 30+count/10;
@@ -205,8 +209,8 @@ public class Demo {
 
 	protected Asteroid newAsteroid() {
 		// difficulty increases with count
-		float vx = (float)((15+count/100)*(5 - Math.random()*10));
-		float vy = (float)((15+count/100)*(5 - Math.random()*10));
+		float vx = (float)((5+count/100)*(5 - Math.random()*10));
+		float vy = (float)((5+count/100)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(5*Math.random())) {
 			case 1: rock = new HexAsteroid(range(20,30)); break;

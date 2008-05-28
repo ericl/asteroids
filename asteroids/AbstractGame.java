@@ -6,13 +6,13 @@ import net.phys2d.raw.*;
 import net.phys2d.raw.strategies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
+import asteroids.handlers.Timer;
 import static asteroids.Util.*;
 
-public abstract class AbstractGame extends KeyAdapter {
+public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
 	protected Display display;
 	protected JFrame frame;
 	protected World world;
-	protected Pauser focus;
 	protected final Dimension dim;
 	protected volatile boolean pause;
 	private MainLoop mainLoop;
@@ -49,9 +49,8 @@ public abstract class AbstractGame extends KeyAdapter {
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
 		mainLoop = new MainLoop();
-		focus = new Pauser(frame, this);
 		display = makeDisplay();
-		frame.addFocusListener(focus);
+		frame.addWindowFocusListener(this);
 		world.addListener(new Exploder(world, display));
 	}
 
@@ -59,15 +58,12 @@ public abstract class AbstractGame extends KeyAdapter {
 		mainLoop.start();
 	}
 
-	protected Display makeDisplay() {
-		return new BasicDisplay(frame, dim);
+	public void windowGainedFocus(WindowEvent e) {
+		unpause();
 	}
 
-	public void unpause() {
-		if (pause) {
-			pause = false;
-			mainLoop.interrupt();
-		}
+	public void windowLostFocus(WindowEvent e) {
+		pause();
 	}
 
 	public void pause() {
@@ -83,6 +79,17 @@ public abstract class AbstractGame extends KeyAdapter {
 				display.show();
 			}
 		}
+	}
+
+	public void unpause() {
+		if (pause) {
+			pause = false;
+			mainLoop.interrupt();
+		}
+	}
+
+	protected Display makeDisplay() {
+		return new BasicDisplay(frame, dim);
 	}
 
 	protected void preWorld() {}
