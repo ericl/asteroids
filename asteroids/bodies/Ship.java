@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
 import asteroids.display.*;
+import asteroids.weapons.*;
 import asteroids.handlers.Exploder;
 import net.phys2d.math.*;
 import net.phys2d.raw.*;
@@ -147,16 +148,18 @@ public class Ship extends Body
 	}
 
 	protected void fire() {
+		if (!fire)
+			return;
 		long timenow = System.currentTimeMillis();
 		if (canExplode() || !fire || timenow - lastFired < 100)
 			return;
 		lastFired = timenow;
-		Body c = new Sphere1(3, 70f);
+		Body c = new Laser();
 		c.setRotation(getRotation());
-		float ax = (float)(20*Math.sin(getRotation()));
-		float ay = (float)(20*Math.cos(getRotation()));
+		float ax = (float)(30*Math.sin(getRotation()));
+		float ay = (float)(30*Math.cos(getRotation()));
 		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
-		c.adjustVelocity(v(10*ax,10*-ay));
+		c.adjustVelocity(v(5*ax,5*-ay));
 		c.adjustVelocity((Vector2f)getVelocity());
 		c.addExcludedBody(this);
 		BodyList list = getExcludedList();

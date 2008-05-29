@@ -1,4 +1,5 @@
 package asteroids.handlers;
+import asteroids.weapons.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
@@ -79,7 +80,7 @@ public class Exploder implements CollisionListener {
 				&& ((Explodable)other).canExplode())
 			group.add(other);
 		if (!(other instanceof Ship)
-				&& !(other instanceof Sphere1)
+				&& !(other instanceof Weapon)
 				&& !(body instanceof Ship)
 				&& !group.canExplode(e))
 			return;

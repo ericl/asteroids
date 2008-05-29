@@ -196,7 +196,7 @@ public class Demo {
 				if (body != object) {
 					count++;
 					world.remove(body);
-					numrocks = 30+count/10;
+					numrocks = 30+count/100;
 					if (world.getBodies().size() <= numrocks)
 						world.add(newAsteroid());
 				}
@@ -209,8 +209,8 @@ public class Demo {
 
 	protected Asteroid newAsteroid() {
 		// difficulty increases with count
-		float vx = (float)((5+count/100)*(5 - Math.random()*10));
-		float vy = (float)((5+count/100)*(5 - Math.random()*10));
+		float vx = (float)((5+count/150)*(5 - Math.random()*10));
+		float vy = (float)((5+count/150)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(5*Math.random())) {
 			case 1: rock = new HexAsteroid(range(20,30)); break;
