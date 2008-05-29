@@ -1,0 +1,44 @@
+<project name="Asteroids" default="compile" basedir=".">
+
+	<description>
+		APCS final project; an asteroids-like game.
+	</description>
+
+	<property name="src" location="asteroids"/>
+	<property name="lib" location="phys2d"/>
+	<property name="build" location="build"/>
+	<property name="dist"  location="dist"/>
+
+	<target name="compile">
+		<javac srcdir="${src}" destdir=""/>
+	</target>
+
+	<target name="compile-jar">
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}"/>
+		<javac srcdir="${lib}" destdir="${build}"/>
+	</target>
+
+	<target name="jar" depends="compile-jar">
+		<mkdir dir="${dist}"/>
+		<manifest file="${build}/MANIFEST.MF">
+			<attribute name="Main-Class" value="asteroids.Asteroids"/>
+		</manifest>
+		<mkdir dir="${build}/asteroids/pixmaps"/>
+		<copy todir="${build}/asteroids/pixmaps" flatten="true">
+			<fileset dir="">
+				<include name="**/pixmaps/*"/>
+			</fileset>
+		</copy>
+		<jar
+			jarfile="${dist}/Asteroids.jar"
+			basedir="${build}"
+			manifest="${build}/MANIFEST.MF"
+		/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
