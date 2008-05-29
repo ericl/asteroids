@@ -13,6 +13,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	protected Display display;
 	protected JFrame frame;
 	protected World world;
+	protected Stats stats;
 	protected final Dimension dim;
 	protected volatile boolean pause;
 	private MainLoop mainLoop;
@@ -50,8 +51,9 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
 		mainLoop = new MainLoop();
 		display = makeDisplay();
+		stats = new Stats();
 		frame.addWindowFocusListener(this);
-		world.addListener(new Exploder(world, display));
+		world.addListener(new Exploder(world, display, stats));
 	}
 
 	public void mainLoop() {

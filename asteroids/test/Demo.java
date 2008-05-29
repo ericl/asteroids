@@ -26,6 +26,7 @@ public class Demo {
 	protected Ship ship;
 	protected float xo, yo;
 	protected int width, height;
+	protected Stats stats;
 	private boolean failed;
 	private FiniteStarField k;
 
@@ -70,7 +71,8 @@ public class Demo {
 			}
 		});
 		d = new BasicDisplay(frame, new Dimension(width, height));
-		world.addListener(new Exploder(world, d));
+		stats = new Stats();
+		world.addListener(new Exploder(world, d, stats));
 		init();
 		mainLoop();
 	}
@@ -108,6 +110,8 @@ public class Demo {
 	 * Resets game within demo.
 	 */
 	protected void init() {
+		stats.print();
+		stats.reset();
 		maxRenderTime = 0;
 		maxLogicTime = 0;
 		logic = new Average();

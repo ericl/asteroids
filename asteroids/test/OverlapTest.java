@@ -18,6 +18,7 @@ public class OverlapTest {
 	protected JFrame frame;
 	protected Display d;
 	protected int width, height;
+	protected Stats stats;
 
 	public static void main(String[] args) {
 		new OverlapTest();
@@ -60,7 +61,8 @@ public class OverlapTest {
 		world.add(q1);
 		world.add(q2);
 		z.adjustVelocity(v(80,-20));
-		world.addListener(new Exploder(world, d));
+		stats = new Stats();
+		world.addListener(new Exploder(world, d, stats));
 		s.setPosition(350,150);
 		t.setPosition(350,150);
 		a.setPosition(420,250);

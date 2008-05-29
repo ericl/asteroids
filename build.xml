@@ -5,11 +5,12 @@
 	</description>
 
 	<property name="src" location="asteroids"/>
-	<property name="lib" location="phys2d"/>
+	<property name="lib" location="net"/>
 	<property name="build" location="build"/>
 	<property name="dist"  location="dist"/>
 
 	<target name="compile">
+		<javac srcdir="${lib}" destdir=""/>
 		<javac srcdir="${src}" destdir=""/>
 	</target>
 

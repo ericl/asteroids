@@ -53,6 +53,8 @@ public class Asteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
+		stats.print();
+		stats.reset();
 		String id = Field.ids[(int)range(0,Field.ids.length)];
 		// switching scenarios would give inconsistent output
 		// (e.g. zero score for an instant)

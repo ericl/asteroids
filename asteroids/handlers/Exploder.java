@@ -12,6 +12,7 @@ public class Exploder implements CollisionListener {
 	private World world;
 	private Display display;
 	private CollisionMap cmap;
+    	private Stats stats;
 
 	private class CollisionMap {
 		private Map<Long,CollisionGroup> tmpMap;
@@ -44,10 +45,11 @@ public class Exploder implements CollisionListener {
 	static float ASTEROID_DURABILITY = .1f;
 	static float COLLIDE_BOUNDS = 150;
 
-	public Exploder(World w, Display d) {
+    	public Exploder(World w, Display d, Stats s) {
 		world = w;
 		display = d;
 		cmap = new CollisionMap(world, display);
+		stats = s;
 	}
 
 	public void collisionOccured(CollisionEvent event) {
@@ -63,11 +65,16 @@ public class Exploder implements CollisionListener {
 
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
+		if (other instanceof Weapon)
+			stats.dmg(body.getClass().getName(), getDamage(event, body));
 		if (!e.canExplode()
 				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
 				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)
 			return;
 		world.remove(body);
+		if (other instanceof Weapon)
+			stats.kill(body.getClass().getName());
+
 		if (world.getBodies().size() > HARD_WORLD_LIMIT)
 			return;
 
