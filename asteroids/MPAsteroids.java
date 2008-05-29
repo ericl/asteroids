@@ -12,7 +12,7 @@ public class MPAsteroids extends MPGame {
 	protected Ship[] ships = new Ship[2];
 	protected Scenario scenario;
 	protected int verbosity = 0;
-	protected StarField k;
+	protected FiniteStarField k;
 
 	public static void main(String[] args) {
 		AbstractGame game = new MPAsteroids();
@@ -25,7 +25,7 @@ public class MPAsteroids extends MPGame {
 		frame.addKeyListener(ship1 = new Ship2(world));
 		ships[0] = ship1;
 		ships[1] = ship2;
-		k = new StarField(ships, display);
+		k = new FiniteStarField(display);
 		newGame();
 	}
 

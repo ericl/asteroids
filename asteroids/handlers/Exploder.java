@@ -41,6 +41,7 @@ public class Exploder implements CollisionListener {
 	static float MAX_ANGLE_DEVIATION = .7f;
 	static float MAX_RADIAL_DEVIATION = 10;
 	static float ASTEROID_DURABILITY = .1f;
+	static float COLLIDE_BOUNDS = 150;
 
 	public Exploder(World w, Display d) {
 		world = w;
@@ -62,7 +63,7 @@ public class Exploder implements CollisionListener {
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		if (!e.canExplode()
-				|| !display.inView(body.getPosition(), e.getRadius())
+				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
 				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)
 			return;
 		world.remove(body);

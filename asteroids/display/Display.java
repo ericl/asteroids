@@ -16,6 +16,7 @@ public abstract class Display {
 	protected final String dir = getClass().getResource("/asteroids/").toString();
 
 	public Display(Frame f, Dimension d) {
+		System.out.println(getClass().getResource("/asteroids/"));
 		frame = f;
 		dim = d;
 		ORIGINAL_WIDTH = (int)dim.getWidth();
@@ -135,6 +136,10 @@ public abstract class Display {
 		float y = range(-b-dim.getHeight()/2, b+dim.getHeight()*3/2);
 		ROVector2f v = scale(sub(o, v(-x,-y)), range(.5,2));
 		return v;
+	}
+
+	public Dimension getDimension() {
+		return dim;
 	}
 
 	public int w(int modifier) {

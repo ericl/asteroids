@@ -27,7 +27,7 @@ public class Demo {
 	protected float xo, yo;
 	protected int width, height;
 	private boolean failed;
-	private StarField k;
+	private FiniteStarField k;
 
 	private class Average {
 		private double a;
@@ -130,7 +130,7 @@ public class Demo {
 			world.add(object = new Europa());
 			object.setPosition((xo+width/2),(yo+height/2));
 			ship = new Ship(world);
-			k = new StarField(ship, d);
+			k = new FiniteStarField(d);
 			k.init();
 			object.getRemnant().addExcludedBody(ship);
 			ship.addExcludedBody(object);

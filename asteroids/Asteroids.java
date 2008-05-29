@@ -11,7 +11,7 @@ public class Asteroids extends AbstractGame {
 	protected final Ship ship;
 	protected Scenario scenario;
 	protected int verbosity = 0;
-	protected StarField k;
+	protected FiniteStarField k;
 
 	public static void main(String[] args) {
 		AbstractGame game = new Asteroids();
@@ -21,7 +21,7 @@ public class Asteroids extends AbstractGame {
 	public Asteroids() {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		frame.addKeyListener(ship = new Ship(world));
-		k = new StarField(ship, display);
+		k = new FiniteStarField(display);
 		newGame();
 	}
 
