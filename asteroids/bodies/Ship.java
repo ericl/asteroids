@@ -25,6 +25,8 @@ public class Ship extends Body
 	protected World world;
 	protected boolean invincible;
 	public int deaths;
+	Laser laser = new Laser();
+	WeaponsSys weapons = new WeaponsSys(laser);
 
 	public void reset() {
 		setRotation(0);
@@ -132,7 +134,8 @@ public class Ship extends Body
 		thrust--;
 		accel();
 		torque();
-		fire();
+		if(fire == true) fire();
+		weapons.tracker(world);
 	}
 
 	protected void accel() {
@@ -148,24 +151,7 @@ public class Ship extends Body
 	}
 
 	protected void fire() {
-		if (!fire)
-			return;
-		long timenow = System.currentTimeMillis();
-		if (canExplode() || !fire || timenow - lastFired < 100)
-			return;
-		lastFired = timenow;
-		Body c = new Laser();
-		c.setRotation(getRotation());
-		float ax = (float)(30*Math.sin(getRotation()));
-		float ay = (float)(30*Math.cos(getRotation()));
-		c.setPosition(getPosition().getX()+ax, getPosition().getY()-ay);
-		c.adjustVelocity(v(5*ax,5*-ay));
-		c.adjustVelocity((Vector2f)getVelocity());
-		c.addExcludedBody(this);
-		BodyList list = getExcludedList();
-		for (int i=0; i < list.size(); i++)
-			c.addExcludedBody(list.get(i));
-		world.add(c);
+		weapons.fire(this, world);
 	}
 
 	public void keyTyped(KeyEvent e) {
