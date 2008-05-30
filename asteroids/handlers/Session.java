@@ -10,12 +10,12 @@ public class Session {
 	public Session(String user, String pass) {
 		long time = System.currentTimeMillis() / 1000;
 		try {
-			String token = MD5(MD5(pass) + time);
+			String token = md5(md5(pass) + time);
 			URL init = new URL("http://a.cognoseed.org/init.php?u=" + user + "&t=" + time + "&a=" + token);
 			HttpURLConnection connection = (HttpURLConnection) init.openConnection();
 			connection.connect();
 			BufferedReader content = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			session = content.readLine();
+			session = content.readLine(); // Should check the validity of the session after disconnecting.
 			connection.disconnect();
 			valid = true;
 		} catch (Exception e) {
@@ -23,7 +23,11 @@ public class Session {
 		}
     	}
 
-	private static String MD5(String hash) throws Exception {
+	public boolean isValid() {
+		return valid;
+	}
+
+	private static String md5(String hash) throws Exception {
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		byte[] retHash = new byte[32];
 		String str = "", proc;

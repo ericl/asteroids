@@ -1,8 +1,7 @@
 package asteroids.bodies;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.*;
 import asteroids.display.*;
 import asteroids.weapons.*;
@@ -58,10 +57,10 @@ public class Ship extends Body
 		return explode && !invincible;
 	}
 	
-	public int getTrust()
-	{
+	public int getTrust() {
 		return thrust;
 	}
+
 	public float getTextureScaleFactor() {
 		return 1.0f;
 	}

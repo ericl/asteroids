@@ -1,29 +1,24 @@
 package asteroids.weapons;
-
 import java.util.*;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.World;
 import asteroids.bodies.Ship;
+import static asteroids.Util.*;
 
 public class WeaponsSys {
-
 	private Weapon weapon;
-	private long lastFired;
+	private long lastFired = 0;
 	private int blah = 0;
-	private Queue fired;
+	private Queue<Weapon> fired = new LinkedList<Weapon>();
 	
 	public WeaponsSys(Weapon w) {
 		weapon = w;
-		lastFired = 0;
-		fired = new LinkedList<Weapon>();
-		
 	}
 	
 	public boolean canFire() {
 		long current = System.currentTimeMillis();
-
-		if((current - lastFired) >= (long)(weapon.getReloadTime() * 100)) {
-			System.out.println(current - lastFired);
+		if ((current-lastFired)>=(long)(weapon.getReloadTime()*100)) {
+//			System.out.println(current - lastFired);
 			lastFired = current;
 			return true;
 		}
@@ -33,8 +28,8 @@ public class WeaponsSys {
 	public void fire(Ship s, World w) {
 		blah++;
 //		System.out.println(blah + " FIRE ATTEMPT");
-		if(canFire()) {
-			System.out.println("FIRE SUCCESS");
+		if (canFire()) {
+//			System.out.println("FIRE SUCCESS");
 			Laser c = new Laser();
 			c.setRotation(s.getRotation());
 			float ax = (float)(20*Math.sin(s.getRotation()));
@@ -50,12 +45,8 @@ public class WeaponsSys {
 		}
 	}
 	
-	private static Vector2f v(Number x, Number y) {
-		return new Vector2f(x.floatValue(), y.floatValue());
-	}
-	
 	public void tracker(World w) {
-		if(fired.peek() != null && ((Weapon)(fired.peek())).check()) {
+		if (fired.peek() != null && ((Weapon)(fired.peek())).check()) {
 			w.remove((Weapon)fired.remove());
 		}
 	}
@@ -65,6 +56,4 @@ public class WeaponsSys {
 //			weapons.add(w);
 //		}
 //	}
-	
-	
 }

@@ -17,9 +17,12 @@ public class Stats {
 	}
 
 	public void print() {
-		System.out.println("Kills: ");
-		for (String body : kill.keySet())
-			System.out.println("\t" + body + ": " + kill.get(body));
+		if (!kill.isEmpty()) {
+			System.out.println("Kills: ");
+			for (String body : kill.keySet())
+				System.out.println("\t" + body + ": " + kill.get(body));
+	    	}
+		if (dmg.isEmpty()) return;
 		System.out.println("Damage: ");
 		for (String body : dmg.keySet())
 			System.out.println("\t" + body + ": " + dmg.get(body));
