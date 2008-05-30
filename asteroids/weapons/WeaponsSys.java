@@ -10,10 +10,13 @@ public class WeaponsSys {
 	private Weapon weapon;
 	private long lastFired;
 	private int blah = 0;
+	private Queue fired;
 	
 	public WeaponsSys(Weapon w) {
 		weapon = w;
 		lastFired = 0;
+		fired = new LinkedList<Weapon>();
+		
 	}
 	
 	public boolean canFire() {
@@ -39,6 +42,7 @@ public class WeaponsSys {
 			c.setPosition(s.getPosition().getX()+ax, s.getPosition().getY()-ay);
 			c.adjustVelocity(v(20*ax,20*-ay));
 			c.addExcludedBody(s);
+			fired.add(c);
 			w.add(c);
 		} else {
 //			System.out.println("FIRE SYS FAILED");
@@ -48,6 +52,12 @@ public class WeaponsSys {
 	
 	private static Vector2f v(Number x, Number y) {
 		return new Vector2f(x.floatValue(), y.floatValue());
+	}
+	
+	public void tracker(World w) {
+		if(fired.peek() != null && ((Weapon)(fired.peek())).check()) {
+			w.remove((Weapon)fired.remove());
+		}
 	}
 	
 //	public WeaponsSys(List<Weapon> weapon) {

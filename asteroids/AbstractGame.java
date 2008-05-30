@@ -51,6 +51,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
 		mainLoop = new MainLoop();
 		display = makeDisplay();
+		display.setBackground("pixmaps/background2.jpg");
 		stats = new Stats();
 		frame.addWindowFocusListener(this);
 		world.addListener(new Exploder(world, display, stats));

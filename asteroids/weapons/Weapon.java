@@ -11,37 +11,32 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	
 	protected float reloadTime;		//reload time (ms)
 	protected boolean canFire = false;
-	private float lastFire;
+	protected long activeTime;
+	protected long deactivateTime;
+	protected float lastFire;
 
 	public Weapon(Polygon weap, float reload) {
 		super(weap, weap.getArea());
 		reloadTime = reload;
+		activeTime = System.currentTimeMillis();
+		deactivateTime = 5;
 		lastFire = 0;
 	}
 	
 	public Weapon(DynamicShape weap, int mass, float reload) {
 		super(weap, mass);
 		reloadTime = reload;
+		activeTime = System.currentTimeMillis();
+		deactivateTime = 5;
 		lastFire = 0;
 	}
 	
 	public void collided(CollisionEvent event) {
-//		if (Exploder.worthyCollision(event))
-//			explode = true;
+		
 	}
 	
 	public boolean canExplode() {
 		return true;
-	}
-	
-	// to be deleted
-	public boolean canFire() {
-		float current = System.currentTimeMillis();
-		if (current - lastFire >= reloadTime * 100) {
-			lastFire = current;
-			return true;
-		}
-		return false;
 	}
 	
 	public List<Body> explode() {
@@ -53,8 +48,11 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 		return reloadTime;
 	}
 	
-	public void fire() {
+	public boolean check() {
+		long temp = System.currentTimeMillis();
+		if(temp - activeTime >= deactivateTime * 10) return true;
+		else
+			activeTime = temp;
+		return false;
 	}
-	
-	
 }
