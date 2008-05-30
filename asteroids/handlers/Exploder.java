@@ -12,7 +12,7 @@ public class Exploder implements CollisionListener {
 	private World world;
 	private Display display;
 	private CollisionMap cmap;
-    	private Stats stats;
+	private Stats stats;
 
 	private class CollisionMap {
 		private Map<Long,CollisionGroup> tmpMap;

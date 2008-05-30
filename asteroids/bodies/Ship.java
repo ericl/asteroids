@@ -128,7 +128,7 @@ public class Ship extends Body
 	public void endFrame() {
 		super.endFrame();
 		float v = getVelocity().length();
-		setDamping(v < 40 ? 0 : v < 100 ? .4f : 1f);
+		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
 		thrust--;
 		accel();
 		torque();

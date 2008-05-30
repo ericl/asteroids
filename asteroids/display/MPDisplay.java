@@ -38,7 +38,8 @@ public class MPDisplay extends Display {
 			public void componentResized(ComponentEvent e) {
 				double sx = frame.getSize().getWidth() / ORIGINAL_WIDTH / 2;
 				double sy = frame.getSize().getHeight() / ORIGINAL_HEIGHT;
-				scale = Math.min(sx, sy);
+				// MP isn't high scored so this is ok
+				scale = 1;
 				dim.setSize(ORIGINAL_WIDTH*sx/scale,ORIGINAL_HEIGHT*sy/scale);
 				resizetime = System.currentTimeMillis();
 				jsplit.setDividerLocation(.5);

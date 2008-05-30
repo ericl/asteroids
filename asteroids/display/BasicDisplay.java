@@ -26,7 +26,9 @@ public class BasicDisplay extends Display {
 			public void componentResized(ComponentEvent e) {
 				double sx = frame.getSize().getWidth() / ORIGINAL_WIDTH;
 				double sy = frame.getSize().getHeight() / ORIGINAL_HEIGHT;
-				scale = Math.min(sx, sy);
+				// allow user to get wider area of view
+				// this should be tracked in the high scores
+//				scale = Math.min(sx, sy);
 				dim.setSize(ORIGINAL_WIDTH*sx/scale,ORIGINAL_HEIGHT*sy/scale);
 				resizetime = System.currentTimeMillis();
 			}

@@ -6,12 +6,12 @@ import java.util.*;
 import static asteroids.Util.*;
 
 /**
- * Wrap around starfield that provides visual consistency.
- * At 800 unique stars, this is only 5x slower
- * (~1ms per frame vs .2) than the old StarField.
+ * Wrap around starfield that provides visual consistency at
+ * the expense of speed (usually < 1ms)
  */
 public class FiniteStarField {
-	private static int DIMENSION = 2000;
+	// hoping that no one has really high resolution monitors
+	private static int DIMENSION = 3000;
 	private static double DENSITY = 2e-4;
 	private static Color[] colors = {Color.yellow,Color.orange,Color.cyan};
 	private LinkedList<Star> stars = new LinkedList<Star>();
@@ -56,23 +56,25 @@ public class FiniteStarField {
 		}
 
 		public float getRadius() {
-			// XXX rewrite to draw manually instead of tricking the display
+			// XXX trick the display
 			return Float.POSITIVE_INFINITY;
 		}
 
 		public void drawTo(Graphics2D g2d, ROVector2f origin) {
-			if (loc.getX() - origin.getX() > DIMENSION)
+			// wrap around the display
+			while (loc.getX() - origin.getX() > DIMENSION)
 				loc = MathUtil.sub(loc, v(DIMENSION,0));
-			else if (loc.getX() - origin.getX() < 0)
+			while (loc.getX() - origin.getX() < 0)
 				loc = MathUtil.sub(loc, v(-DIMENSION,0));
-			if (loc.getY() - origin.getY() > DIMENSION)
+			while (loc.getY() - origin.getY() > DIMENSION)
 				loc = MathUtil.sub(loc, v(0,DIMENSION));
-			else if (loc.getY() - origin.getY() < 0)
+			while (loc.getY() - origin.getY() < 0)
 				loc = MathUtil.sub(loc, v(0,-DIMENSION));
-			// TODO check for visibility before drawing
-			Vector2f tmp = MathUtil.sub(loc, origin);
-			g2d.setColor(color);
-			g2d.fillOval((int)tmp.getX(), (int)tmp.getY(), radius, radius);
+			if (display.inView(loc,radius)) {
+				Vector2f tmp = MathUtil.sub(loc, origin);
+				g2d.setColor(color);
+				g2d.fillOval((int)tmp.getX(), (int)tmp.getY(), radius, radius);
+			}
 		}
 
 		public Vector2f getPosition() {
