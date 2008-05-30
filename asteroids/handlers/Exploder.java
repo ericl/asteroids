@@ -66,7 +66,7 @@ public class Exploder implements CollisionListener {
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		if (other instanceof Weapon)
-			stats.dmg(body.getClass().getName(), getDamage(event, body));
+			stats.dmg(body.getClass().getName(), (float)getDamage(event, body));
 		if (!e.canExplode()
 				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
 				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)

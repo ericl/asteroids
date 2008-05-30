@@ -1,20 +1,17 @@
 package asteroids.weapons;
-
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.Vector2f;
-import net.phys2d.raw.Body;
-import net.phys2d.raw.World;
 import asteroids.bodies.*;
+import static asteroids.Util.*;
 
 public class Laser extends Weapon {
-
-	private float sphereradius;
+	private float sphereRadius;
 
 	public Laser() {
 		super((new Circle(2)),600,8f);
-		sphereradius = 2;
+		sphereRadius = 2;
 	}
 
 	public Vector2f getTextureCenter() {
@@ -50,11 +47,11 @@ public class Laser extends Weapon {
 	}
 
 	public float getTextureScaleFactor() {
-		return sphereradius / 2;
+		return sphereRadius / 2;
 	}
 	
 	public float getRadius() {
-		return sphereradius;
+		return sphereRadius;
 	}
 
 	public void fire(World w, Ship s) {
@@ -69,9 +66,5 @@ public class Laser extends Weapon {
 			w.add(c);
 			System.out.println("FIRE");
 		}
-	}
-	
-	private static Vector2f v(Number x, Number y) {
-		return new Vector2f(x.floatValue(), y.floatValue());
 	}
 }
