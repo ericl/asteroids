@@ -24,7 +24,4 @@ public interface Explodable extends Visible {
 	 * Notification that the explodable object has been hit.
 	 */
 	public void collided(CollisionEvent event);
-
-	public long getGID();
-	public void setGID(long id);
 }

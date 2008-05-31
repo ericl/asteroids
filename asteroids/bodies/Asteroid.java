@@ -10,18 +10,6 @@ import net.phys2d.raw.*;
 public abstract class Asteroid extends Body
 		implements Visible, Comparable<Asteroid>, Explodable {
 
-	protected long gid = -1;
-
-	public void setGID(long id) {
-		gid = id;
-	}
-
-	public long getGID() {
-		if (gid < 0)
-			gid = System.nanoTime();
-		return gid;
-	}
-
 	public Asteroid(Polygon shape) {
 		super(shape, shape.getArea());
 	}

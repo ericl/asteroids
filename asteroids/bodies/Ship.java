@@ -20,7 +20,7 @@ public class Ship extends Body
 	protected int thrust;
 	protected float accel, torque;
 	protected boolean fire, explode;
-	protected long lastFired, gid = -1;
+	protected long lastFired;
 	protected World world;
 	protected boolean invincible;
 	public int deaths;
@@ -155,15 +155,5 @@ public class Ship extends Body
 
 	public void keyTyped(KeyEvent e) {
 		// don't care
-	}
-
-	public long getGID() {
-		if (gid < 0)
-			gid = System.nanoTime();
-		return gid;
-	}
-
-	public void setGID(long id) {
-		gid = id;
 	}
 }

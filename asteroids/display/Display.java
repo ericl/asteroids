@@ -16,7 +16,6 @@ public abstract class Display {
 	protected final String dir = getClass().getResource("/asteroids/").toString();
 
 	public Display(Frame f, Dimension d) {
-		System.out.println(getClass().getResource("/asteroids/"));
 		frame = f;
 		dim = d;
 		ORIGINAL_WIDTH = (int)dim.getWidth();

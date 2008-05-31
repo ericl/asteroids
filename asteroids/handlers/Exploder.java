@@ -11,29 +11,8 @@ import java.util.*;
 public class Exploder implements CollisionListener {
 	private World world;
 	private Display display;
-	private CollisionMap cmap;
 	private Stats stats;
-
-	private class CollisionMap {
-		private Map<Long,CollisionGroup> tmpMap;
-		private long mapTime;
-		private World world;
-		private Display display;
-		public CollisionMap(World w, Display d) {
-			world = w;
-			display = d;
-		}
-		public CollisionGroup get(long gid) {
-			// rather than figure out what needs to be discarded
-			// it's easier to drop the whole map after inactivity
-			if (tmpMap == null || System.currentTimeMillis() - mapTime > 5000)
-				tmpMap = new HashMap<Long,CollisionGroup>(1000);
-			mapTime = System.currentTimeMillis();
-			if (!tmpMap.containsKey(gid))
-				tmpMap.put(gid, new CollisionGroup(world,display,gid));
-			return tmpMap.get(gid);
-		}
-	}
+	private CollisionGrouper grouper;
 
 	static boolean DOUBLE_GROUP = true;
 	static int HARD_WORLD_LIMIT = 250;
@@ -45,11 +24,11 @@ public class Exploder implements CollisionListener {
 	static float ASTEROID_DURABILITY = .1f;
 	static float COLLIDE_BOUNDS = 150;
 
-    	public Exploder(World w, Display d, Stats s) {
+	public Exploder(World w, Display d, Stats s) {
 		world = w;
 		display = d;
-		cmap = new CollisionMap(world, display);
 		stats = s;
+		grouper = new CollisionGrouper(w);
 	}
 
 	public void collisionOccured(CollisionEvent event) {
@@ -63,6 +42,7 @@ public class Exploder implements CollisionListener {
 			tryExplode(event.getBodyB(), event.getBodyA(), event);
 	}
 
+	// precondition: body instanceof Explodable
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		if (other instanceof Weapon)
@@ -74,25 +54,22 @@ public class Exploder implements CollisionListener {
 		world.remove(body);
 		if (other instanceof Weapon)
 			stats.kill(body.getClass().getName());
-
 		if (world.getBodies().size() > HARD_WORLD_LIMIT)
 			return;
-
-		long gid = e.getGID();
 		List<Body> f = e.getFragments();
-		CollisionGroup group = cmap.get(gid);
+		long group = grouper.findGroup(body);
 		Body rem = e.getRemnant();
-		group.add(rem);
-		if (DOUBLE_GROUP && other instanceof Explodable
-				&& ((Explodable)other).canExplode())
-			group.add(other);
-		if (!(other instanceof Ship)
-				&& !(other instanceof Weapon)
-				&& !(body instanceof Ship)
-				&& !group.canExplode(e))
-			return;
-		group.remove(body);
-
+		if (rem != null)
+			rem.setBitmask(group);
+		if (DOUBLE_GROUP && !(other instanceof Ship))
+			other.setBitmask(group);
+		// user-related stuff automatically passes
+		if (!(body instanceof Ship || other instanceof Ship
+				|| other instanceof Weapon)) {
+			body.setBitmask(group);
+			if (!grouper.canExplode(body))
+				return;
+		}
 		float J = Math.min(other.getMass() / body.getMass() *
 				   (body.getRestitution() + other.getRestitution()) / 2,
 				   MAX_MOMENTUM_MULTIPLIER);
@@ -102,7 +79,7 @@ public class Exploder implements CollisionListener {
 			double theta = Math.random()*2*Math.PI;
 			double tstep = 2*Math.PI / f.size();
 			for (Body b : f) {
-				group.add(b);
+				b.setBitmask(group);
 				sx = body.getPosition().getX();
 				sy = body.getPosition().getY();
 				sx += e.getRadius() * (float)Math.sin(theta) / 2;
@@ -141,71 +118,50 @@ public class Exploder implements CollisionListener {
 }
 
 /**
- * The cpu used by this is tiny compared to that of the
- * display and physics engine. Therefore we may as well
- * try to make it look good.
+ * phys2d will not collide bodies with any matching bits
  */
-class CollisionGroup {
-	// queue of this collision's smallest fragments
-	private PriorityQueue<Asteroid> prio = new PriorityQueue<Asteroid>();
-	// all the fragments of this collision group
-	private Set<Asteroid> set = new HashSet<Asteroid>();
-	private long gid;
+class CollisionGrouper {
+	private long nextmask = 1;
+	private int[] groups = new int[64];
+	private static int MAX_GROUP_SIZE = 40;
 	private World world;
-	private Display display;
 
-	static int LOWER_GROUP_LIMIT = 35;
-	static int UPPER_GROUP_LIMIT = 50;
-	static int LOWER_WORLD_LIMIT = 175;
-	static int UPPER_WORLD_LIMIT = 200;
-	static int MAX_OFFSCREEN_SEARCH = 15;
-
-	public CollisionGroup(World world, Display display, long gid) {
-		this.gid = gid;
-		this.world = world;
-		this.display = display;
+	public CollisionGrouper(World w) {
+		world = w;
 	}
 
-	public void add(Body b) {
-		if (b instanceof Asteroid) {
-			Asteroid c = ((Asteroid)b);
-			c.setGID(gid);
-			set.add(c);
-			for (Body x : set)
-				x.addExcludedBody(b);
-			prio.add(c);
+	private void recount() {
+		int[] tmp = new int[65];
+		BodyList bodies = world.getBodies();
+		for (int i=0; i < bodies.size(); i++) {
+			Body b = bodies.get(i);
+			if (b != null) // check for concurrent modification
+				tmp[getBitIndex(b.getBitmask())]++;
 		}
+		groups = tmp;
 	}
 
-	public void remove(Body b) {
-		set.remove(b);
-		if (b instanceof Asteroid)
-			prio.remove((Asteroid)b);
+	private int getBitIndex(long in) {
+		int j;
+		for (j=64; j > 0; j--)
+			if ((in & 1 << j) != 0)
+				break;
+		return j;
 	}
 
-	// all this processing still uses little cpu vs rendering
-	public boolean canExplode(Explodable e) {
-		if (!set.contains(e) || set.size() < LOWER_GROUP_LIMIT
-				&& world.getBodies().size() < LOWER_WORLD_LIMIT)
+	public long findGroup(Body b) {
+		if (b.getBitmask() != 0)
+			return b.getBitmask();
+		nextmask = nextmask << 1;
+		if (nextmask == 0)
+			nextmask = 1;
+		return nextmask;
+	}
+
+	public boolean canExplode(Body b) {
+		recount();
+		if (getBitIndex(b.getBitmask()) == 0)
 			return true;
-
-		int num = MAX_OFFSCREEN_SEARCH*(set.size() - LOWER_GROUP_LIMIT) /
-		          (UPPER_GROUP_LIMIT - LOWER_GROUP_LIMIT);
-		Asteroid c;
-		Queue<Asteroid> onscreen = new LinkedList<Asteroid>();
-		// look for small offscreen objects to remove
-		for (int i=0; i < num && !prio.isEmpty(); i++) {
-			c = prio.poll();
-			if (!display.inView(c.getPosition(), c.getRadius())) {
-				world.remove(c);
-				set.remove(c);
-			} else
-				onscreen.add(c);
-		}
-		while (!onscreen.isEmpty())
-			prio.add(onscreen.remove());
-		return set.size() <= UPPER_GROUP_LIMIT + Math.sqrt(e.getRadius())
-			&& world.getBodies().size()
-			<= UPPER_WORLD_LIMIT + Math.sqrt(e.getRadius());
+		return groups[getBitIndex(b.getBitmask())] < MAX_GROUP_SIZE;
 	}
 }

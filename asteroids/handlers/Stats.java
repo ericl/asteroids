@@ -3,8 +3,10 @@ import java.util.concurrent.*;
 import java.util.*;
 
 public class Stats {
+	// necessary?
 	private Map<String, Long> kill = new ConcurrentHashMap<String, Long>();
 	private Map<String, Float> dmg = new ConcurrentHashMap<String, Float>();
+
 //	private String scenario;
 //
 //	public Stats(String scenario) {
@@ -21,7 +23,7 @@ public class Stats {
 			System.out.println("Kills: ");
 			for (String body : kill.keySet())
 				System.out.println("\t" + body + ": " + kill.get(body));
-	    	}
+		}
 		if (dmg.isEmpty()) return;
 		System.out.println("Damage: ");
 		for (String body : dmg.keySet())

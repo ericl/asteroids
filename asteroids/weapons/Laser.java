@@ -34,14 +34,6 @@ public class Laser extends Weapon {
 		return f;
 	}
 
-	public long getGID() {
-		return 0;
-	}
-	
-	public void setGID(long l) {
-		return;
-	}
-	
 	public String getTexturePath() {
 		return "pixmaps/laser.png";
 	}

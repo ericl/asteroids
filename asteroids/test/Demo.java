@@ -213,8 +213,8 @@ public class Demo {
 
 	protected Asteroid newAsteroid() {
 		// difficulty increases with count
-		float vx = (float)((5+count/150)*(5 - Math.random()*10));
-		float vy = (float)((5+count/150)*(5 - Math.random()*10));
+		float vx = (float)((1+count/150)*(5 - Math.random()*10));
+		float vy = (float)((1+count/150)*(5 - Math.random()*10));
 		Asteroid rock;
 		switch ((int)(5*Math.random())) {
 			case 1: rock = new HexAsteroid(range(20,30)); break;
@@ -222,7 +222,7 @@ public class Demo {
 			default: rock = new CircleAsteroid(range(20,30)); break;
 		}
 		int chance = 100-count/30;
-		if (oneIn(chance < 7 ? 7 : chance))
+		if (oneIn(1))
 			rock = new CircleAsteroid(range(100,300));
 //		// for easy visualization, ok?
 //		if (rock instanceof CircleAsteroid)
