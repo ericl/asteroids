@@ -46,8 +46,8 @@ public class WeaponsSys {
 	}
 	
 	public void tracker(World w) {
-		if (fired.peek() != null && ((Weapon)(fired.peek())).check()) {
-			w.remove((Weapon)fired.remove());
+		if (fired.peek() != null && fired.peek().check()) {
+			w.remove(fired.remove());
 		}
 	}
 	

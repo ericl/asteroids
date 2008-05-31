@@ -6,40 +6,36 @@
 
 	<property name="src" location="asteroids"/>
 	<property name="lib" location="net"/>
-	<property name="build" location="build"/>
-	<property name="dist"  location="dist"/>
 
 	<target name="compile">
 		<javac srcdir="${lib}" destdir=""/>
-		<javac srcdir="${src}" destdir=""/>
+		<javac srcdir="${src}" destdir="">
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
 	</target>
 
-	<target name="compile-jar">
-		<mkdir dir="${build}"/>
-		<javac srcdir="${lib}" destdir="${build}"/>
-		<javac srcdir="${src}" destdir="${build}"/>
-	</target>
-
-	<target name="jar" depends="compile-jar">
-		<mkdir dir="${dist}"/>
-		<manifest file="${build}/MANIFEST.MF">
-			<attribute name="Main-Class" value="asteroids.Asteroids"/>
-		</manifest>
-		<mkdir dir="${build}/asteroids/pixmaps"/>
-		<copy todir="${build}/asteroids/pixmaps" flatten="true">
-			<fileset dir="">
-				<include name="**/pixmaps/*"/>
+	<target name="jar" depends="compile">
+		<jar jarfile="Asteroids.jar" update="true">
+			<manifest>
+				<attribute name="Main-Class" value="asteroids.Asteroids"/>
+			</manifest>
+			<fileset dir=".">
+				<include name="asteroids/**/*.class"/>
+				<include name="asteroids/**/*.png"/>
+				<include name="asteroids/**/*.jpg"/>
+				<include name="net/**/*.class"/>
 			</fileset>
-		</copy>
-		<jar
-			jarfile="${dist}/Asteroids.jar"
-			basedir="${build}"
-			manifest="${build}/MANIFEST.MF"
-		/>
+		</jar>
 	</target>
 
 	<target name="clean">
-		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
+		<delete>
+			<fileset dir="." defaultexcludes="false">
+				<include name="**/*.class"/>
+				<include name="**/#*#"/>
+				<include name="**/*.jar"/>
+				<include name="**/*~"/>
+			</fileset>
+		</delete>
 	</target>
 </project>

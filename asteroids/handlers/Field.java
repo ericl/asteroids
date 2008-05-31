@@ -2,16 +2,18 @@ package asteroids.handlers;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
+import java.awt.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
 public class Field implements Scenario {
 	protected final static int BORDER = 300, BUF = 500;
-	protected final static int MIN_DENSITY = 50;
+	protected final static double MIN_DENSITY = 2e-4;
 	protected int[] density;
 	protected Ship[] ships;
 	protected World world;
 	protected Display display;
+	protected Dimension dim;
 	protected int count, score = -1;
 	public static String[] ids = {"circles", "hex", "large",
 	                              "basic", "rocky", "icey"};
@@ -20,6 +22,7 @@ public class Field implements Scenario {
 	public Field(World w, Display d, Ship ship, String id) {
 		this.id = id;
 		this.display = d;
+		this.dim = d.getDimension();
 		ships = new Ship[1];
 		ships[0] = ship;
 		density = new int[ships.length];
@@ -35,6 +38,7 @@ public class Field implements Scenario {
 	public Field(World w, Display d, Ship[] shiparray, String id) {
 		this.display = d;
 		this.id = id;
+		this.dim = d.getDimension();
 		ships = shiparray;
 		density = new int[ships.length];
 		boolean ok = false;
@@ -92,7 +96,7 @@ public class Field implements Scenario {
 			}
 		}
 		for (int i=0; i < density.length; i++)
-			if (density[i] < MIN_DENSITY)
+			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY)
 				world.add(newAsteroid(ships[i].getPosition()));
 		if (done() && score < 0) {
 			for (Ship ship : ships)
