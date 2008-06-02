@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 import asteroids.display.*;
 import asteroids.weapons.*;
-import asteroids.handlers.Exploder;
+import asteroids.handlers.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
@@ -24,8 +24,8 @@ public class Ship extends Body
 	protected World world;
 	protected boolean invincible;
 	public int deaths;
-	Laser laser = new Laser();
-	WeaponsSys weapons = new WeaponsSys(laser);
+	protected Laser laser = new Laser();
+	protected WeaponsSys weapons;
 
 	public void reset() {
 		setRotation(0);
@@ -38,9 +38,10 @@ public class Ship extends Body
 		thrust = 0;
 	}
 
-	public Ship(World w) {
+	public Ship(World w, Stats s) {
 		super("Your ship", shape, 1000f);
 		world = w;
+		weapons = new WeaponsSys(laser, s);
 		setRotDamping(4000);
 	}
 

@@ -6,7 +6,7 @@ public class Stats {
 	// necessary?
 	private Map<String, Long> kill = new ConcurrentHashMap<String, Long>();
 	private Map<String, Float> dmg = new ConcurrentHashMap<String, Float>();
-
+	public int hit = 0, att = 0;
 //	private String scenario;
 //
 //	public Stats(String scenario) {
@@ -16,9 +16,14 @@ public class Stats {
 	public void reset() {
 		kill.clear();
 		dmg.clear();
+		hit = att = 0;
 	}
 
 	public void print() {
+		if (att == 0) return;
+		System.out.println("Attempts: " + att
+					+ "\nHits: " + hit
+					+ "\nAccuracy: "+(int)(((double)hit/att)*100)+"%");
 		if (!kill.isEmpty()) {
 			System.out.println("Kills: ");
 			for (String body : kill.keySet())

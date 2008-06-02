@@ -133,7 +133,7 @@ public class Demo {
 				world.add(newAsteroid());
 			world.add(object = new Europa());
 			object.setPosition((xo+width/2),(yo+height/2));
-			ship = new Ship(world);
+			ship = new Ship(world, stats);
 			k = new FiniteStarField(d);
 			k.init();
 			object.getRemnant().addExcludedBody(ship);

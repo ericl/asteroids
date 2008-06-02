@@ -21,8 +21,8 @@ public class MPAsteroids extends MPGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship2 = new Ship(world));
-		frame.addKeyListener(ship1 = new Ship2(world));
+		frame.addKeyListener(ship2 = new Ship(world, stats));
+		frame.addKeyListener(ship1 = new Ship2(world, stats));
 		ships[0] = ship1;
 		ships[1] = ship2;
 		k = new FiniteStarField(display);

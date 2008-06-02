@@ -1,11 +1,12 @@
 package asteroids.bodies;
 import net.phys2d.raw.*;
 import java.awt.event.KeyEvent;
+import asteroids.handlers.Stats;
 
 public class Ship2 extends Ship {
 
-	public Ship2(World w) {
-		super(w);
+	public Ship2(World w, Stats s) {
+		super(w, s);
 	}
 	
 	public void keyPressed(KeyEvent e) {

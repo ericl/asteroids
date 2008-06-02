@@ -20,7 +20,7 @@ public class Asteroids extends AbstractGame {
 
 	public Asteroids() {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship = new Ship(world));
+		frame.addKeyListener(ship = new Ship(world, stats));
 		k = new FiniteStarField(display);
 		newGame();
 	}
@@ -54,7 +54,7 @@ public class Asteroids extends AbstractGame {
 	public void newGame() {
 		k.init();
 		stats.print();
-		stats.reset();
+		stats.reset();		
 		String id = Field.ids[(int)range(0,Field.ids.length)];
 		// switching scenarios would give inconsistent output
 		// (e.g. zero score for an instant)
