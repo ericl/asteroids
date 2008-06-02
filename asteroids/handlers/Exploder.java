@@ -18,7 +18,7 @@ public class Exploder implements CollisionListener {
 	static int HARD_WORLD_LIMIT = 250;
 	static float RADIAL_VELOCITY = 5;
 	static float MIN_STUCK_DEPTH = 5;
-	static float MAX_MOMENTUM_MULTIPLIER = 3;
+	static float MAX_MOMENTUM_MULTIPLIER = 2;
 	static float MAX_ANGLE_DEVIATION = .7f;
 	static float MAX_RADIAL_DEVIATION = 10;
 	static float ASTEROID_DURABILITY = .1f;
@@ -47,9 +47,11 @@ public class Exploder implements CollisionListener {
 		Explodable e = (Explodable)body;
 		if (other instanceof Weapon)
 			stats.dmg(body.getClass().getName(), (float)getDamage(event, body));
+		// don't explode some offscreen or non-exploding bodies
 		if (!e.canExplode()
-				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
-				&& event.getPenetrationDepth() < MIN_STUCK_DEPTH)
+				|| (!display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
+					&& event.getPenetrationDepth() < MIN_STUCK_DEPTH
+					&& !(body instanceof Weapon)))
 			return;
 		world.remove(body);
 		if (other instanceof Weapon)
@@ -61,13 +63,13 @@ public class Exploder implements CollisionListener {
 		Body rem = e.getRemnant();
 		if (rem != null)
 			rem.setBitmask(group);
-		if (DOUBLE_GROUP && !(other instanceof Ship))
+		if (DOUBLE_GROUP && !(other instanceof Ship || body instanceof Weapon))
 			other.setBitmask(group);
-		// user-related stuff automatically passes
+		// user-related stuff automatically passes the group limit
 		if (!(body instanceof Ship || other instanceof Ship
 				|| other instanceof Weapon)) {
 			body.setBitmask(group);
-			if (!grouper.canExplode(body))
+			if (!grouper.shouldFragment(body))
 				return;
 		}
 		float J = Math.min(other.getMass() / body.getMass() *
@@ -118,10 +120,12 @@ public class Exploder implements CollisionListener {
 }
 
 /**
- * phys2d will not collide bodies with any matching bits
+ * phys2d will not collide bodies with any matching bits...
+ * we use this to stop runaway explosions...
+ * there are 63 bits/groups available for use so they wrap around
  */
 class CollisionGrouper {
-	private long nextmask = 1;
+	private long nextmask = 1l;
 	private int[] groups = new int[64];
 	private static int MAX_GROUP_SIZE = 40;
 	private World world;
@@ -130,6 +134,9 @@ class CollisionGrouper {
 		world = w;
 	}
 
+	/**
+	 * update the group numbers, very fast operation
+	 */
 	private void recount() {
 		int[] tmp = new int[65];
 		BodyList bodies = world.getBodies();
@@ -141,24 +148,34 @@ class CollisionGrouper {
 		groups = tmp;
 	}
 
+	/**
+	 * @return index of first bit found on, 0 <= index <= 64
+	 */
 	private int getBitIndex(long in) {
 		int j;
-		for (j=64; j > 0; j--)
-			if ((in & 1 << j) != 0)
+		// backwards to make 0x0 get index 0
+		for (j = 64; j > 0; j--)
+			if ((in & 1l << j) != 0)
 				break;
 		return j;
 	}
 
+	/**
+	 * @return bitmask of next available group
+	 */
 	public long findGroup(Body b) {
 		if (b.getBitmask() != 0)
 			return b.getBitmask();
 		nextmask = nextmask << 1;
 		if (nextmask == 0)
-			nextmask = 1;
+			nextmask = 1l;
 		return nextmask;
 	}
 
-	public boolean canExplode(Body b) {
+	/**
+	 * @return whether the body should fragment
+	 */
+	public boolean shouldFragment(Body b) {
 		recount();
 		if (getBitIndex(b.getBitmask()) == 0)
 			return true;

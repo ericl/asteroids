@@ -10,7 +10,7 @@ import java.awt.Color;
 import java.util.*;
 
 public class CircleAsteroid extends Asteroid implements Drawable {
-	protected boolean explode;
+	protected double explode;
 	private Color color = Color.orange;
 
 	public CircleAsteroid(float radius) {
@@ -39,12 +39,11 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 	}
 
 	public void collided(CollisionEvent event) {
-		if (Exploder.worthyCollision(event))
-			explode = true;
+		explode += Exploder.getDamage(event, this);
 	}
 
 	public boolean canExplode() {
-		return getRadius() < 100 ? explode : explode ? oneIn(10) : false;
+		return getRadius() > 100 ? explode > Math.log(getRadius()) : explode > 0;
 	}
 
 	public Body getRemnant() {

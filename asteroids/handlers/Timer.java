@@ -33,7 +33,7 @@ public class Timer {
 	public float tick() {
 		now_ns = System.nanoTime();
 		now_diff = now_ns - old_ns;
-		if (now_diff - old_diff > 10000000)
+		if (now_diff - old_diff > 1e7)
 			sleep_ms = 0; // respond to sudden rendering activity
 		else if (now_diff < target_ns)
 			sleep_ms++;
@@ -44,7 +44,7 @@ public class Timer {
 			// conserves cpu time when running at lower qualities
 			Thread.sleep(sleep_ms);
 		} catch (InterruptedException e) {
-			System.err.println(e);
+			e.printStackTrace();
 		}
 		float frame_ns = now_ns - old_ns;
 		old_ns = now_ns;
