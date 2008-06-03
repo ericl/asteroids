@@ -32,10 +32,8 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	
 	public boolean check() {
 		long temp = System.currentTimeMillis();
-		if (temp - activeTime >= deactivateTime * 10)
-			return true;
-		else
-			activeTime = temp;
+		if (temp - activeTime >= deactivateTime * 10) return true;
+		activeTime = temp;
 		return false;
 	}
 }

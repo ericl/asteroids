@@ -4,7 +4,6 @@ import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
 public class Laser2 extends Laser {
-
 	public Body getRemnant() {
 		return new LargeExplosion();
 	}

@@ -3,8 +3,8 @@ import static asteroids.Util.*;
 import net.phys2d.math.*;
 
 public class LargeExplosion extends Explosion {
-	double life = 1;
-	float scale = 1;
+	private double life = 1;
+	private float scale = 1;
 
 	public LargeExplosion() {
 		super();

@@ -3,7 +3,7 @@ import static asteroids.Util.*;
 import net.phys2d.math.*;
 
 public class LaserExplosion extends Explosion {
-	double life = 1;
+	private double life = 1;
 
 	public float getRadius() {
 		return 30;	
@@ -14,8 +14,7 @@ public class LaserExplosion extends Explosion {
 	}
 
 	public String getTexturePath() {
-		if (dead())
-			return null;
+		if (dead()) return null;
 		return "pixmaps/exp2/" + (int)life + ".png";
 	}
 

@@ -39,25 +39,24 @@ public class WeaponsSys {
 	}
 	
 	public void fire(Ship s, World w) {
-		if (canFire()) {
-			Weapon c = null;
-			try {
-				c = cons.newInstance();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			stats.att++;
-			c.setRotation(s.getRotation());
-			float xc = (float)Math.sin(s.getRotation());
-			float yc = (float)Math.cos(s.getRotation());
-			float sr = s.getRadius() * 2 / 3; // estimated length
-			c.setPosition(s.getPosition().getX()+xc*sr,s.getPosition().getY()-yc*sr);
-			c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
-			c.adjustVelocity((Vector2f)s.getVelocity());
-			c.addExcludedBody(s);
-			fired.add(c);
-			w.add(c);
+		if (!canFire()) return;
+		Weapon c = null;
+		try {
+			c = cons.newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		stats.att++;
+		c.setRotation(s.getRotation());
+		float xc = (float)Math.sin(s.getRotation());
+		float yc = (float)Math.cos(s.getRotation());
+		float sr = s.getRadius() * 2 / 3; // estimated length
+		c.setPosition(s.getPosition().getX()+xc*sr,s.getPosition().getY()-yc*sr);
+		c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
+		c.adjustVelocity((Vector2f)s.getVelocity());
+		c.addExcludedBody(s);
+		fired.add(c);
+		w.add(c);
 	}
 	
 	public void tracker(World w) {
