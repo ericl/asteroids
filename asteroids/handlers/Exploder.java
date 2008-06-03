@@ -22,7 +22,6 @@ public class Exploder implements CollisionListener {
 	static float MAX_MOMENTUM_MULTIPLIER = 2;
 	static float MAX_ANGLE_DEVIATION = .7f;
 	static float MAX_RADIAL_DEVIATION = 10;
-	static float ASTEROID_DURABILITY = .1f;
 	static float COLLIDE_BOUNDS = 150;
 
 	public Exploder(World w, Display d, Stats s) {
@@ -33,7 +32,7 @@ public class Exploder implements CollisionListener {
 	}
 
 	public void collisionOccured(CollisionEvent event) {
-		if (!explosionQueue.isEmpty() && explosionQueue.peek().dead())
+		while (!explosionQueue.isEmpty() && explosionQueue.peek().dead())
 			world.remove(explosionQueue.remove());
 		if (event.getBodyA() instanceof Explodable)
 			((Explodable)event.getBodyA()).collided(event);
@@ -120,14 +119,12 @@ public class Exploder implements CollisionListener {
 		}
 	}
 
-	public static boolean worthyCollision(CollisionEvent e) {
-		return Math.abs(e.getPenetrationDepth()) > ASTEROID_DURABILITY;
-	}
-
 	public static double getDamage(CollisionEvent e, Body victim) {
 		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
-		double vmult = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
-		return Math.min(other.getMass(),1000) * vmult / 1e7;
+		if (other instanceof Weapon)
+			return ((Weapon)other).getDamage();
+		double vmod = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
+		return Math.min(other.getMass(),1000) * vmod / 1e7;
 	}
 }
 

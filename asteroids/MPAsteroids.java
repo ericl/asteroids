@@ -71,15 +71,16 @@ public class MPAsteroids extends MPGame {
 
 	private void shipStatus(Graphics2D g2d, Ship ship) {
 		g2d.setColor(Color.gray);
+		String hull = "Infinity";
+		if (ship.getDamage() != Double.POSITIVE_INFINITY)
+			hull = (int)(ship.getDamage()*1000)/10+"%";
 		if (verbosity % 2 == 0) {
-			g2d.drawString("Armor: " +
-				(int)(ship.getDamage()*1000)/10+"%",
+			g2d.drawString("Armor: " + hull,
 				display.w(-110),display.h(-59));
 			g2d.drawString("Deaths: " + ship.deaths,
 				display.w(-110),display.h(-39));
 		} else {
-			g2d.drawString("Armor: " +
-				(int)(ship.getDamage()*1000)/10+"%",	
+			g2d.drawString("Armor: " + hull,
 				display.w(-110),display.h(-99));
 			g2d.drawString("Speed: " +
 				(int)(1000*ship.getVelocity().length())/1000f,

@@ -14,15 +14,6 @@ public class Rock2 extends TexturedAsteroid {
 		super(raw, "pixmaps/rock2.png", 40, radius);
 	}
 
-	public void collided(CollisionEvent event) {
-		if (Exploder.worthyCollision(event))
-			explode = true;
-	}
-
-	public boolean canExplode() {
-		return explode;
-	}
-
 	public Body getRemnant() {
 		return getRadius() > 20 ? new Rock2(getRadius() * 2 / 3) : null;
 	}

@@ -80,18 +80,16 @@ public class Field implements Scenario {
 			BodyList bodies = world.getBodies();
 			for (int i=0; i < bodies.size(); i++) {
 				Body body = bodies.get(i);
-				if (body instanceof Asteroid) {
-					boolean outOfRange = true;
-					for (int j=0; j < ships.length; j++)
-						if (display.inViewFrom(ships[j].getPosition(),
-								body.getPosition(), BORDER+BUF)) {
-							density[j]++;
-							outOfRange = false;
-						}
-					if (outOfRange) {
-						count++;
-						world.remove(body);
+				boolean outOfRange = true;
+				for (int j=0; j < ships.length; j++)
+					if (display.inViewFrom(ships[j].getPosition(),
+							body.getPosition(), BORDER+BUF)) {
+						density[j]++;
+						outOfRange = false;
 					}
+				if (outOfRange) {
+					count++;
+					world.remove(body);
 				}
 			}
 		}

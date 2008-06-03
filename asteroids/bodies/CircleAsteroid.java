@@ -1,7 +1,6 @@
 package asteroids.bodies;
 import static asteroids.Util.*;
 import asteroids.display.*;
-import asteroids.handlers.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
@@ -10,7 +9,6 @@ import java.awt.Color;
 import java.util.*;
 
 public class CircleAsteroid extends Asteroid implements Drawable {
-	protected double explode;
 	private Color color = Color.orange;
 
 	public CircleAsteroid(float radius) {
@@ -36,14 +34,6 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 
 	public float getRadius() {
 		return ((Circle)getShape()).getRadius();
-	}
-
-	public void collided(CollisionEvent event) {
-		explode += Exploder.getDamage(event, this);
-	}
-
-	public boolean canExplode() {
-		return getRadius() > 100 ? explode > 1 : explode > 0;
 	}
 
 	public Body getRemnant() {

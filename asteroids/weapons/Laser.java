@@ -6,11 +6,10 @@ import net.phys2d.math.Vector2f;
 import static asteroids.Util.*;
 
 public class Laser extends Weapon {
-	private float myRadius;
+	private static float myRadius = 2;
 
 	public Laser() {
-		super((new Circle(2)),5,1f);
-		myRadius = 2;
+		super(new Circle(myRadius));
 	}
 
 	public Vector2f getTextureCenter() {
@@ -21,10 +20,20 @@ public class Laser extends Weapon {
 		return true;
 	}
 
+	public float getDamage() {
+		return .05f;
+	}
+
+	public float getReloadTime() {
+		return 100;
+	}
+
+	public float getSpeed() {
+		return 200;
+	}
+
 	public Body getRemnant() {
-		Explosion e = new LaserExplosion();
-		e.setEnabled(false);
-		return e;
+		return new LaserExplosion();
 	}
 	
 	public List<Body> getFragments() {

@@ -17,13 +17,32 @@ public class ShipBattle extends Field {
 		return count;
 	}
 
+	private class ShipHelper extends Thread {
+		Ship ship;
+		public ShipHelper(Ship s, World w) {
+			ship = s;
+		}
+		public void run() {
+			try {
+				Thread.sleep(2000);
+			} catch (Exception e) {}
+			ship.reset();
+			world.add(ship);
+			try {
+				Thread.sleep(5000);
+			} catch (Exception e) {}
+			ship.setInvincible(false);
+		}
+	}
+
+
 	public void update() {
 		super.update();
 		for (Ship ship : ships)
 			if (ship.canExplode()) {
 				ship.deaths++;
-				ship.reset();
-				world.add(ship);
+				ship.setInvincible(true);
+				new ShipHelper(ship, world).start();
 			}
 	}
 }

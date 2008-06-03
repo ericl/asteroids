@@ -4,6 +4,16 @@ import net.phys2d.math.*;
 
 public class LargeExplosion extends Explosion {
 	double life = 1;
+	float scale = 1;
+
+	public LargeExplosion() {
+		super();
+	}
+
+	public LargeExplosion(float scaler) {
+		super();
+		scale = scaler;
+	}
 
 	public float getRadius() {
 		return 46;	
@@ -28,6 +38,6 @@ public class LargeExplosion extends Explosion {
 	}
 
 	public float getTextureScaleFactor() {
-		return 1f;
+		return scale;
 	}
 }

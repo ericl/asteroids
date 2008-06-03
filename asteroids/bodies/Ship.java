@@ -24,7 +24,6 @@ public class Ship extends Body
 	protected World world;
 	protected boolean invincible;
 	public int deaths;
-	protected Laser laser = new Laser();
 	protected WeaponsSys weapons;
 
 	public void reset() {
@@ -36,12 +35,13 @@ public class Ship extends Body
 		fire = explode = false;
 		hull = 1;
 		thrust = 0;
+		weapons.setWeaponType(oneIn(2) ? new Laser() : new Laser2());
 	}
 
 	public Ship(World w, Stats s) {
 		super("Your ship", shape, 1000f);
 		world = w;
-		weapons = new WeaponsSys(laser, s);
+		weapons = new WeaponsSys(oneIn(2) ? new Laser() : new Laser2(), s);
 		setRotDamping(4000);
 	}
 
@@ -67,7 +67,7 @@ public class Ship extends Body
 	}
 
 	public Body getRemnant() {
-		return new LargeExplosion();
+		return new LargeExplosion(1.5f);
 	}
 
 	public List<Body> getFragments() {

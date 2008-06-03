@@ -1,4 +1,5 @@
 package asteroids.bodies;
+import asteroids.handlers.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
@@ -7,7 +8,8 @@ import java.awt.Color;
 import java.util.*;
 
 public class IceAsteroid extends CircleAsteroid {
-	private int melting;
+	private double melting;
+	private int count = 0;
 
 	public IceAsteroid(float radius) {
 		super(radius);
@@ -24,13 +26,15 @@ public class IceAsteroid extends CircleAsteroid {
 
 	public void endFrame() {
 		super.endFrame();
-		if (melting > 0)
-			if (melting-- % 5 == 0)
-				setShape(new Circle(getRadius() - 1));
+		count++;
+		if (melting - 1 > 0 && count % 5 == 0) {
+			melting--;
+			setShape(new Circle(getRadius() - 1));
+		}
 	}
 
 	public void collided(CollisionEvent e) {
-		melting += 25;
+		melting += 50 * Exploder.getDamage(e, this);
 	}
 
 	public boolean canExplode() {

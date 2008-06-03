@@ -2,30 +2,22 @@ package asteroids.weapons;
 import java.util.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
-import asteroids.handlers.Exploder;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 
 public abstract class Weapon extends Body implements Textured, Explodable {
-	protected float reloadTime, lastFire;
+	protected float lastFire = 0;
 	protected boolean canFire = false;
-	protected long activeTime, deactivateTime;
+	protected long activeTime, deactivateTime = 5;
 
-	public Weapon(Polygon weap, float reload) {
-		super(weap, weap.getArea());
-		reloadTime = reload;
+	public Weapon(DynamicShape weap) {
+		super(weap, 1);
 		activeTime = System.currentTimeMillis();
-		deactivateTime = 5;
-		lastFire = 0;
 	}
-	
-	public Weapon(DynamicShape weap, int mass, float reload) {
-		super(weap, mass);
-		reloadTime = reload;
-		activeTime = System.currentTimeMillis();
-		deactivateTime = 5;
-		lastFire = 0;
-	}
+
+	public abstract float getSpeed();
+	public abstract float getDamage();
+	public abstract float getReloadTime();
 	
 	public void collided(CollisionEvent event) {}
 	
@@ -38,13 +30,10 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 		return f;
 	}
 	
-	public float getReloadTime() {
-		return reloadTime;
-	}
-	
 	public boolean check() {
 		long temp = System.currentTimeMillis();
-		if(temp - activeTime >= deactivateTime * 10) return true;
+		if (temp - activeTime >= deactivateTime * 10)
+			return true;
 		else
 			activeTime = temp;
 		return false;
