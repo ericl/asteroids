@@ -43,7 +43,7 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 	}
 
 	public boolean canExplode() {
-		return getRadius() > 100 ? explode > Math.log(getRadius()) : explode > 0;
+		return getRadius() > 100 ? explode > 1 : explode > 0;
 	}
 
 	public Body getRemnant() {

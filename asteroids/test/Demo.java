@@ -222,7 +222,7 @@ public class Demo {
 			default: rock = new CircleAsteroid(range(20,30)); break;
 		}
 		int chance = 100-count/30;
-		if (oneIn(1))
+		if (oneIn(chance))
 			rock = new CircleAsteroid(range(100,300));
 //		// for easy visualization, ok?
 //		if (rock instanceof CircleAsteroid)

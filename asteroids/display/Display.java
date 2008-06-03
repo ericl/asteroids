@@ -9,6 +9,7 @@ import net.phys2d.math.*;
 
 public abstract class Display {
 	protected MediaTracker tracker;
+	protected int index = 1;
 	protected HashMap<String,Image> cache;
 	protected Frame frame;
 	protected final Dimension dim;
@@ -84,12 +85,14 @@ public abstract class Display {
 	 */
 	public abstract	void setBackground(String path);
 
-	protected Image loadImage(String path) {
+	public Image loadImage(String path) {
 		Image i = cache.get(path);
 		if (i == null)
 			try {
 				i = frame.getToolkit().createImage(new URL(dir+path));
 				cache.put(path, i);
+				tracker.addImage(i, index++);
+				tracker.waitForAll();
 			} catch (Exception e) {
 				System.err.println(e);
 			}

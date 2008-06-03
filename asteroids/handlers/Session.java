@@ -21,7 +21,7 @@ public class Session {
 		} catch (Exception e) {
 			valid = false;
 		}
-    	}
+	}
 
 	public boolean isValid() {
 		return valid;

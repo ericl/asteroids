@@ -117,10 +117,10 @@ public class Field implements Scenario {
 			}
 			if (oneIn(200))
 				rock = new CircleAsteroid(range(100,300));
-		} else if (id.equals("circles"))
+		} else if (id.equals("large"))
+			rock = new CircleAsteroid(oneIn(3) ? range(100,200) : range(10,20));
+		else if (id.equals("circles"))
 			rock = new CircleAsteroid(range(30,40));
-		else if (id.equals("large"))
-			rock = new CircleAsteroid(range(100,200));
 		else if (id.equals("hex"))
 			rock = new HexAsteroid(range(10,50));
 		else if (id.equals("rocky"))

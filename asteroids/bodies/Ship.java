@@ -67,7 +67,7 @@ public class Ship extends Body
 	}
 
 	public Body getRemnant() {
-		return null;
+		return new LargeExplosion();
 	}
 
 	public List<Body> getFragments() {

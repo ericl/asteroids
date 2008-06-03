@@ -3,15 +3,14 @@ import java.util.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.Vector2f;
-import asteroids.bodies.*;
 import static asteroids.Util.*;
 
 public class Laser extends Weapon {
-	private float sphereRadius;
+	private float myRadius;
 
 	public Laser() {
-		super((new Circle(2)),100,1f);
-		sphereRadius = 2;
+		super((new Circle(2)),5,1f);
+		myRadius = 2;
 	}
 
 	public Vector2f getTextureCenter() {
@@ -23,15 +22,13 @@ public class Laser extends Weapon {
 	}
 
 	public Body getRemnant() {
-		return null;
+		Explosion e = new LaserExplosion();
+		e.setEnabled(false);
+		return e;
 	}
 	
 	public List<Body> getFragments() {
-		List<Body> f = new LinkedList<Body>();
-		if (getRadius() > 10)
-			for (int i=0; i < 4; i++)
-				f.add(new Sphere1(getRadius() / 3));	
-		return f;
+		return null;
 	}
 
 	public String getTexturePath() {
@@ -39,10 +36,10 @@ public class Laser extends Weapon {
 	}
 
 	public float getTextureScaleFactor() {
-		return sphereRadius / 2;
+		return myRadius / 2;
 	}
 	
 	public float getRadius() {
-		return sphereRadius;
+		return myRadius;
 	}
 }

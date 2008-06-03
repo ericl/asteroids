@@ -1,6 +1,5 @@
 package asteroids.weapons;
 import java.util.*;
-import net.phys2d.math.Vector2f;
 import net.phys2d.raw.World;
 import asteroids.bodies.Ship;
 import asteroids.handlers.Stats;
@@ -20,7 +19,6 @@ public class WeaponsSys {
 	public boolean canFire() {
 		long current = System.currentTimeMillis();
 		if ((current-lastFired)>=(long)(weapon.getReloadTime()*100)) {
-//			System.out.println(current - lastFired);
 			lastFired = current;
 			return true;
 		}
@@ -28,7 +26,6 @@ public class WeaponsSys {
 	}
 	
 	public void fire(Ship s, World w) {
-//		System.out.println(stats.att + " FIRE ATTEMPT");
 		if (canFire()) {
 			stats.att++;
 			Laser c = new Laser();
@@ -40,20 +37,11 @@ public class WeaponsSys {
 			c.addExcludedBody(s);
 			fired.add(c);
 			w.add(c);
-		} else {
-//			System.out.println("FIRE SYS FAILED");
-//			System.out.println("CURRENT: " + System.currentTimeMillis() + "\tLAST FIRED: " + lastFired);
 		}
 	}
 	
 	public void tracker(World w) {
-		if (fired.peek() != null && fired.peek().check())
+		if (!fired.isEmpty() && fired.peek().check())
 			w.remove(fired.remove());
 	}
-	
-//	public WeaponsSys(List<Weapon> weapon) {
-//		for(Weapon w : weapon) {
-//			weapons.add(w);
-//		}
-//	}
 }

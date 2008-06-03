@@ -9,13 +9,14 @@ import net.phys2d.math.*;
 import java.util.*;
 
 public class Exploder implements CollisionListener {
+	private Queue<Explosion> explosionQueue = new LinkedList<Explosion>();
 	private World world;
 	private Display display;
 	private Stats stats;
 	private CollisionGrouper grouper;
 
 	static boolean DOUBLE_GROUP = true;
-	static int HARD_WORLD_LIMIT = 250;
+	static int MAX_BODIES = 300;
 	static float RADIAL_VELOCITY = 5;
 	static float MIN_STUCK_DEPTH = 5;
 	static float MAX_MOMENTUM_MULTIPLIER = 2;
@@ -32,6 +33,8 @@ public class Exploder implements CollisionListener {
 	}
 
 	public void collisionOccured(CollisionEvent event) {
+		if (!explosionQueue.isEmpty() && explosionQueue.peek().dead())
+			world.remove(explosionQueue.remove());
 		if (event.getBodyA() instanceof Explodable)
 			((Explodable)event.getBodyA()).collided(event);
 		if (event.getBodyB() instanceof Explodable)
@@ -43,6 +46,7 @@ public class Exploder implements CollisionListener {
 	}
 
 	// precondition: body instanceof Explodable
+	// so many special cases!
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		Explodable e = (Explodable)body;
 		if (other instanceof Weapon) {
@@ -58,18 +62,20 @@ public class Exploder implements CollisionListener {
 		world.remove(body);
 		if (other instanceof Weapon)
 			stats.kill(body.getClass().getName());
-		if (world.getBodies().size() > HARD_WORLD_LIMIT)
+		Body rem = e.getRemnant();
+		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
 			return;
 		List<Body> f = e.getFragments();
 		long group = grouper.findGroup(body);
-		Body rem = e.getRemnant();
+		if (rem instanceof Explosion) // gah, another special case
+			explosionQueue.add((Explosion)rem);
 		if (rem != null)
 			rem.setBitmask(group);
 		if (DOUBLE_GROUP && !(other instanceof Ship || body instanceof Weapon))
 			other.setBitmask(group);
 		// user-related stuff automatically passes the group limit
 		if (!(body instanceof Ship || other instanceof Ship
-				|| other instanceof Weapon)) {
+				|| other instanceof Weapon || rem instanceof Explosion)) {
 			body.setBitmask(group);
 			if (!grouper.shouldFragment(body))
 				return;
@@ -101,8 +107,12 @@ public class Exploder implements CollisionListener {
 			}
 		}
 		if (rem != null) {
-			rem.setPosition(body.getPosition().getX(),
-				body.getPosition().getY());
+			if (rem instanceof Explosion && !(body instanceof Ship))
+				rem.setPosition(event.getPoint().getX(),
+					event.getPoint().getY());
+			else
+				rem.setPosition(body.getPosition().getX(),
+					body.getPosition().getY());
 			rem.adjustVelocity(v);
 			rem.setRotation(body.getRotation());
 			rem.adjustAngularVelocity(body.getAngularVelocity());
