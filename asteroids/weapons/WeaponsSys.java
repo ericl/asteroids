@@ -13,6 +13,7 @@ public class WeaponsSys {
 	private long lastFired = 0;
 	private Queue<Weapon> fired = new LinkedList<Weapon>();
 	private Stats stats;
+	private float burst;
 
 	public WeaponsSys(Weapon w, Stats s) {
 		stats = s;
@@ -31,7 +32,13 @@ public class WeaponsSys {
 
 	public boolean canFire() {
 		long current = System.currentTimeMillis();
-		if ((current-lastFired)>=(long)(weapon.getReloadTime())) {
+		long disp = current - lastFired;
+		float test = Math.min(disp / weapon.getReloadTime(), weapon.getBurstLength());
+		if (test > burst)
+			burst = test;
+		if (burst > 1 && disp > weapon.getReloadTime() / 4
+				|| disp > weapon.getReloadTime()) {
+			burst--;
 			lastFired = current;
 			return true;
 		}

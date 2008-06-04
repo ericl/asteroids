@@ -18,6 +18,7 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	public abstract float getSpeed();
 	public abstract float getDamage();
 	public abstract float getReloadTime();
+	public abstract int getBurstLength();
 	
 	public void collided(CollisionEvent event) {}
 	

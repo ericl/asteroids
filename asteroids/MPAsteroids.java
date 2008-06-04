@@ -81,15 +81,17 @@ public class MPAsteroids extends MPGame {
 				display.w(-110),display.h(-39));
 		} else {
 			g2d.drawString("Armor: " + hull,
-				display.w(-110),display.h(-99));
+				display.w(-110),display.h(-119));
 			g2d.drawString("Speed: " +
 				(int)(1000*ship.getVelocity().length())/1000f,
-				display.w(-110),display.h(-79));
+				display.w(-110),display.h(-99));
 			g2d.drawString("Xcoord: " +
 				(int)(ship.getPosition().getX()),
-				display.w(-110),display.h(-59));
+				display.w(-110),display.h(-79));
 			g2d.drawString("Ycoord: " +
 				(int)(-ship.getPosition().getY()),
+				display.w(-110),display.h(-59));
+			g2d.drawString("Deaths: " + ship.deaths,
 				display.w(-110),display.h(-39));
 		}
 	}

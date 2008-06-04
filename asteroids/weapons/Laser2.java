@@ -16,6 +16,10 @@ public class Laser2 extends Laser {
 		return v(7,7);
 	}
 
+	public int getBurstLength() {
+		return 5;
+	}
+
 	public String getTexturePath() {
 		return "pixmaps/blast.png";
 	}
@@ -25,6 +29,6 @@ public class Laser2 extends Laser {
 	}
 
 	public float getReloadTime() {
-		return 500;
+		return 700;
 	}
 }

@@ -3,7 +3,10 @@ import static asteroids.Util.*;
 import net.phys2d.math.*;
 
 public class LaserExplosion extends Explosion {
-	private double life = 1;
+	static double frametime = 150;
+	static int frames = 8;
+	double inittime = System.currentTimeMillis();
+	int frame = 1;
 
 	public float getRadius() {
 		return 30;	
@@ -15,15 +18,15 @@ public class LaserExplosion extends Explosion {
 
 	public String getTexturePath() {
 		if (dead()) return null;
-		return "pixmaps/exp2/" + (int)life + ".png";
+		return "pixmaps/exp2/" + frame + ".png";
 	}
 
 	public void endFrame() {
-		life += .3;
+		frame = 1 + (int)((System.currentTimeMillis() - inittime)/frametime*frames);
 	}
 
 	public boolean dead() {
-		return life > 8;
+		return frame > 8;
 	}
 
 	public float getTextureScaleFactor() {

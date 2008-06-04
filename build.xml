@@ -8,8 +8,8 @@
 	<property name="lib" location="net"/>
 
 	<target name="compile">
-		<javac srcdir="${lib}" destdir="" debug="true"/>
-		<javac srcdir="${src}" destdir="" debug="true">
+		<javac srcdir="${lib}" destdir="" debug="true" target="5"/>
+		<javac srcdir="${src}" destdir="" debug="true" target="5">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>

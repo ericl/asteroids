@@ -16,6 +16,10 @@ public class Laser extends Weapon {
 		return v(7,3);
 	}
 
+	public int getBurstLength() {
+		return 0;
+	}
+
 	public boolean canExplode() {
 		return true;
 	}
@@ -25,7 +29,7 @@ public class Laser extends Weapon {
 	}
 
 	public float getReloadTime() {
-		return 100;
+		return 150;
 	}
 
 	public float getSpeed() {
