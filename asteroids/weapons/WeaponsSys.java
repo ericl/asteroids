@@ -62,12 +62,14 @@ public class WeaponsSys {
 		c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
 		c.adjustVelocity((Vector2f)s.getVelocity());
 		c.addExcludedBody(s);
+		for (Weapon f : fired)
+			c.addExcludedBody(f);
 		fired.add(c);
 		w.add(c);
 	}
 	
 	public void tracker(World w) {
-		if (!fired.isEmpty() && fired.peek().check())
+		while (!fired.isEmpty() && fired.peek().check())
 			w.remove(fired.remove());
 	}
 }

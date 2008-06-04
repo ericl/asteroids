@@ -6,6 +6,7 @@
 
 	<property name="src" location="asteroids"/>
 	<property name="lib" location="net"/>
+	<property name="doc" location="doc"/>
 
 	<target name="compile">
 		<javac srcdir="${lib}" destdir="" debug="true" target="5"/>
@@ -28,8 +29,19 @@
 		</jar>
 	</target>
 
+	<target name="doc" depends="compile">
+		<javadoc
+			sourcepath="."
+			packagenames="asteroids.*"
+			destdir="${doc}/asteroids"/>
+		<javadoc
+			sourcepath="."
+			packagenames="net.phys2d.*"
+			destdir="${doc}/phys2d"/>
+	</target>
+
 	<target name="clean">
-		<delete>
+		<delete dir="${doc}">
 			<fileset dir="." defaultexcludes="false">
 				<include name="**/*.class"/>
 				<include name="**/#*#"/>

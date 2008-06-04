@@ -3,7 +3,7 @@ import static asteroids.Util.*;
 import net.phys2d.math.*;
 
 public class LaserExplosion extends Explosion {
-	static double frametime = 150;
+	static double frametime = 100;
 	static int frames = 8;
 	double inittime = System.currentTimeMillis();
 	int frame = 1;
@@ -13,7 +13,7 @@ public class LaserExplosion extends Explosion {
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(21,21);
+		return v(21,20);
 	}
 
 	public String getTexturePath() {

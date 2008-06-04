@@ -25,6 +25,7 @@ public class MPAsteroids extends MPGame {
 		frame.addKeyListener(ship1 = new Ship2(world, stats));
 		ships[0] = ship1;
 		ships[1] = ship2;
+		display.setBackground("pixmaps/background2.jpg");
 		k = new FiniteStarField(display);
 		newGame();
 	}

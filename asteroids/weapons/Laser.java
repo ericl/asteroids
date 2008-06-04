@@ -33,7 +33,7 @@ public class Laser extends Weapon {
 	}
 
 	public float getSpeed() {
-		return 200;
+		return 250;
 	}
 
 	public Body getRemnant() {
