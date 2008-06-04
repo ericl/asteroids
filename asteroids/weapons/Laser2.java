@@ -2,6 +2,7 @@ package asteroids.weapons;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
+import java.util.*;
 
 public class Laser2 extends Laser {
 	public Body getRemnant() {

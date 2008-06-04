@@ -69,7 +69,7 @@ public class WeaponsSys {
 	}
 	
 	public void tracker(World w) {
-		while (!fired.isEmpty() && fired.peek().check())
-			w.remove(fired.remove());
+		while (!fired.isEmpty() && fired.peek().exploded())
+			fired.remove();
 	}
 }

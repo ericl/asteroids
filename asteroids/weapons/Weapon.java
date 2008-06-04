@@ -8,11 +8,12 @@ import net.phys2d.raw.*;
 public abstract class Weapon extends Body implements Textured, Explodable {
 	protected float lastFire = 0;
 	protected boolean canFire = false;
-	protected long activeTime, deactivateTime = 5;
+	private boolean exploded;
+	private long MAX_LIFETIME = 10000;
+	private long startTime = System.currentTimeMillis();
 
 	public Weapon(DynamicShape weap) {
 		super(weap, 1);
-		activeTime = System.currentTimeMillis();
 	}
 
 	public abstract float getSpeed();
@@ -28,13 +29,13 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	
 	public List<Body> explode() {
 		List<Body> f = new LinkedList<Body>();
+		exploded = true;
 		return f;
 	}
-	
-	public boolean check() {
-		long temp = System.currentTimeMillis();
-		if (temp - activeTime >= deactivateTime * 10) return true;
-		activeTime = temp;
-		return false;
+
+	public boolean exploded() {
+		if (System.currentTimeMillis() - startTime > MAX_LIFETIME)
+			return true;
+		return exploded;
 	}
 }
