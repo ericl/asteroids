@@ -134,7 +134,8 @@ public class Ship extends Body
 		thrust--;
 		accel();
 		torque();
-		if(fire == true) fire();
+		if (fire == true)
+			fire();
 		weapons.tracker(world);
 	}
 

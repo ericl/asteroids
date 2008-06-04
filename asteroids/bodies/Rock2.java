@@ -1,6 +1,5 @@
 package asteroids.bodies;
 import static asteroids.Util.*;
-import asteroids.handlers.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import java.util.*;

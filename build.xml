@@ -27,6 +27,17 @@
 				<include name="net/**/*.class"/>
 			</fileset>
 		</jar>
+		<jar jarfile="MPAsteroids.jar" update="true">
+			<manifest>
+				<attribute name="Main-Class" value="asteroids.MPAsteroids"/>
+			</manifest>
+			<fileset dir=".">
+				<include name="asteroids/**/*.class"/>
+				<include name="asteroids/**/*.png"/>
+				<include name="asteroids/**/*.jpg"/>
+				<include name="net/**/*.class"/>
+			</fileset>
+		</jar>
 	</target>
 
 	<target name="doc" depends="compile">
@@ -50,4 +61,6 @@
 			</fileset>
 		</delete>
 	</target>
+
+	<target name="all" depends="clean, jar, doc"/>
 </project>
