@@ -33,7 +33,7 @@ public class Ship extends Body
 		adjustAngularVelocity(-getAngularVelocity());
 		accel = torque = lastFired = 0;
 		fire = explode = false;
-		hull = 1;
+		hull = .2;
 		thrust = 0;
 		weapons.setWeaponType(oneIn(2) ? new Laser() : new Laser2());
 	}
@@ -157,5 +157,10 @@ public class Ship extends Body
 
 	public void keyTyped(KeyEvent e) {
 		// don't care
+	}
+	
+	public void setArmor(double num)
+	{
+		hull = num;
 	}
 }
