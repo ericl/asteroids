@@ -24,7 +24,8 @@ public class Ship extends Body
 	protected World world;
 	protected boolean invincible;
 	public int deaths;
-	protected WeaponsSys weapons;
+	protected MissileSys weapons;
+	public boolean waitingForSpawn; // don't touch please
 
 	public void reset() {
 		setRotation(0);
@@ -35,13 +36,15 @@ public class Ship extends Body
 		fire = explode = false;
 		hull = 1;
 		thrust = 0;
-		weapons.setWeaponType(oneIn(2) ? new Laser() : new Laser2());
+		//weapons.setWeaponType(oneIn(2) ? new Laser() : new Laser2());
+		weapons.setWeaponType(new Missile());
 	}
 
 	public Ship(World w, Stats s) {
 		super("Your ship", shape, 1000f);
 		world = w;
-		weapons = new WeaponsSys(oneIn(2) ? new Laser() : new Laser2(), s);
+		//weapons = new WeaponsSys(oneIn(2) ? new Laser() : new Laser2(), s);
+		weapons = new MissileSys(new Missile(), s);
 		setRotDamping(4000);
 	}
 
@@ -109,8 +112,8 @@ public class Ship extends Body
 	
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
-			case KeyEvent.VK_LEFT: torque = -.00008f; break;
-			case KeyEvent.VK_RIGHT: torque = .00008f; break;
+			case KeyEvent.VK_LEFT: torque = -8e-5f; break;
+			case KeyEvent.VK_RIGHT: torque = 8e-5f; break;
 			case KeyEvent.VK_UP: accel = 10; break;
 			case KeyEvent.VK_DOWN: accel = -5; break;
 			case KeyEvent.VK_SPACE: fire = true; break;
@@ -134,9 +137,8 @@ public class Ship extends Body
 		thrust--;
 		accel();
 		torque();
-		if (fire == true)
-			fire();
-		weapons.tracker(world);
+		if(fire == true) fire();
+		weapons.update(world);
 	}
 
 	protected void accel() {

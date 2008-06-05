@@ -8,12 +8,13 @@ import asteroids.handlers.Stats;
 import static asteroids.Util.*;
 
 public class WeaponsSys {
-	private Weapon weapon;
-	private Constructor<Weapon> cons;
-	private long lastFired = 0;
-	private Queue<Weapon> fired = new LinkedList<Weapon>();
-	private Stats stats;
-	private float burst;
+	
+	protected Weapon weapon;
+	protected Constructor<Weapon> cons;
+	protected long lastFired = 0;
+	protected Queue<Weapon> fired = new LinkedList<Weapon>();
+	protected Stats stats;
+	protected float burst;
 
 	public WeaponsSys(Weapon w, Stats s) {
 		stats = s;
@@ -68,8 +69,8 @@ public class WeaponsSys {
 		w.add(c);
 	}
 	
-	public void tracker(World w) {
+	public void update(World w) {
 		while (!fired.isEmpty() && fired.peek().exploded())
-			fired.remove();
+			w.remove(fired.remove());
 	}
 }

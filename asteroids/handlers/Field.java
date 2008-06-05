@@ -108,7 +108,7 @@ public class Field implements Scenario {
 		Asteroid rock = null;
 		if (id.equals("basic")) {
 			switch ((int)(5*Math.random())) {
-				case 1: rock = new HexAsteroid(range(20,30)); break;
+				case 1: rock = new BigAsteroid(range(20,30)); break;
 				case 2: rock = new Rock2(range(20,30)); break;
 				case 3: rock = new IceAsteroid(range(20,70)); break;
 				default: rock = new CircleAsteroid(range(20,30)); break;
@@ -120,7 +120,7 @@ public class Field implements Scenario {
 		else if (id.equals("circles"))
 			rock = new CircleAsteroid(range(30,40));
 		else if (id.equals("hex"))
-			rock = new HexAsteroid(range(10,50));
+			rock = new BigAsteroid(range(30,50));
 		else if (id.equals("rocky"))
 			rock = new Rock2(40);
 		else if (id.equals("icey"))

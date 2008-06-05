@@ -60,7 +60,7 @@ public class Asteroids extends AbstractGame {
 		// switching scenarios would give inconsistent output
 		// (e.g. zero score for an instant)
 		synchronized (world) {
-			scenario = new Field(world, display, ship, id);
+			scenario = new Field(world, display, ship, "hex");
 			scenario.start();
 		}
 	}
