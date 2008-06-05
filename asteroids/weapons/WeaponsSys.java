@@ -2,22 +2,36 @@ package asteroids.weapons;
 import java.util.*;
 import java.lang.reflect.*;
 import net.phys2d.raw.World;
+import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import asteroids.bodies.Ship;
 import asteroids.handlers.Stats;
 import static asteroids.Util.*;
 
 public class WeaponsSys {
-	private Weapon weapon;
-	private Constructor<Weapon> cons;
-	private long lastFired = 0;
-	private Queue<Weapon> fired = new LinkedList<Weapon>();
-	private Stats stats;
-	private float burst;
+	
+	protected Weapon weapon;
+	protected Constructor<Weapon> cons;
+	protected long lastFired = 0;
+	protected Queue<Weapon> fired = new LinkedList<Weapon>();
+	protected Stats stats;
+	protected float burst;
 
 	public WeaponsSys(Weapon w, Stats s) {
 		stats = s;
 		setWeaponType(w);
+	}
+
+	public WeaponsSys(Stats s) {
+		stats = s;
+		setRandomWeaponType();
+	}
+
+	public void setRandomWeaponType() {
+		switch ((int)(2*Math.random())) {
+			case 0: setWeaponType(new Laser()); break;
+			case 1: setWeaponType(new Laser2()); break;
+		}
 	}
 
 	@SuppressWarnings(value = "unchecked")
@@ -62,14 +76,17 @@ public class WeaponsSys {
 		c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
 		c.adjustVelocity((Vector2f)s.getVelocity());
 		c.addExcludedBody(s);
+		BodyList el = s.getExcludedList();
+		for (int i=0; i < el.size(); i++)
+			c.addExcludedBody(el.get(i));
 		for (Weapon f : fired)
 			c.addExcludedBody(f);
 		fired.add(c);
 		w.add(c);
 	}
 	
-	public void tracker(World w) {
+	public void update(World w) {
 		while (!fired.isEmpty() && fired.peek().exploded())
-			fired.remove();
+			w.remove(fired.remove());
 	}
 }

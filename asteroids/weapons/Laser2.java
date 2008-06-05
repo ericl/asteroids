@@ -2,7 +2,6 @@ package asteroids.weapons;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import java.util.*;
 
 public class Laser2 extends Laser {
 	public Body getRemnant() {
@@ -14,7 +13,7 @@ public class Laser2 extends Laser {
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(7,7);
+		return v(4,4);
 	}
 
 	public int getBurstLength() {

@@ -14,16 +14,16 @@ public class Rock2 extends TexturedAsteroid {
 	}
 
 	public Body getRemnant() {
-		return getRadius() > 20 ? new Rock2(getRadius() * 2 / 3) : null;
+		return null;
 	}
 
 	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(5);
-		int max = (int)range(3,4);
+		int max = (int)range(4,5);
 		if (getRadius() > 10)
 			for (int i=0; i < max; i++)
 				f.add(new Rock1(getRadius() / 3));
-		if(oneIn(1))
+		if(oneIn(2))
 		{
 			f.add(new ArmorRecovery(10, 1));
 		}

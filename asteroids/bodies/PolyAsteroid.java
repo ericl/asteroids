@@ -43,6 +43,7 @@ public abstract class PolyAsteroid extends Asteroid implements Drawable {
 	public Vector2f getTextureCenter() {
 		return centroid;
 	}
+
 	private static ROVector2f[] centralized(ROVector2f[] in) {
 		ROVector2f c = new Polygon(in).getCentroid();
 		ROVector2f[] out = new ROVector2f[in.length];

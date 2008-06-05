@@ -31,6 +31,6 @@ public class Ship2 extends Ship {
 
 	public void reset() {
 		super.reset();
-		setPosition(-100,0);
+		setPosition(-150,0);
 	}
 }
