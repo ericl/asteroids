@@ -23,18 +23,14 @@ public class FiniteStarField {
 
 	public void init() {
 		int numstars = (int)(DIMENSION*DIMENSION*DENSITY);
-		synchronized (stars) {
-			stars.clear();
-			for (int i=0; i < numstars; i++)
-				stars.add(new Star(v(range(0,DIMENSION), range(0,DIMENSION))));
-		}
+		stars.clear();
+		for (int i=0; i < numstars; i++)
+			stars.add(new Star(v(range(0,DIMENSION), range(0,DIMENSION))));
 	}
 	
 	public void starField() {
-		synchronized (stars) {
-			for (Star star : stars)
-				display.drawDrawable(star);
-		}
+		for (Star star : stars)
+			display.drawDrawable(star);
 	}
 
 	private static Color starColor() {

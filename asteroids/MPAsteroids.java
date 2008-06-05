@@ -12,6 +12,7 @@ public class MPAsteroids extends MPGame {
 	protected Ship[] ships = new Ship[2];
 	protected Scenario scenario;
 	protected int verbosity = 0;
+	protected boolean restart;
 	protected FiniteStarField k;
 
 	public static void main(String[] args) {
@@ -32,6 +33,10 @@ public class MPAsteroids extends MPGame {
 	}
 
 	protected void update() {
+		if (restart) {
+			newGame();
+			restart = false;
+		}
 		scenario.update();
 		display.setCenter(ship1.getPosition(), ship2.getPosition());
 	}
@@ -56,20 +61,16 @@ public class MPAsteroids extends MPGame {
 
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'r': newGame(); break;
+			case 'r': restart = true; break;
 			case 'm': verbosity++; break;
 		}
 	}
 
 	public void newGame() {
 		k.init();
-		String id = Field.ids[(int)range(0,Field.ids.length)];
-		// switching scenarios would give inconsistent output
-		// (e.g. zero score for an instant)
-		synchronized (world) {
-			scenario = new Field(world, display, ships, id);
-			scenario.start();
-		}
+		int id = Field.ids[(int)range(0,Field.ids.length)];
+		scenario = new Field(world, display, ships, id);
+		scenario.start();
 	}
 
 	private void shipStatus(Graphics2D g2d, Ship ship) {

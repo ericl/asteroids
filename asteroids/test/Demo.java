@@ -22,6 +22,7 @@ public class Demo {
 	protected World world;
 	protected float border = 300, buf = 500;
 	protected int numrocks = 30, count;
+	protected boolean restart;
 	protected String score;
 	protected Ship ship;
 	protected float xo, yo;
@@ -66,7 +67,7 @@ public class Demo {
 		frame.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
-					case 'r': init(); return;
+					case 'r': restart = true; return;
 				}
 			}
 		});
@@ -81,28 +82,29 @@ public class Demo {
 		Timer t = new Timer(60f);
 		float dt;
 		while (true) {
-			// do the sleeping outside the synchronized part
-			dt = t.tick();
-			synchronized (world) {
-				if (object.getRemnant().canExplode())
-					failed = true;
-				logic.add(logicTime);
-				render.add(renderTime);
-				if (renderTime > maxRenderTime)
-					maxRenderTime = renderTime;
-				if (logicTime > maxLogicTime)
-					maxLogicTime = logicTime;
-				beforeRender = System.currentTimeMillis();
-				d.drawWorld(world);
-				drawGUI(dt);
-				d.show();
-				renderTime = System.currentTimeMillis() - beforeRender;
-				beforeLogic = System.currentTimeMillis();
-				for (int i=0;i<5;i++)
-					world.step(dt);
-				logicTime = System.currentTimeMillis() - beforeLogic;
-				update();
+			if (restart) {
+				restart = false;
+				init();
 			}
+			dt = t.tick();
+			if (object.getRemnant().canExplode())
+				failed = true;
+			logic.add(logicTime);
+			render.add(renderTime);
+			if (renderTime > maxRenderTime)
+				maxRenderTime = renderTime;
+			if (logicTime > maxLogicTime)
+				maxLogicTime = logicTime;
+			beforeRender = System.currentTimeMillis();
+			d.drawWorld(world);
+			drawGUI(dt);
+			d.show();
+			renderTime = System.currentTimeMillis() - beforeRender;
+			beforeLogic = System.currentTimeMillis();
+			for (int i=0;i<5;i++)
+				world.step(dt);
+			logicTime = System.currentTimeMillis() - beforeLogic;
+			update();
 		}
 	}
 
@@ -119,30 +121,28 @@ public class Demo {
 		render = new Average();
 		arbiters = new Average();
 		bodies = new Average();
-		synchronized (world) {
-			failed = false;
-			world.clear();
-			frame.removeKeyListener(ship);
-			score = null;
-			xo = width/2;
-			yo = height/2;
-			d.setCenter(v(width, height));
-			count = 0;
-			world.setGravity(0,0);
-			for (int i=0; i < numrocks; i++)
-				world.add(newAsteroid());
-			world.add(object = new Europa());
-			object.setPosition((xo+width/2),(yo+height/2));
-			ship = new Ship(world, stats);
-			k = new FiniteStarField(d);
-			k.init();
-			object.getRemnant().addExcludedBody(ship);
-			ship.addExcludedBody(object);
-			ship.setInvincible(true);
-			frame.addKeyListener(ship);
-			ship.setPosition((xo+width/2),(yo+height/2));
-			world.add(ship);
-		}
+		failed = false;
+		world.clear();
+		frame.removeKeyListener(ship);
+		score = null;
+		xo = width/2;
+		yo = height/2;
+		d.setCenter(v(width, height));
+		count = 0;
+		world.setGravity(0,0);
+		for (int i=0; i < numrocks; i++)
+			world.add(newAsteroid());
+		world.add(object = new Europa());
+		object.setPosition((xo+width/2),(yo+height/2));
+		ship = new Ship(world, stats);
+		k = new FiniteStarField(d);
+		k.init();
+		object.getRemnant().addExcludedBody(ship);
+		ship.addExcludedBody(object);
+		ship.setInvincible(true);
+		frame.addKeyListener(ship);
+		ship.setPosition((xo+width/2),(yo+height/2));
+		world.add(ship);
 	}
 
 	protected void drawGUI(float frameAverage) {

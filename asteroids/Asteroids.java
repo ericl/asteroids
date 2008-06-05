@@ -10,6 +10,7 @@ public class Asteroids extends AbstractGame {
 	private static final int BASE_HEIGHT = 500;
 	protected final Ship ship;
 	protected Scenario scenario;
+	protected boolean restart;
 	protected int verbosity = 0;
 	protected FiniteStarField k;
 
@@ -27,6 +28,10 @@ public class Asteroids extends AbstractGame {
 	}
 
 	protected void update() {
+		if (restart) {
+			newGame();
+			restart = false;
+		}
 		scenario.update();
 		display.setCenter(ship.getPosition());
 	}
@@ -51,7 +56,7 @@ public class Asteroids extends AbstractGame {
 
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'r': newGame(); break;
+			case 'r': restart = true; break;
 			case 'm': verbosity++; break;
 		}
 	}
@@ -60,13 +65,9 @@ public class Asteroids extends AbstractGame {
 		k.init();
 		stats.print();
 		stats.reset();		
-		String id = Field.ids[(int)range(0,Field.ids.length)];
-		// switching scenarios would give inconsistent output
-		// (e.g. zero score for an instant)
-		synchronized (world) {
-			scenario = new Field(world, display, ship, id);
-			scenario.start();
-		}
+		int id = Field.ids[(int)range(0,Field.ids.length)];
+		scenario = new Field(world, display, ship, id);
+		scenario.start();
 	}
 
 	private void shipStatus(Graphics2D g2d) {
