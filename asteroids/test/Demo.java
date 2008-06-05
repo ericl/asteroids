@@ -112,7 +112,6 @@ public class Demo {
 	 * Resets game within demo.
 	 */
 	protected void init() {
-		stats.print();
 		stats.reset();
 		maxRenderTime = 0;
 		maxLogicTime = 0;
