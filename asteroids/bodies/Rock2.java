@@ -22,7 +22,11 @@ public class Rock2 extends TexturedAsteroid {
 		int max = (int)range(3,4);
 		if (getRadius() > 10)
 			for (int i=0; i < max; i++)
-				f.add(new Rock1(getRadius() / 3));	
+				f.add(new Rock1(getRadius() / 3));
+		if(oneIn(1))
+		{
+			f.add(new ArmorRecovery(10, 1));
+		}
 		return f;
 	}
 }

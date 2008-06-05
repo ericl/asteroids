@@ -126,6 +126,11 @@ public class Exploder implements CollisionListener {
 		double vmod = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
 		return Math.min(other.getMass(),1000) * vmod / 1e7;
 	}
+	
+	public Display getDisplay()
+	{
+		return display;
+	}
 }
 
 /**

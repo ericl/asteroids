@@ -95,7 +95,10 @@ public class Field implements Scenario {
 		}
 		for (int i=0; i < density.length; i++)
 			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY)
+			{
 				world.add(newAsteroid(ships[i].getPosition()));
+			}
+
 		if (done() && score < 0) {
 			for (Ship ship : ships)
 				world.remove(ship);
@@ -134,5 +137,19 @@ public class Field implements Scenario {
 		rock.adjustVelocity(v(range(-count/20-10,count/20+10),
 		                      range(count/-20-10,count/20+10)));
 		return rock;
+	}
+	
+	protected PowerUp newPowerUp(ROVector2f origin) {
+		// difficulty increases with count
+		PowerUp h = new ArmorRecovery(10, 1);
+		// workaround for rogue collisions
+		h.setMaxVelocity(10+count/10, 10+count/10);
+		h.adjustAngularVelocity((float)(2*Math.random()-1));
+		ROVector2f vo = display.getOffscreenCoords(
+			h.getRadius(), BORDER, origin);
+		h.setPosition(vo.getX(), vo.getY());
+		h.adjustVelocity(v(range(-count/20-10,count/20+10),
+		                      range(count/-20-10,count/20+10)));
+		return h;
 	}
 }
