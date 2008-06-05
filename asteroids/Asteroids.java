@@ -46,6 +46,13 @@ public class Asteroids extends AbstractGame {
 			g2d.setFont(CENTER);
 			String score = "Score: " + scenario.score();
 			g2d.drawString(score, centerX(CENTER, score, g2d), display.h(0)/2);
+			if (!(scenario instanceof Field)) return;
+			g2d.drawString("High Scores", centerX(CENTER, "High Scores", g2d), display.h(0)/2+50);
+			g2d.setFont(NORMAL);
+			g2d.setColor(Color.GRAY);
+			stats.build(((Field)scenario).id, "TestName", scenario.score());
+			for (int i=0; i<5; i++)
+				g2d.drawString(stats.get(i+1), centerX(CENTER, stats.get(i+1), g2d), display.h(0)/2+69+19*i);
 		}
 		shipStatus(g2d);
 	}
@@ -63,7 +70,6 @@ public class Asteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
-		stats.print();
 		stats.reset();		
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, ship, id);

@@ -13,7 +13,7 @@ public class Field implements Scenario {
 	protected Display display;
 	protected Dimension dim;
 	protected int count, score = -1;
-	protected int id;
+	public int id;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
 	public final static int HEX = 1;
