@@ -27,7 +27,7 @@ public class LargeExplosion extends Explosion {
 	}
 
 	public String getTexturePath() {
-		if (dead())
+		if (frame > 11)
 			return null;
 		return "pixmaps/exp1/" + frame + ".png";
 	}

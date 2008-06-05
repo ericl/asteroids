@@ -16,16 +16,17 @@ public class Ship extends Body
 	
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	protected static Shape shape = new Polygon(poly);
-	protected double hull = 1;
+	protected static double MAX = 1;
+	protected double hull = MAX;
 	protected int thrust;
 	protected float accel, torque;
 	protected boolean fire, explode;
 	protected long lastFired;
 	protected World world;
 	protected boolean invincible;
+	protected WeaponsSys weapons;
+	protected MissileSys missiles;
 	public int deaths;
-	protected MissileSys weapons;
-	public boolean waitingForSpawn; // don't touch please
 
 	public void reset() {
 		setRotation(0);
@@ -34,17 +35,20 @@ public class Ship extends Body
 		adjustAngularVelocity(-getAngularVelocity());
 		accel = torque = lastFired = 0;
 		fire = explode = false;
-		hull = 1;
+		hull = MAX;
 		thrust = 0;
-		//weapons.setWeaponType(oneIn(2) ? new Laser() : new Laser2());
-		weapons.setWeaponType(new Missile());
+		weapons.setRandomWeaponType();
+	}
+
+	public static void setMax(double damage) {
+		MAX = damage;
 	}
 
 	public Ship(World w, Stats s) {
 		super("Your ship", shape, 1000f);
 		world = w;
-		//weapons = new WeaponsSys(oneIn(2) ? new Laser() : new Laser2(), s);
-		weapons = new MissileSys(new Missile(), s);
+		weapons = new WeaponsSys(s);
+		missiles = new MissileSys(new Missile(),s);
 		setRotDamping(4000);
 	}
 
@@ -70,6 +74,8 @@ public class Ship extends Body
 	}
 
 	public Body getRemnant() {
+		// assume 1 death if explode
+		deaths++;
 		return new LargeExplosion(1.5f);
 	}
 
@@ -90,7 +96,7 @@ public class Ship extends Body
 	}
 
 	public double getDamage() {
-		return invincible ? Double.POSITIVE_INFINITY : hull < 0 ? 0 : hull;
+		return invincible ? Double.POSITIVE_INFINITY : hull < 0 ? 0 : hull/MAX;
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
@@ -118,6 +124,8 @@ public class Ship extends Body
 			case KeyEvent.VK_DOWN: accel = -5; break;
 			case KeyEvent.VK_SPACE: fire = true; break;
 		}
+		if (e.getKeyChar() == '\'')
+			fire = true;
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -128,6 +136,8 @@ public class Ship extends Body
 			case KeyEvent.VK_DOWN: accel = 0; break;
 			case KeyEvent.VK_SPACE: fire = false; break;
 		}
+		if (e.getKeyChar() == '\'')
+			fire = false;
 	}
 
 	public void endFrame() {

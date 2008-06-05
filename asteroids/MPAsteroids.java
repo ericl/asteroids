@@ -25,6 +25,7 @@ public class MPAsteroids extends MPGame {
 		frame.addKeyListener(ship1 = new Ship2(world, stats));
 		ships[0] = ship1;
 		ships[1] = ship2;
+		Ship.setMax(2);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new FiniteStarField(display);
 		newGame();
@@ -41,11 +42,12 @@ public class MPAsteroids extends MPGame {
 
 	protected void postWorld() {
 		Graphics2D[] g2ds = display.getAllGraphics();
-		for (Graphics2D g2d : g2ds) {
-			if (scenario.done()) {
-				g2d.setColor(Color.black);
-				g2d.drawString("Score: " + scenario.score(),
-				display.w(0)/2-27, display.h(0)/2+5);
+		for (int i=0; i < g2ds.length; i++) {
+			if (ships[i].canExplode()) {
+				g2ds[i].setColor(Color.GRAY);
+				g2ds[i].setFont(NORMAL);
+				g2ds[i].drawString(RESTART,
+					centerX(NORMAL, RESTART, g2ds[i]), display.h(0)/2-5);
 			}
 		}
 		shipStatus(g2ds[0], ship1);
@@ -61,17 +63,18 @@ public class MPAsteroids extends MPGame {
 
 	public void newGame() {
 		k.init();
-		String id = ShipBattle.ids[(int)range(0,Field.ids.length)];
+		String id = Field.ids[(int)range(0,Field.ids.length)];
 		// switching scenarios would give inconsistent output
 		// (e.g. zero score for an instant)
 		synchronized (world) {
-			scenario = new ShipBattle(world, display, ships, id);
+			scenario = new Field(world, display, ships, id);
 			scenario.start();
 		}
 	}
 
 	private void shipStatus(Graphics2D g2d, Ship ship) {
 		g2d.setColor(Color.gray);
+		g2d.setFont(NORMAL);
 		String hull = "Infinity";
 		if (ship.getDamage() != Double.POSITIVE_INFINITY)
 			hull = (int)(ship.getDamage()*1000)/10+"%";

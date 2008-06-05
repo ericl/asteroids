@@ -15,8 +15,7 @@ public class Field implements Scenario {
 	protected Display display;
 	protected Dimension dim;
 	protected int count, score = -1;
-	public static String[] ids = {"circles", "hex", "large",
-	                              "basic", "rocky", "icey"};
+	public final static String[] ids = {"hex", "large", "rocky", "icey"};
 	protected String id;
 
 	public Field(World w, Display d, Ship ship, String id) {
@@ -98,7 +97,8 @@ public class Field implements Scenario {
 				world.add(newAsteroid(ships[i].getPosition()));
 		if (done() && score < 0) {
 			for (Ship ship : ships)
-				world.remove(ship);
+				if (ship.canExplode())
+					world.remove(ship);
 			score = count;
 		}
 	}
@@ -106,28 +106,17 @@ public class Field implements Scenario {
 	protected Asteroid newAsteroid(ROVector2f origin) {
 		// difficulty increases with count
 		Asteroid rock = null;
-		if (id.equals("basic")) {
-			switch ((int)(5*Math.random())) {
-				case 1: rock = new BigAsteroid(range(20,30)); break;
-				case 2: rock = new Rock2(range(20,30)); break;
-				case 3: rock = new IceAsteroid(range(20,70)); break;
-				default: rock = new CircleAsteroid(range(20,30)); break;
-			}
-			if (oneIn(200))
-				rock = new CircleAsteroid(range(100,300));
-		} else if (id.equals("large"))
-			rock = new CircleAsteroid(oneIn(3) ? range(100,200) : range(10,20));
-		else if (id.equals("circles"))
-			rock = new CircleAsteroid(range(30,40));
+		if (id.equals("large"))
+			rock = new BigAsteroid(oneIn(3) ? range(100,175) : range(10,75));
 		else if (id.equals("hex"))
-			rock = new BigAsteroid(range(30,50));
+			rock = new HexAsteroid(oneIn(100) ? range(100,200) : range(30,50));
 		else if (id.equals("rocky"))
-			rock = new Rock2(40);
+			rock = new BigAsteroid(range(30,50));
 		else if (id.equals("icey"))
 			rock = new IceAsteroid(range(10,90));
 		// workaround for rogue collisions
 		rock.setMaxVelocity(10+count/10, 10+count/10);
-		rock.adjustAngularVelocity((float)(2*Math.random()-1));
+		rock.adjustAngularVelocity((float)(1.5*Math.random()-.75));
 		ROVector2f vo = display.getOffscreenCoords(
 			rock.getRadius(), BORDER, origin);
 		rock.setPosition(vo.getX(), vo.getY());

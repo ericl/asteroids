@@ -2,6 +2,7 @@ package asteroids.weapons;
 import java.util.*;
 import java.lang.reflect.*;
 import net.phys2d.raw.World;
+import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import asteroids.bodies.Ship;
 import asteroids.handlers.Stats;
@@ -19,6 +20,18 @@ public class WeaponsSys {
 	public WeaponsSys(Weapon w, Stats s) {
 		stats = s;
 		setWeaponType(w);
+	}
+
+	public WeaponsSys(Stats s) {
+		stats = s;
+		setRandomWeaponType();
+	}
+
+	public void setRandomWeaponType() {
+		switch ((int)(2*Math.random())) {
+			case 0: setWeaponType(new Laser()); break;
+			case 1: setWeaponType(new Laser2()); break;
+		}
 	}
 
 	@SuppressWarnings(value = "unchecked")
@@ -63,6 +76,9 @@ public class WeaponsSys {
 		c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
 		c.adjustVelocity((Vector2f)s.getVelocity());
 		c.addExcludedBody(s);
+		BodyList el = s.getExcludedList();
+		for (int i=0; i < el.size(); i++)
+			c.addExcludedBody(el.get(i));
 		for (Weapon f : fired)
 			c.addExcludedBody(f);
 		fired.add(c);
