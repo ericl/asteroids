@@ -10,6 +10,7 @@ public class Asteroids extends AbstractGame {
 	private static final int BASE_HEIGHT = 500;
 	protected final Ship ship;
 	protected Scenario scenario;
+	protected boolean restart;
 	protected int verbosity = 0;
 	protected FiniteStarField k;
 
@@ -27,6 +28,10 @@ public class Asteroids extends AbstractGame {
 	}
 
 	protected void update() {
+		if (restart) {
+			newGame();
+			restart = false;
+		}
 		scenario.update();
 		display.setCenter(ship.getPosition());
 	}
@@ -34,9 +39,13 @@ public class Asteroids extends AbstractGame {
 	protected void postWorld() {
 		Graphics2D g2d = display.getGraphics();
 		if (scenario.done()) {
-			g2d.setColor(Color.gray);
-			g2d.drawString("Score: " +
-				scenario.score(), display.w(0)/2-27, display.h(0)/2+5);
+			g2d.setColor(Color.GRAY);
+			g2d.setFont(NORMAL);
+			g2d.drawString(RESTART, centerX(NORMAL, RESTART, g2d),display.h(0)/2+19);
+			g2d.setColor(Color.ORANGE);
+			g2d.setFont(CENTER);
+			String score = "Score: " + scenario.score();
+			g2d.drawString(score, centerX(CENTER, score, g2d), display.h(0)/2);
 		}
 		shipStatus(g2d);
 	}
@@ -47,7 +56,7 @@ public class Asteroids extends AbstractGame {
 
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'r': newGame(); break;
+			case 'r': restart = true; break;
 			case 'm': verbosity++; break;
 		}
 	}
@@ -56,17 +65,14 @@ public class Asteroids extends AbstractGame {
 		k.init();
 		stats.print();
 		stats.reset();		
-		String id = Field.ids[(int)range(0,Field.ids.length)];
-		// switching scenarios would give inconsistent output
-		// (e.g. zero score for an instant)
-		synchronized (world) {
-			scenario = new Field(world, display, ship, id);
-			scenario.start();
-		}
+		int id = Field.ids[(int)range(0,Field.ids.length)];
+		scenario = new Field(world, display, ship, id);
+		scenario.start();
 	}
 
 	private void shipStatus(Graphics2D g2d) {
 		g2d.setColor(Color.gray);
+		g2d.setFont(NORMAL);
 		if (verbosity % 2 == 0) {
 			g2d.drawString("Armor: " +
 				(int)(ship.getDamage()*1000)/10+"%",

@@ -2,6 +2,7 @@ package asteroids.bodies;
 import java.util.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
+import static asteroids.Util.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.*;
 
@@ -52,9 +53,5 @@ public class Europa extends CircleAsteroid implements Textured {
 	
 	public float getRadius() {
 		return sphereradius;
-	}
-
-	private static Vector2f v(Number x, Number y) {
-		return new Vector2f(x.floatValue(), y.floatValue());
 	}
 }

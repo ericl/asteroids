@@ -1,11 +1,10 @@
 package asteroids.handlers;
-import java.util.concurrent.*;
 import java.util.*;
 
 public class Stats {
 	// necessary?
-	private Map<String, Long> kill = new ConcurrentHashMap<String, Long>();
-	private Map<String, Float> dmg = new ConcurrentHashMap<String, Float>();
+	private Map<String, Long> kill = new HashMap<String, Long>();
+	private Map<String, Float> dmg = new HashMap<String, Float>();
 	public int hit = 0, att = 0;
 //	private String scenario;
 //

@@ -1,6 +1,7 @@
 package asteroids.handlers;
 
-// TODO: write abstract scenario instead
+// TODO: write different scenarios
+// (right now Field handles everything, making this pointless)
 public interface Scenario {
 	public void start();
 	public void update();

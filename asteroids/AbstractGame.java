@@ -18,6 +18,11 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	protected volatile boolean pause;
 	private MainLoop mainLoop;
 
+	// random fonts
+	public final static Font CENTER = new Font("Serif", Font.BOLD, 15);
+	public final static Font NORMAL = new Font("SansSerif", Font.PLAIN, 12);
+	public final static String RESTART = "R - Restart Game";
+
 	private class MainLoop extends Thread {
 		public void run() {
 			if (display == null)
@@ -38,6 +43,11 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 				}
 			}
 		}
+	}
+
+	protected int centerX(Font f, String s, Graphics2D g2d) {
+		return (int)((dim.getWidth() - g2d.getFontMetrics(f)
+				.getStringBounds(s, g2d).getWidth())/2);
 	}
 
 	public AbstractGame(String title, Dimension d) {
