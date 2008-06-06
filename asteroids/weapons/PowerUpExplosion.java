@@ -2,23 +2,32 @@ package asteroids.weapons;
 import static asteroids.Util.*;
 import net.phys2d.math.*;
 
-public class LaserExplosion extends Explosion {
-	static double FRAMETIME = 100;
-	static int FRAMES = 8;
+public class PowerUpExplosion extends Explosion {
+	static double FRAMETIME = 200;
+	static int FRAMES = 5;
 	double inittime = System.currentTimeMillis();
 	int frame = 1;
 
+	public PowerUpExplosion() {
+		super();
+		setEnabled(true);
+	}
+
 	public float getRadius() {
-		return 30;	
+		return 12;	
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(21,20);
+		return v(6,7);
+	}
+
+	public float getRotation() {
+		return 0;
 	}
 
 	public String getTexturePath() {
 		if (dead()) return null;
-		return "pixmaps/exp2/" + frame + ".png";
+		return "pixmaps/exp3/" + frame + ".png";
 	}
 
 	public void endFrame() {
@@ -30,6 +39,6 @@ public class LaserExplosion extends Explosion {
 	}
 
 	public float getTextureScaleFactor() {
-		return 1f;
+		return 1.3f;
 	}
 }

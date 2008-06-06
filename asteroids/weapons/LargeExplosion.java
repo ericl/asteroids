@@ -3,8 +3,8 @@ import static asteroids.Util.*;
 import net.phys2d.math.*;
 
 public class LargeExplosion extends Explosion {
-	static double frametime = 500;
-	static int frames = 11;
+	static double FRAMETIME = 500;
+	static int FRAMES = 11;
 	double inittime = System.currentTimeMillis();
 	int frame = 1;
 	float scale = 1;
@@ -33,11 +33,11 @@ public class LargeExplosion extends Explosion {
 	}
 
 	public void endFrame() {
-		frame = 1 + (int)((System.currentTimeMillis() - inittime)/frametime*frames);
+		frame = 1 + (int)((System.currentTimeMillis() - inittime)/FRAMETIME*FRAMES);
 	}
 
 	public boolean dead() {
-		return frame > 11;
+		return frame > FRAMES;
 	}
 
 	public float getTextureScaleFactor() {

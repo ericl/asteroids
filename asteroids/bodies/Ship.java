@@ -171,8 +171,7 @@ public class Ship extends Body
 		// don't care
 	}
 	
-	public void setArmor(double num)
-	{
+	public void setArmor(double num) {
 		hull = num;
 	}
 }

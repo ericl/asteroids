@@ -51,6 +51,7 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 				f.add(x = new CircleAsteroid(getRadius() / 3));
 				x.setColor(color);
 			}
+		powerup(f);
 		return f;
 	}
 }

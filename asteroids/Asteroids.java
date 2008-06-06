@@ -13,6 +13,16 @@ public class Asteroids extends AbstractGame {
 	protected boolean restart;
 	protected int verbosity = 0;
 	protected FiniteStarField k;
+	protected boolean scoresBuilt;
+	protected Thread scoreBuilder;
+	protected String name = System.getProperty("user.name");
+	
+	private class ScoreBuilder extends Thread {
+		public void run() {
+			stats.build(((Field)scenario).id, name, scenario.score());
+			scoresBuilt = true;
+		}
+	}
 
 	public static void main(String[] args) {
 		AbstractGame game = new Asteroids();
@@ -38,23 +48,40 @@ public class Asteroids extends AbstractGame {
 
 	protected void postWorld() {
 		Graphics2D g2d = display.getGraphics();
+		g2d.setColor(COLOR);
+		g2d.setFont(FONT_BOLD);
+		g2d.drawString("\"" + scenario.toString() + "\"", 10, 40);
 		if (scenario.done()) {
-			g2d.setColor(Color.GRAY);
-			g2d.setFont(NORMAL);
-			g2d.drawString(RESTART, centerX(NORMAL, RESTART, g2d),display.h(0)/2+19);
-			g2d.setColor(Color.ORANGE);
-			g2d.setFont(CENTER);
-			String score = "Score: " + scenario.score();
-			g2d.drawString(score, centerX(CENTER, score, g2d), display.h(0)/2);
-			if (!(scenario instanceof Field)) return;
-			g2d.drawString("High Scores", centerX(CENTER, "High Scores", g2d), display.h(0)/2+50);
-			g2d.setFont(NORMAL);
-			g2d.setColor(Color.GRAY);
-			stats.build(((Field)scenario).id, "TestName", scenario.score());
-			for (int i=0; i<5; i++)
-				g2d.drawString(stats.get(i+1), centerX(CENTER, stats.get(i+1), g2d), display.h(0)/2+69+19*i);
+			g2d.setColor(COLOR);
+			g2d.setFont(FONT_NORMAL);
+			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
+			g2d.setColor(COLOR_BOLD);
+			g2d.setFont(FONT_BOLD);
+			String score = "Your Score: " + scenario.score();
+			g2d.drawString(score, centerX(FONT_BOLD, score, g2d), display.h(0)/2-20);
+			if (!scoreBuilder.isAlive() && !scoresBuilt)
+				scoreBuilder.start();
+			else if (scenario instanceof Field)
+				drawHighScores(g2d);
+			else
+				System.err.println("Can't get to high scores.");
+		} else {
+			shipStatus(g2d);
 		}
-		shipStatus(g2d);
+	}
+
+	public void drawHighScores(Graphics2D g2d) {
+		g2d.setFont(FONT_NORMAL);
+		g2d.setColor(COLOR);
+		String loading = "Loading high scores...";
+		if (scoreBuilder.isAlive())
+			g2d.drawString(loading, centerX(FONT_NORMAL,loading,g2d),
+				display.h(0)/2);
+		else
+			for (int i=0; i<5; i++)
+				g2d.drawString(stats.get(i+1),
+					centerX(FONT_NORMAL, stats.get(i+1), g2d),
+					display.h(0)/2+19*i);
 	}
 
 	protected void preWorld() {
@@ -70,6 +97,8 @@ public class Asteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
+		scoreBuilder = new ScoreBuilder();
+		scoresBuilt = false;
 		stats.reset();		
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, ship, id);
@@ -77,18 +106,21 @@ public class Asteroids extends AbstractGame {
 	}
 
 	private void shipStatus(Graphics2D g2d) {
-		g2d.setColor(Color.gray);
-		g2d.setFont(NORMAL);
+		g2d.setFont(FONT_NORMAL);
 		if (verbosity % 2 == 0) {
+			g2d.setColor(shipColor(ship));
 			g2d.drawString("Armor: " +
 				(int)(ship.getDamage()*1000)/10+"%",
 				display.w(-110),display.h(-35));
+			g2d.setColor(COLOR);
 			g2d.drawString("Asteroids: " +
 				scenario.score(),display.w(-110),display.h(-15));
 		} else {
+			g2d.setColor(shipColor(ship));
 			g2d.drawString("Armor: " +
 				(int)(ship.getDamage()*1000)/10+"%",
 				display.w(-110),display.h(-95));
+			g2d.setColor(COLOR);
 			g2d.drawString("Speed: " +
 				(int)(1000*ship.getVelocity().length())/1000f,
 				display.w(-110),display.h(-75));

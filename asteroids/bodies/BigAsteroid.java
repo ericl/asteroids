@@ -1,10 +1,7 @@
 package asteroids.bodies;
-
-import static asteroids.Util.v;
-
+import static asteroids.Util.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.Body;
 
@@ -30,6 +27,7 @@ public class BigAsteroid extends TexturedAsteroid {
 				tmp = new SmallAsteroid(getRadius() / 3);
 				f.add(tmp);
 			}
+		powerup(f);
 		return f;
 	}
 }

@@ -1,5 +1,4 @@
 package asteroids.bodies;
-import asteroids.handlers.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
@@ -27,6 +26,7 @@ public class HexAsteroid extends PolyAsteroid {
 				tmp.setColor(color);
 				f.add(tmp);
 			}
+		powerup(f);
 		return f;
 	}
 }

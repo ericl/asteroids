@@ -5,13 +5,13 @@ import java.net.*;
 import java.security.*;
 
 public class Stats {
-	// necessary?
 	private Map<String, Integer> kill = new HashMap<String, Integer>();
 	private Map<String, Double> dmg = new HashMap<String, Double>();
-	private List<String> list = new ArrayList<String>();
+	private Vector<String> list = new Vector<String>();
 	public int hit = 0, att = 0;
 
 	public void reset() {
+		list = new Vector<String>();
 		kill.clear();
 		dmg.clear();
 		list.clear();
@@ -27,25 +27,34 @@ public class Stats {
 	}
 
 	public void build(int scenario, String name, int score) {
-		if (!list.isEmpty()) return;
+		List<String> output = list;
+		if (!output.isEmpty())
+				return;
 		try {
-			URL init = new URL("http://a.cognoseed.org/post.php?scenario=" + scenario + "&name=" + name + "&score=" + score + "&chk=" + md5(name+scenario+score+hit+att+(System.currentTimeMillis()/1000)));
-			HttpURLConnection connection = (HttpURLConnection) init.openConnection();
-			connection.connect();
-			LineNumberReader content = new LineNumberReader(new InputStreamReader(connection.getInputStream()));
+			URL init = new URL("http://a.cognoseed.org/post.php?scenario="
+				+ scenario + "&name=" + name + "&score=" + score + "&chk="
+				+ md5(name+scenario+score+hit+att
+						+(System.currentTimeMillis()/1000)));
+			HttpURLConnection con = (HttpURLConnection)init.openConnection();
+			con.connect();
+			LineNumberReader content = new LineNumberReader(
+				new InputStreamReader(con.getInputStream()));
 			content.readLine();
-			connection.disconnect();
+			con.disconnect();
 			init = new URL("http://a.cognoseed.org/get.php?scenario=" + scenario);
-			connection = (HttpURLConnection) init.openConnection();
-			connection.connect();
-			content = new LineNumberReader(new InputStreamReader(connection.getInputStream()));
+			con = (HttpURLConnection) init.openConnection();
+			con.connect();
+			content = new LineNumberReader(
+				new InputStreamReader(con.getInputStream()));
 			String s = content.readLine();
 			while (s != null) {
-				list.add(s);
+				output.add(s);
 				s = content.readLine();
 			}
-			connection.disconnect();
-		} catch (Exception e) {}
+			con.disconnect();
+		} catch (Exception e) {
+			System.err.println(e);
+		}
 	}
 
 	public void kill(String body) {
@@ -64,7 +73,7 @@ public class Stats {
 		dmg.put(body, d+amt);
 	}
 
-	private static String md5(String hash) throws Exception {
+	private static String md5(String hash) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		byte[] retHash = new byte[32];
 		String str = "", proc;

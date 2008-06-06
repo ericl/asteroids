@@ -61,7 +61,7 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 	}
 
 	public Body getRemnant() {
-		return null;
+		return PowerUp.random();
 	}
 
 	public List<Body> getFragments() {

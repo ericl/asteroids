@@ -6,7 +6,8 @@ import java.util.*;
 public interface Explodable extends Visible {
 
 	/**
-	 * @return True if the body should be exploded.
+	 * @return True if the body should be exploded or has exploded.
+	 * Should be callable at any time.
 	 */
 	public boolean canExplode();
 
@@ -22,6 +23,7 @@ public interface Explodable extends Visible {
 
 	/**
 	 * Notification that the explodable object has been hit.
+	 * This is guaranteed to be called before getFragment or getRemnant.
 	 */
 	public void collided(CollisionEvent event);
 }

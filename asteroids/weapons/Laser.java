@@ -29,11 +29,11 @@ public class Laser extends Weapon {
 	}
 
 	public float getReloadTime() {
-		return 170;
+		return 125;
 	}
 
 	public float getSpeed() {
-		return 250;
+		return 200;
 	}
 
 	public Body getRemnant() {

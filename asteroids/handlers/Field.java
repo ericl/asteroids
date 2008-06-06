@@ -111,7 +111,17 @@ public class Field implements Scenario {
 		Asteroid rock = null;
 		switch (id) {
 			case LARGE:
-				rock = new BigAsteroid(oneIn(3) ? range(100,175) : range(10,75));
+				switch ((int)(Math.random()*3)) {
+					case 0:
+						rock = new BigAsteroid(range(10,175));
+						break;
+					case 1:
+						rock = new HexAsteroid(range(10,175));
+						break;
+					default:
+						rock = new IceAsteroid(range(10,175));
+						break;
+				}
 				break;
 			case HEX:
 				rock = new HexAsteroid(oneIn(100) ? range(100,200) : range(30,50));
@@ -133,18 +143,14 @@ public class Field implements Scenario {
 		                      range(count/-20-10,count/20+10)));
 		return rock;
 	}
-	
-	protected PowerUp newPowerUp(ROVector2f origin) {
-		// difficulty increases with count
-		PowerUp h = new ArmorRecovery(10, 1);
-		// workaround for rogue collisions
-		h.setMaxVelocity(10+count/10, 10+count/10);
-		h.adjustAngularVelocity((float)(2*Math.random()-1));
-		ROVector2f vo = display.getOffscreenCoords(
-			h.getRadius(), BORDER, origin);
-		h.setPosition(vo.getX(), vo.getY());
-		h.adjustVelocity(v(range(-count/20-10,count/20+10),
-		                      range(count/-20-10,count/20+10)));
-		return h;
+
+	public String toString() {
+		switch (id) {
+			case HEX: return "Hexagons";
+			case LARGE: return "Large";
+			case ROCKY: return "Rocky";
+			case ICEY: return "Icey";
+		}
+		return "Unknown";
 	}
 }

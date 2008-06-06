@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.strategies.*;
+import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
 import asteroids.handlers.Timer;
@@ -18,10 +19,11 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	protected volatile boolean pause;
 	private MainLoop mainLoop;
 
-	// random fonts
-	public final static Font CENTER = new Font("Serif", Font.BOLD, 15);
-	public final static Font NORMAL = new Font("SansSerif", Font.PLAIN, 12);
-	public final static String RESTART = "R - Restart Game";
+	public static Font FONT_BOLD = new Font("Serif", Font.BOLD, 15);
+	public static Font FONT_NORMAL = new Font("SansSerif", Font.PLAIN, 12);
+	public static String RESTART_MSG = "R - Restart Game";
+	public static Color COLOR_BOLD = Color.ORANGE;
+	public static Color COLOR = Color.lightGray;
 
 	private class MainLoop extends Thread {
 		public void run() {
@@ -36,11 +38,9 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 				} catch (InterruptedException e) {
 					timer.reset();
 				}
-				synchronized (world) {
-					update();
-					doGraphics();
-					doPhysics(dt);
-				}
+				update();
+				doGraphics();
+				doPhysics(dt);
 			}
 		}
 	}
@@ -120,5 +120,13 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 			display.drawWorld(world);
 			postWorld();
 		}
+	}
+
+	public static Color shipColor(Ship ship) {
+		if (ship.getDamage() < .2)
+			return Color.RED;
+		else if (ship.getDamage() < .6)
+			return Color.YELLOW;
+		return COLOR;
 	}
 }

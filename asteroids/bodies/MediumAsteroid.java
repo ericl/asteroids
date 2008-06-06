@@ -29,6 +29,7 @@ public class MediumAsteroid extends TexturedAsteroid {
 				tmp = new SmallAsteroid(getRadius() / 3);
 				f.add(tmp);
 			}
+		powerup(f);
 		return f;
 	}
 }

@@ -49,10 +49,10 @@ public class MPAsteroids extends MPGame {
 		Graphics2D[] g2ds = display.getAllGraphics();
 		for (int i=0; i < g2ds.length; i++) {
 			if (ships[i].canExplode()) {
-				g2ds[i].setColor(Color.GRAY);
-				g2ds[i].setFont(NORMAL);
-				g2ds[i].drawString(RESTART,
-					centerX(NORMAL, RESTART, g2ds[i]), display.h(0)/2-5);
+				g2ds[i].setColor(COLOR);
+				g2ds[i].setFont(FONT_NORMAL);
+				g2ds[i].drawString(RESTART_MSG,
+					centerX(FONT_NORMAL, RESTART_MSG, g2ds[i]), display.h(0)/2-5);
 			}
 		}
 		shipStatus(g2ds[0], ship1);
@@ -74,19 +74,21 @@ public class MPAsteroids extends MPGame {
 	}
 
 	private void shipStatus(Graphics2D g2d, Ship ship) {
-		g2d.setColor(Color.gray);
-		g2d.setFont(NORMAL);
+		g2d.setFont(FONT_NORMAL);
 		String hull = "Infinity";
 		if (ship.getDamage() != Double.POSITIVE_INFINITY)
 			hull = (int)(ship.getDamage()*1000)/10+"%";
+		g2d.setColor(shipColor(ship));
 		if (verbosity % 2 == 0) {
 			g2d.drawString("Armor: " + hull,
 				display.w(-110),display.h(-59));
+			g2d.setColor(COLOR);
 			g2d.drawString("Deaths: " + ship.deaths,
 				display.w(-110),display.h(-39));
 		} else {
 			g2d.drawString("Armor: " + hull,
 				display.w(-110),display.h(-119));
+			g2d.setColor(COLOR);
 			g2d.drawString("Speed: " +
 				(int)(1000*ship.getVelocity().length())/1000f,
 				display.w(-110),display.h(-99));

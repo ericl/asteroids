@@ -10,4 +10,5 @@ import java.awt.Color;
 import java.util.*;
 
 public class WeaponPower {
+
 }
