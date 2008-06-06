@@ -1,4 +1,5 @@
 package asteroids.bodies;
+import asteroids.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.*;
@@ -57,7 +58,8 @@ public class Ship extends Body
 	}
 
 	public void collided(CollisionEvent event) {
-		hull -= Exploder.getDamage(event, this);
+		if (!invincible)
+			hull -= Exploder.getDamage(event, this);
 		explode = hull < 0;
 	}
 
@@ -87,6 +89,16 @@ public class Ship extends Body
 		return hull.getFragments();
 	}
 
+	public Color statusColor() {
+		if (invincible)
+			return Color.GREEN;
+		if (getDamage() < .2)
+			return Color.RED;
+		else if (getDamage() < .6)
+			return Color.YELLOW;
+		return AbstractGame.COLOR;
+	}
+
 	public String getTexturePath() {
 		return thrust > 0 ? "pixmaps/ship-t.png" : "pixmaps/ship.png";
 	}
@@ -95,8 +107,19 @@ public class Ship extends Body
 		return v(33,32);
 	}
 
+	public double getRawDamage() {
+		return hull;
+	}
+
+	/**
+	 * @return Percent damage from max.
+	 */
 	public double getDamage() {
 		return invincible ? Double.POSITIVE_INFINITY : hull < 0 ? 0 : hull/MAX;
+	}
+
+	public boolean isInvincible() {
+		return invincible;
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {

@@ -123,6 +123,8 @@ public class Exploder implements CollisionListener {
 		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Weapon)
 			return ((Weapon)other).getDamage();
+		else if (other instanceof PowerUp) // got killed this way before :(
+			return 0;
 		double vmod = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
 		return Math.min(other.getMass(),1000) * vmod / 1e7;
 	}

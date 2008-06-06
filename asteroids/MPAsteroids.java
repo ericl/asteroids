@@ -10,8 +10,7 @@ public class MPAsteroids extends MPGame {
 	private static final int BASE_HEIGHT = 500;
 	protected final Ship ship1, ship2;
 	protected Ship[] ships = new Ship[2];
-	protected Scenario scenario;
-	protected int verbosity = 0;
+	protected Field scenario;
 	protected boolean restart;
 	protected FiniteStarField k;
 
@@ -62,7 +61,6 @@ public class MPAsteroids extends MPGame {
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
 			case 'r': restart = true; break;
-			case 'm': verbosity++; break;
 		}
 	}
 
@@ -70,36 +68,20 @@ public class MPAsteroids extends MPGame {
 		k.init();
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, ships, id);
+		scenario.setInitialSpeed(10);
 		scenario.start();
 	}
 
 	private void shipStatus(Graphics2D g2d, Ship ship) {
 		g2d.setFont(FONT_NORMAL);
 		String hull = "Infinity";
-		if (ship.getDamage() != Double.POSITIVE_INFINITY)
+		if (!ship.isInvincible())
 			hull = (int)(ship.getDamage()*1000)/10+"%";
-		g2d.setColor(shipColor(ship));
-		if (verbosity % 2 == 0) {
-			g2d.drawString("Armor: " + hull,
-				display.w(-110),display.h(-59));
-			g2d.setColor(COLOR);
-			g2d.drawString("Deaths: " + ship.deaths,
-				display.w(-110),display.h(-39));
-		} else {
-			g2d.drawString("Armor: " + hull,
-				display.w(-110),display.h(-119));
-			g2d.setColor(COLOR);
-			g2d.drawString("Speed: " +
-				(int)(1000*ship.getVelocity().length())/1000f,
-				display.w(-110),display.h(-99));
-			g2d.drawString("Xcoord: " +
-				(int)(ship.getPosition().getX()),
-				display.w(-110),display.h(-79));
-			g2d.drawString("Ycoord: " +
-				(int)(-ship.getPosition().getY()),
-				display.w(-110),display.h(-59));
-			g2d.drawString("Deaths: " + ship.deaths,
-				display.w(-110),display.h(-39));
-		}
+		g2d.setColor(ship.statusColor());
+		g2d.drawString("Armor: " + hull,
+			display.w(-110),display.h(-59));
+		g2d.setColor(COLOR);
+		g2d.drawString("Deaths: " + ship.deaths,
+			display.w(-110),display.h(-39));
 	}
 }

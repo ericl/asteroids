@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.strategies.*;
-import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
 import asteroids.handlers.Timer;
@@ -120,13 +119,5 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 			display.drawWorld(world);
 			postWorld();
 		}
-	}
-
-	public static Color shipColor(Ship ship) {
-		if (ship.getDamage() < .2)
-			return Color.RED;
-		else if (ship.getDamage() < .6)
-			return Color.YELLOW;
-		return COLOR;
 	}
 }

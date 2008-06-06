@@ -28,7 +28,8 @@ public class ArmorRecovery extends PowerUp implements Textured {
 	}
 
 	public void up(Ship ship) {
-		ship.setArmor(Ship.MAX);
+		if (ship.getDamage() < Double.POSITIVE_INFINITY)
+			ship.setArmor(Ship.MAX);
 	}
 
 	public String getTexturePath() {

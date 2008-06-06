@@ -6,7 +6,7 @@ import java.awt.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
-public class Field implements Scenario {
+public class Field {
 	protected int[] density;
 	protected Ship[] ships;
 	protected World world;
@@ -16,6 +16,7 @@ public class Field implements Scenario {
 	public int id;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
+	protected float I = 30; // initial speed of asteroids
 	public final static int HEX = 1;
 	public final static int LARGE = 2;
 	public final static int ROCKY = 3;
@@ -51,6 +52,10 @@ public class Field implements Scenario {
 		if (!ok)
 			throw new IllegalArgumentException("Unknown id " + id);
 		world = w;
+	}
+
+	public void setInitialSpeed(float speed) {
+		I = speed;
 	}
 
 	public void start() {
@@ -134,13 +139,13 @@ public class Field implements Scenario {
 				break;
 		}
 		// workaround for rogue collisions
-		rock.setMaxVelocity(10+count/10, 10+count/10);
+		rock.setMaxVelocity(I+count/10, I+count/10);
 		rock.adjustAngularVelocity((float)(1.5*Math.random()-.75));
 		ROVector2f vo = display.getOffscreenCoords(
 			rock.getRadius(), BORDER, origin);
 		rock.setPosition(vo.getX(), vo.getY());
-		rock.adjustVelocity(v(range(-count/20-10,count/20+10),
-		                      range(count/-20-10,count/20+10)));
+		rock.adjustVelocity(v(range(-count/20-I,count/20+I),
+		                      range(count/-20-I,count/20+I)));
 		return rock;
 	}
 

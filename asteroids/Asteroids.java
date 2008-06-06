@@ -9,9 +9,8 @@ public class Asteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500;
 	private static final int BASE_HEIGHT = 500;
 	protected final Ship ship;
-	protected Scenario scenario;
+	protected Field scenario;
 	protected boolean restart;
-	protected int verbosity = 0;
 	protected FiniteStarField k;
 	protected boolean scoresBuilt;
 	protected Thread scoreBuilder;
@@ -19,7 +18,7 @@ public class Asteroids extends AbstractGame {
 	
 	private class ScoreBuilder extends Thread {
 		public void run() {
-			stats.build(((Field)scenario).id, name, scenario.score());
+			stats.build(scenario.id, name, scenario.score());
 			scoresBuilt = true;
 		}
 	}
@@ -68,20 +67,20 @@ public class Asteroids extends AbstractGame {
 	} else {
 		shipStatus(g2d);
 	}
-}
+	}
 
-public void drawHighScores(Graphics2D g2d) {
-	g2d.setFont(FONT_NORMAL);
-	g2d.setColor(COLOR);
-	String loading = "Loading high scores...";
-	if (scoreBuilder.isAlive())
-		g2d.drawString(loading, centerX(FONT_NORMAL,loading,g2d),
-			display.h(0)/2);
-	else
-		for (int i=0; i<5; i++)
-			g2d.drawString(stats.get(i+1),
-				centerX(FONT_NORMAL, stats.get(i+1), g2d),
-				display.h(0)/2+5+19*i);
+	public void drawHighScores(Graphics2D g2d) {
+		g2d.setFont(FONT_NORMAL);
+		g2d.setColor(COLOR);
+		String loading = "Loading high scores...";
+		if (scoreBuilder.isAlive())
+			g2d.drawString(loading, centerX(FONT_NORMAL,loading,g2d),
+				display.h(0)/2);
+		else
+			for (int i=0; i<5; i++)
+				g2d.drawString(stats.get(i+1),
+					centerX(FONT_NORMAL, stats.get(i+1), g2d),
+					display.h(0)/2+5+19*i);
 	}
 
 	protected void preWorld() {
@@ -91,7 +90,6 @@ public void drawHighScores(Graphics2D g2d) {
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
 			case 'r': restart = true; break;
-			case 'm': verbosity++; break;
 		}
 	}
 
@@ -108,31 +106,13 @@ public void drawHighScores(Graphics2D g2d) {
 	private void shipStatus(Graphics2D g2d) {
 		g2d.setFont(FONT_NORMAL);
 		String hull = "Infinity";
-		if (ship.getDamage() != Double.POSITIVE_INFINITY)
+		if (!ship.isInvincible())
 			hull = (int)(ship.getDamage()*1000)/10+"%";
-		if (verbosity % 2 == 0) {
-			g2d.setColor(shipColor(ship));
-			g2d.drawString("Armor: " + hull,
-				display.w(-110),display.h(-35));
-			g2d.setColor(COLOR);
-			g2d.drawString("Asteroids: " +
-				scenario.score(),display.w(-110),display.h(-15));
-		} else {
-			g2d.setColor(shipColor(ship));
-			g2d.drawString("Armor: " + hull,
-				display.w(-110),display.h(-95));
-			g2d.setColor(COLOR);
-			g2d.drawString("Speed: " +
-				(int)(1000*ship.getVelocity().length())/1000f,
-				display.w(-110),display.h(-75));
-			g2d.drawString("Xcoord: " +
-				(int)(ship.getPosition().getX()),
-				display.w(-110),display.h(-55));
-			g2d.drawString("Ycoord: " +
-				(int)(-ship.getPosition().getY()),
-				display.w(-110),display.h(-35));
-			g2d.drawString("Asteroids: " + scenario.score(),
-				display.w(-110),display.h(-15));
-		}
+		g2d.setColor(ship.statusColor());
+		g2d.drawString("Armor: " + hull,
+			display.w(-110),display.h(-35));
+		g2d.setColor(COLOR);
+		g2d.drawString("Asteroids: " +
+			scenario.score(),display.w(-110),display.h(-15));
 	}
 }
