@@ -1,5 +1,6 @@
 package asteroids.bodies;
 
+import static asteroids.Util.oneIn;
 import static asteroids.Util.v;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class BigAsteroid extends TexturedAsteroid {
 				tmp = new SmallAsteroid(getRadius() / 3);
 				f.add(tmp);
 			}
+		if(oneIn(2)) {
+			f.add(new ArmorRecovery(10, 1));
+		}
 		return f;
 	}
 }
