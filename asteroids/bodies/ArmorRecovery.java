@@ -11,9 +11,11 @@ import java.awt.Color;
 import java.util.*;
 
 public class ArmorRecovery extends PowerUp implements Textured {
+	
+	private static ROVector2f[] raw = { v(176,8), v(325,30), v(311,54), v(307,78), v(310,113), v(310,138), v(306,167), v(281,212), v(176,329), v(56,186), v(44,159), v(41,140), v(41,115), v(44,80), v(40,53), v(28,28), v(86,16) };
 
 	public ArmorRecovery(float radius) {
-		super(new Circle(radius), (float) Math.pow(radius, 2));
+		super(new Polygon(raw));
 		setMoveable(false);
 	}
 
@@ -60,7 +62,7 @@ public class ArmorRecovery extends PowerUp implements Textured {
 	}
 
 	public String getTexturePath() {
-		return "pixmaps/armor.png";
+		return "pixmaps/armor2.png";
 	}
 
 	public Vector2f getTextureCenter() {
@@ -68,7 +70,7 @@ public class ArmorRecovery extends PowerUp implements Textured {
 	}
 
 	public float getTextureScaleFactor() {
-		return .3f;
+		return .09f;
 	}
 
 	public boolean canExplode() {
