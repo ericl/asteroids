@@ -32,7 +32,7 @@ public class BigAsteroid extends TexturedAsteroid {
 				f.add(tmp);
 			}
 		if(oneIn(2)) {
-			f.add(new ArmorRecovery(10, 1));
+			f.add(new ArmorRecovery(12, 1));
 		}
 		return f;
 	}
