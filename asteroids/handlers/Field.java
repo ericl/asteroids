@@ -116,15 +116,18 @@ public class Field {
 		Asteroid rock = null;
 		switch (id) {
 			case LARGE:
+				int max = 175;
+				if (oneIn(2))
+					max	= 50;
 				switch ((int)(Math.random()*3)) {
 					case 0:
-						rock = new BigAsteroid(range(10,175));
+						rock = new BigAsteroid(range(10,max));
 						break;
 					case 1:
-						rock = new HexAsteroid(range(10,175));
+						rock = new HexAsteroid(range(10,max));
 						break;
 					default:
-						rock = new IceAsteroid(range(10,175));
+						rock = new IceAsteroid(range(10,max));
 						break;
 				}
 				break;

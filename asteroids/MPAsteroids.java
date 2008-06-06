@@ -12,6 +12,7 @@ public class MPAsteroids extends MPGame {
 	protected Ship[] ships = new Ship[2];
 	protected Field scenario;
 	protected boolean restart;
+	protected Pointer pLeft, pRight;
 	protected FiniteStarField k;
 
 	public static void main(String[] args) {
@@ -26,6 +27,8 @@ public class MPAsteroids extends MPGame {
 		ships[0] = ship1;
 		ships[1] = ship2;
 		Ship.setMax(2);
+		pLeft = new Pointer(ship1, ship2, display);
+		pRight = new Pointer(ship2, ship1, display);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new FiniteStarField(display);
 		newGame();
@@ -42,6 +45,9 @@ public class MPAsteroids extends MPGame {
 
 	protected void preWorld() {
 		k.starField();
+		Graphics2D[] g2ds = display.getAllGraphics();
+		pLeft.drawTo(g2ds[0]);
+		pRight.drawTo(g2ds[1]);
 	}
 
 	protected void postWorld() {
