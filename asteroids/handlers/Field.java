@@ -12,8 +12,8 @@ public class Field {
 	protected World world;
 	protected Display display;
 	protected Dimension dim;
-	protected int count, score = -1;
-	public int id;
+	protected int count;
+	public int id, score = -1;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
 	protected float I = 30; // initial speed of asteroids

@@ -50,7 +50,7 @@ public class Exploder implements CollisionListener {
 		Explodable e = (Explodable)body;
 		if (other instanceof Weapon) {
 			stats.hit++;
-			stats.dmg(body.getClass().getName(), (float)getDamage(event, body));
+			stats.dmg += getDamage(event, body);
 		}
 		// don't explode some offscreen or non-exploding bodies
 		if (!e.canExplode()
@@ -60,7 +60,7 @@ public class Exploder implements CollisionListener {
 			return;
 		world.remove(body);
 		if (other instanceof Weapon)
-			stats.kill(body.getClass().getName());
+			stats.kills++;
 		Body rem = e.getRemnant();
 		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
 			return;

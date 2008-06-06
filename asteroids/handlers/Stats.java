@@ -3,19 +3,17 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.security.*;
+import asteroids.handlers.Field;
 
 public class Stats {
-	private Map<String, Integer> kill = new HashMap<String, Integer>();
-	private Map<String, Double> dmg = new HashMap<String, Double>();
 	private Vector<String> list = new Vector<String>();
-	public int hit = 0, att = 0;
+	public int hit = 0, att = 0, kills = 0;
+	public double dmg = 0.;
 
 	public void reset() {
-		list = new Vector<String>();
-		kill.clear();
-		dmg.clear();
 		list.clear();
-		hit = att = 0;
+		hit = att = kills = 0;
+		dmg = 0.;
 	}
 
 	public String get(int i) {
@@ -26,14 +24,15 @@ public class Stats {
 		}
 	}
 
-	public void build(int scenario, String name, int score) {
+	public void build(String name, Field scenario) {
 		List<String> output = list;
+		scenario.score += kills*(hit/(double)att);
 		if (!output.isEmpty())
 				return;
 		try {
 			URL init = new URL("http://a.cognoseed.org/post.php?scenario="
-				+ scenario + "&name=" + name + "&score=" + score + "&chk="
-				+ md5(name+scenario+score+hit+att
+					   + scenario.id + "&name=" + name + "&score=" +scenario.score() + "&chk="
+					   + md5(name+scenario.id+scenario.score()+hit+att
 						+(System.currentTimeMillis()/1000)));
 			HttpURLConnection con = (HttpURLConnection)init.openConnection();
 			con.connect();
@@ -41,7 +40,7 @@ public class Stats {
 				new InputStreamReader(con.getInputStream()));
 			content.readLine();
 			con.disconnect();
-			init = new URL("http://a.cognoseed.org/get.php?scenario=" + scenario);
+			init = new URL("http://a.cognoseed.org/get.php?scenario=" + scenario.id);
 			con = (HttpURLConnection) init.openConnection();
 			con.connect();
 			content = new LineNumberReader(
@@ -55,22 +54,6 @@ public class Stats {
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-	}
-
-	public void kill(String body) {
-		body = body.substring(body.lastIndexOf('.')+1);
-		Integer i = kill.get(body);
-		if (i == null)
-			i = 0;
-		kill.put(body, ++i);
-	}
-
-	public void dmg(String body, double amt) {
-		body = body.substring(body.lastIndexOf('.')+1);
-		Double d = dmg.get(body);
-		if (d == null)
-			d = 0.;
-		dmg.put(body, d+amt);
 	}
 
 	private static String md5(String hash) throws NoSuchAlgorithmException {
