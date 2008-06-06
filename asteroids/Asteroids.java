@@ -62,26 +62,26 @@ public class Asteroids extends AbstractGame {
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
 			else if (scenario instanceof Field)
-				drawHighScores(g2d);
-			else
-				System.err.println("Can't get to high scores.");
-		} else {
-			shipStatus(g2d);
-		}
-	}
-
-	public void drawHighScores(Graphics2D g2d) {
-		g2d.setFont(FONT_NORMAL);
-		g2d.setColor(COLOR);
-		String loading = "Loading high scores...";
-		if (scoreBuilder.isAlive())
-			g2d.drawString(loading, centerX(FONT_NORMAL,loading,g2d),
-				display.h(0)/2);
+			drawHighScores(g2d);
 		else
-			for (int i=0; i<5; i++)
-				g2d.drawString(stats.get(i+1),
-					centerX(FONT_NORMAL, stats.get(i+1), g2d),
-					display.h(0)/2+19*i);
+			System.err.println("Can't get to high scores.");
+	} else {
+		shipStatus(g2d);
+	}
+}
+
+public void drawHighScores(Graphics2D g2d) {
+	g2d.setFont(FONT_NORMAL);
+	g2d.setColor(COLOR);
+	String loading = "Loading high scores...";
+	if (scoreBuilder.isAlive())
+		g2d.drawString(loading, centerX(FONT_NORMAL,loading,g2d),
+			display.h(0)/2);
+	else
+		for (int i=0; i<5; i++)
+			g2d.drawString(stats.get(i+1),
+				centerX(FONT_NORMAL, stats.get(i+1), g2d),
+				display.h(0)/2+5+19*i);
 	}
 
 	protected void preWorld() {

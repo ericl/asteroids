@@ -12,7 +12,7 @@ public class WeaponsSys {
 	
 	protected Weapon weapon;
 	protected Constructor<Weapon> cons;
-	protected long lastFired = 0;
+	protected long lastFired;
 	protected Queue<Weapon> fired = new LinkedList<Weapon>();
 	protected Stats stats;
 	protected float burst;
@@ -28,6 +28,7 @@ public class WeaponsSys {
 	}
 
 	public void setRandomWeaponType() {
+		lastFired = 0;
 		switch ((int)(2*Math.random())) {
 			case 0: setWeaponType(new Laser()); break;
 			case 1: setWeaponType(new Laser2()); break;

@@ -1,7 +1,3 @@
-/**
- * 	An asteroid...
- */
-
 package asteroids.bodies;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
@@ -14,7 +10,7 @@ public abstract class Asteroid extends Body implements Explodable {
 
 	public void powerup(List<Body> list) {
 		for (int i=1; i < Math.log10(getRadius()); i++)
-			if (oneIn(7)) {
+			if (oneIn(1)) {
 				list.add(PowerUp.random());
 				return;
 			}

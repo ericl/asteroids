@@ -6,11 +6,12 @@ import java.awt.Graphics2D;
 import java.awt.Color;
 
 public abstract class PolyAsteroid extends Asteroid implements Drawable {
-	private float radius;
-	private Vector2f centroid;
+	public float radius;
+	public Vector2f centroid;
 	protected float ratio;
 	protected Color color = Color.blue;
 
+	// ratio is the scaling of the polygon
 	public PolyAsteroid(ROVector2f[] raw, float ratio) {
 		super(new Polygon(centralized(scaled(raw, ratio))));
 		this.ratio = ratio;
@@ -44,7 +45,7 @@ public abstract class PolyAsteroid extends Asteroid implements Drawable {
 		return centroid;
 	}
 
-	private static ROVector2f[] centralized(ROVector2f[] in) {
+	public static ROVector2f[] centralized(ROVector2f[] in) {
 		ROVector2f c = new Polygon(in).getCentroid();
 		ROVector2f[] out = new ROVector2f[in.length];
 		for (int i=0; i < in.length; i++)
@@ -52,7 +53,7 @@ public abstract class PolyAsteroid extends Asteroid implements Drawable {
 		return out;
 	}
 
-	private static ROVector2f[] scaled(ROVector2f[] in, float scalefactor) {
+	public static ROVector2f[] scaled(ROVector2f[] in, float scalefactor) {
 		ROVector2f[] out = new ROVector2f[in.length];
 		for (int i=0; i < in.length; i++)
 			out[i] = MathUtil.scale(in[i], scalefactor);

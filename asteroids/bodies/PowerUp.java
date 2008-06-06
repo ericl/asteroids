@@ -5,7 +5,6 @@ import net.phys2d.raw.*;
 import java.util.*;
 
 public abstract class PowerUp extends Body implements Explodable {
-	protected boolean activated;
 
 	public static PowerUp random() {
 		return new ArmorRecovery();
@@ -19,11 +18,9 @@ public abstract class PowerUp extends Body implements Explodable {
 		Body a = e.getBodyA();
 		Body b = e.getBodyB();
 		if (a instanceof Ship) {
-			activated = true;
 			up((Ship)a);
 		}
 		if (b instanceof Ship) {
-			activated = true;
 			up((Ship)b);
 		}
 	}
@@ -37,10 +34,7 @@ public abstract class PowerUp extends Body implements Explodable {
 	public abstract float getRadius();
 
 	public Body getRemnant() {
-		if (activated)
-			return new PowerUpExplosion();
-		else
-			return null;
+		return new PowerUpExplosion();
 	}
 
 	public List<Body> getFragments() {

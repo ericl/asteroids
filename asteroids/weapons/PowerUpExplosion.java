@@ -4,6 +4,7 @@ import net.phys2d.math.*;
 
 public class PowerUpExplosion extends Explosion {
 	static double FRAMETIME = 200;
+	static float SCALE = 1.5f;
 	static int FRAMES = 5;
 	double inittime = System.currentTimeMillis();
 	int frame = 1;
@@ -14,11 +15,11 @@ public class PowerUpExplosion extends Explosion {
 	}
 
 	public float getRadius() {
-		return 12;	
+		return 12*SCALE;
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(6,7);
+		return v(6*SCALE,7*SCALE);
 	}
 
 	public float getRotation() {
@@ -39,6 +40,6 @@ public class PowerUpExplosion extends Explosion {
 	}
 
 	public float getTextureScaleFactor() {
-		return 1.3f;
+		return SCALE;
 	}
 }
