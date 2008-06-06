@@ -2,6 +2,7 @@ package asteroids.handlers;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.security.*;
 
 public class Stats {
 	// necessary?
@@ -28,7 +29,7 @@ public class Stats {
 	public void build(int scenario, String name, int score) {
 		if (!list.isEmpty()) return;
 		try {
-			URL init = new URL("http://a.cognoseed.org/post.php?scenario=" + scenario + "&name=" + name + "&score=" + score);
+			URL init = new URL("http://a.cognoseed.org/post.php?scenario=" + scenario + "&name=" + name + "&score=" + score + "&chk=" + md5(name+scenario+score+hit+att+(System.currentTimeMillis()/1000)));
 			HttpURLConnection connection = (HttpURLConnection) init.openConnection();
 			connection.connect();
 			LineNumberReader content = new LineNumberReader(new InputStreamReader(connection.getInputStream()));
@@ -61,5 +62,20 @@ public class Stats {
 		if (d == null)
 			d = 0.;
 		dmg.put(body, d+amt);
+	}
+
+	private static String md5(String hash) throws Exception {
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		byte[] retHash = new byte[32];
+		String str = "", proc;
+		md.update(hash.getBytes(), 0, hash.length());
+		retHash = md.digest();
+		for (int i = 0; i < retHash.length; i++) {
+			proc = Integer.toHexString(retHash[i] & 0xFF);
+			if (proc.length() == 1)
+				proc = "0" + proc;
+			str += proc;
+		}
+		return str;
 	}
 }
