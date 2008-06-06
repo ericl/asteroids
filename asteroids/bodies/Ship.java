@@ -37,6 +37,9 @@ public class Ship extends Body
 	public int deaths;
 
 	public void reset() {
+		BodyList excluded = getExcludedList();
+		while (excluded.size() > 0)
+			removeExcludedBody(excluded.get(0));
 		setRotation(0);
 		setPosition(0,0);
 		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
@@ -210,7 +213,6 @@ public class Ship extends Body
 
 	public void endFrame() {
 		if (invincibleFlag && gameTime() > invincibleEnd - warntime) {
-			System.out.println("FSFSDF");
 			invincibleFlag = false;
 			loseInvincibility(warntime);
 		}
