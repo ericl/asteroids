@@ -53,7 +53,7 @@ public class MPAsteroids extends MPGame {
 	protected void postWorld() {
 		Graphics2D[] g2ds = display.getAllGraphics();
 		for (int i=0; i < g2ds.length; i++) {
-			if (ships[i].canExplode()) {
+			if (ships[i].dead()) {
 				g2ds[i].setColor(COLOR);
 				g2ds[i].setFont(FONT_NORMAL);
 				g2ds[i].drawString(RESTART_MSG,
@@ -67,6 +67,16 @@ public class MPAsteroids extends MPGame {
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
 			case 'r': restart = true; break;
+		}
+	}
+
+	public void enterPause(boolean pause) {
+		if (pause) {
+			ship1.pause();
+			ship2.pause();
+		} else {
+			ship1.unpause();
+			ship2.unpause();
 		}
 	}
 

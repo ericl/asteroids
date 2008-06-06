@@ -79,6 +79,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 
 	public void pause() {
 		if (!pause) {
+			enterPause(true);
 			pause = true;
 			synchronized (display) {
 				Graphics2D g2d = display.getGraphics();
@@ -94,6 +95,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 
 	public void unpause() {
 		if (pause) {
+			enterPause(false);
 			pause = false;
 			mainLoop.interrupt();
 		}
@@ -103,6 +105,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		return new BasicDisplay(frame, dim);
 	}
 
+	protected abstract void enterPause(boolean b);
 	protected void preWorld() {}
 	protected void postWorld() {}
 	protected void update() {}

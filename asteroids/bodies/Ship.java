@@ -15,16 +15,23 @@ import static asteroids.Util.*;
 public class Ship extends Body
 		implements Drawable, Textured, Explodable, KeyListener {
 	
+	private long pauseTime;
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	protected static Shape shape = new Polygon(poly);
 	protected static double MAX = 1;
+	protected Explosion explosion;
 	protected double hull = MAX;
 	protected int thrust;
 	protected float accel, torque;
 	protected boolean fire, explode;
 	protected long lastFired;
 	protected World world;
-	protected boolean invincible;
+	protected int warning; // for blinking only
+	protected int warntime; // assigned by gainInvincibility
+	protected long warningEnd; // end of warning -> not invincible
+	protected long invincibleEnd; // end of invincibility -> warning(warntime)
+	protected boolean invincibleFlag; // isInvincible() && ! in warning stage
+	protected long pauseTmp;
 	protected WeaponsSys weapons;
 	protected MissileSys missiles;
 	public int deaths;
@@ -36,9 +43,23 @@ public class Ship extends Body
 		adjustAngularVelocity(-getAngularVelocity());
 		accel = torque = lastFired = 0;
 		fire = explode = false;
+		warning = 0;
+		warningEnd = invincibleEnd = 0;
+		pauseTime = 0;
+		invincibleFlag = false;
 		hull = MAX;
 		thrust = 0;
 		weapons.setRandomWeaponType();
+	}
+
+	// misuse of these methods will break everything
+	public void pause() {
+		pauseTmp = System.currentTimeMillis();	
+	}
+
+	// misuse of these methods will break everything
+	public void unpause() {
+		pauseTime += System.currentTimeMillis() - pauseTmp;
 	}
 
 	public static void setMax(double damage) {
@@ -53,20 +74,38 @@ public class Ship extends Body
 		setRotDamping(4000);
 	}
 
+	// only for testing
 	public void setInvincible(boolean b) {
-		invincible = b;		
+		invincibleEnd = b ? Long.MAX_VALUE : 0;		
+		invincibleFlag = b;
+	}
+
+	public void gainInvincibility(int time, int warn) {
+		invincibleFlag = true;
+		invincibleEnd = gameTime() + time;
+		warntime = warn;
+	}
+
+	public void loseInvincibility(int time) {
+		warning = Integer.MAX_VALUE;
+		warningEnd = gameTime() + time;
 	}
 
 	public void collided(CollisionEvent event) {
-		if (!invincible)
+		if (!isInvincible())
 			hull -= Exploder.getDamage(event, this);
 		explode = hull < 0;
 	}
 
 	public boolean canExplode() {
-		return explode && !invincible;
+		return explode && !isInvincible();
 	}
 	
+	// canExplode but also tracking explosions
+	public boolean dead() {
+		return canExplode() && explosion != null && explosion.dead();
+	}
+
 	public int getTrust() {
 		return thrust;
 	}
@@ -78,7 +117,7 @@ public class Ship extends Body
 	public Body getRemnant() {
 		// assume 1 death if explode
 		deaths++;
-		return new LargeExplosion(1.5f);
+		return explosion = new LargeExplosion(1.5f);
 	}
 
 	public List<Body> getFragments() {
@@ -90,7 +129,13 @@ public class Ship extends Body
 	}
 
 	public Color statusColor() {
-		if (invincible)
+		if (warning > 0) {
+			if (warning-- % 10 > 5)
+				return Color.GREEN;
+			else
+				return Color.GRAY;
+		}
+		if (isInvincible())
 			return Color.GREEN;
 		if (getDamage() < .2)
 			return Color.RED;
@@ -115,11 +160,11 @@ public class Ship extends Body
 	 * @return Percent damage from max.
 	 */
 	public double getDamage() {
-		return invincible ? Double.POSITIVE_INFINITY : hull < 0 ? 0 : hull/MAX;
+		return isInvincible() ? Double.POSITIVE_INFINITY : hull < 0 ? 0 : hull/MAX;
 	}
 
 	public boolean isInvincible() {
-		return invincible;
+		return invincibleEnd > gameTime();
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
@@ -164,6 +209,15 @@ public class Ship extends Body
 	}
 
 	public void endFrame() {
+		if (invincibleFlag && gameTime() > invincibleEnd - warntime) {
+			System.out.println("FSFSDF");
+			invincibleFlag = false;
+			loseInvincibility(warntime);
+		}
+		if (!invincibleFlag && gameTime() > warningEnd) {
+			setInvincible(false);
+			warning = 0;
+		}
 		super.endFrame();
 		float v = getVelocity().length();
 		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
@@ -196,5 +250,9 @@ public class Ship extends Body
 	
 	public void setArmor(double num) {
 		hull = num;
+	}
+
+	private long gameTime() {
+		return System.currentTimeMillis() - pauseTime;
 	}
 }

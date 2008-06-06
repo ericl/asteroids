@@ -40,16 +40,19 @@ public abstract class MPGame extends AbstractGame {
 	}
 
 	public void pause() {
-		pause = true;
-		synchronized (display) {
-			for (Graphics2D g2d : display.getAllGraphics()) {
-				g2d.setColor(new Color(100,100,100,100));
-				g2d.fillRect(0,0,display.w(0),display.h(0));
-				g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
-				g2d.setColor(Color.RED);
-				g2d.drawString("PAUSED",20,display.h(-45));
+		if (!pause) {
+			enterPause(true);
+			pause = true;
+			synchronized (display) {
+				for (Graphics2D g2d : display.getAllGraphics()) {
+					g2d.setColor(new Color(100,100,100,100));
+					g2d.fillRect(0,0,display.w(0),display.h(0));
+					g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
+					g2d.setColor(Color.RED);
+					g2d.drawString("PAUSED",20,display.h(-45));
+				}
+				display.show();
 			}
-			display.show();
 		}
 	}
 }

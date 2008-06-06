@@ -23,6 +23,13 @@ public class Asteroids extends AbstractGame {
 		}
 	}
 
+	public void enterPause(boolean pause) {
+		if (pause)
+			ship.pause();
+		else
+			ship.unpause();
+	}
+
 	public static void main(String[] args) {
 		AbstractGame game = new Asteroids();
 		game.mainLoop();
@@ -61,12 +68,12 @@ public class Asteroids extends AbstractGame {
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
 			else if (scenario instanceof Field)
-			drawHighScores(g2d);
-		else
-			System.err.println("Can't get to high scores.");
-	} else {
-		shipStatus(g2d);
-	}
+				drawHighScores(g2d);
+			else
+				System.err.println("Can't get to high scores.");
+		} else {
+			shipStatus(g2d);
+		}
 	}
 
 	public void drawHighScores(Graphics2D g2d) {

@@ -70,7 +70,7 @@ public class Field {
 
 	public boolean done() {
 		for (Ship ship : ships)
-			if (ship.canExplode())
+			if (ship.dead())
 				return true;
 		return false;
 	}
@@ -144,6 +144,7 @@ public class Field {
 		// workaround for rogue collisions
 		rock.setMaxVelocity(I+count/10, I+count/10);
 		rock.adjustAngularVelocity((float)(1.5*Math.random()-.75));
+		rock.setRotDamping(100);
 		ROVector2f vo = display.getOffscreenCoords(
 			rock.getRadius(), BORDER, origin);
 		rock.setPosition(vo.getX(), vo.getY());
