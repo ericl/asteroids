@@ -18,7 +18,7 @@ public class Asteroids extends AbstractGame {
 	
 	private class ScoreBuilder extends Thread {
 		public void run() {
-			stats.build(scenario.id, name, scenario.score());
+			stats.build(name, scenario);
 			scoresBuilt = true;
 		}
 	}
