@@ -7,10 +7,12 @@ import java.util.*;
 
 public abstract class Asteroid extends Body implements Explodable {
 	public float damage;
+	private static int MIN_SIZE = (int)Math.sqrt(10);
+	private static int BASE_CHANCE = 7;
 
 	public void powerup(List<Body> list) {
-		for (int i=1; i < Math.log10(getRadius()); i++)
-			if (oneIn(1)) {
+		for (int i = MIN_SIZE; i < Math.sqrt(getRadius()); i++)
+			if (oneIn(BASE_CHANCE)) {
 				list.add(PowerUp.random());
 				return;
 			}
