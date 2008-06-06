@@ -107,18 +107,19 @@ public void drawHighScores(Graphics2D g2d) {
 
 	private void shipStatus(Graphics2D g2d) {
 		g2d.setFont(FONT_NORMAL);
+		String hull = "Infinity";
+		if (ship.getDamage() != Double.POSITIVE_INFINITY)
+			hull = (int)(ship.getDamage()*1000)/10+"%";
 		if (verbosity % 2 == 0) {
 			g2d.setColor(shipColor(ship));
-			g2d.drawString("Armor: " +
-				(int)(ship.getDamage()*1000)/10+"%",
+			g2d.drawString("Armor: " + hull,
 				display.w(-110),display.h(-35));
 			g2d.setColor(COLOR);
 			g2d.drawString("Asteroids: " +
 				scenario.score(),display.w(-110),display.h(-15));
 		} else {
 			g2d.setColor(shipColor(ship));
-			g2d.drawString("Armor: " +
-				(int)(ship.getDamage()*1000)/10+"%",
+			g2d.drawString("Armor: " + hull,
 				display.w(-110),display.h(-95));
 			g2d.setColor(COLOR);
 			g2d.drawString("Speed: " +
