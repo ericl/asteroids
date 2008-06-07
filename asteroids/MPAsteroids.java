@@ -13,7 +13,7 @@ public class MPAsteroids extends MPGame {
 	protected Field scenario;
 	protected boolean restart;
 	protected Pointer pLeft, pRight;
-	protected FiniteStarField k;
+	protected StarField k;
 
 	public static void main(String[] args) {
 		AbstractGame game = new MPAsteroids();
@@ -30,7 +30,7 @@ public class MPAsteroids extends MPGame {
 		pLeft = new Pointer(ship1, ship2, display);
 		pRight = new Pointer(ship2, ship1, display);
 		display.setBackground("pixmaps/background2.jpg");
-		k = new FiniteStarField(display);
+		k = new StarField(display);
 		newGame();
 	}
 

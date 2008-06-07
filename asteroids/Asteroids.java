@@ -12,7 +12,7 @@ public class Asteroids extends AbstractGame {
 	protected final Ship ship;
 	protected Field scenario;
 	protected boolean restart;
-	protected FiniteStarField k;
+	protected StarField k;
 	protected boolean scoresBuilt;
 	protected Thread scoreBuilder;
 	protected String name = System.getProperty("user.name");
@@ -33,7 +33,7 @@ public class Asteroids extends AbstractGame {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		frame.addKeyListener(ship = new Ship(world, stats));
 		display.setBackground("pixmaps/background2.jpg");
-		k = new FiniteStarField(display);
+		k = new StarField(display);
 		newGame();
 	}
 

@@ -17,10 +17,6 @@ public class Exploder implements CollisionListener {
 
 	static boolean DOUBLE_GROUP = true;
 	static int MAX_BODIES = 300;
-	static float RADIAL_VELOCITY = 5;
-	static float MIN_STUCK_DEPTH = 5;
-	static float MAX_MOMENTUM_MULTIPLIER = 2;
-	static float MAX_ANGLE_DEVIATION = .7f;
 	static float MAX_RADIAL_DEVIATION = 10;
 	static float COLLIDE_BOUNDS = 150;
 
@@ -53,11 +49,11 @@ public class Exploder implements CollisionListener {
 			stats.dmg += getDamage(event, body);
 		}
 		// don't explode some offscreen or non-exploding bodies
-		if (!e.canExplode()
-				|| (!display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
-					&& event.getPenetrationDepth() < MIN_STUCK_DEPTH
-					&& !(body instanceof Weapon)))
+		if (!isStuck(body, other) && (!e.canExplode()
+				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
+				&& !(body instanceof Weapon))) {
 			return;
+		}
 		world.remove(body);
 		if (other instanceof Weapon)
 			stats.kills++;
@@ -79,18 +75,15 @@ public class Exploder implements CollisionListener {
 			if (!grouper.shouldFragment(body))
 				return;
 		}
-		float J = Math.min(other.getMass() / body.getMass() *
-				   (body.getRestitution() + other.getRestitution()) / 2,
-				   MAX_MOMENTUM_MULTIPLIER);
+		float J = other.getMass() / body.getMass() *
+				   (body.getRestitution() + other.getRestitution()) / 2;
 		Vector2f v = sub(body.getVelocity(),(scale(other.getVelocity(),-J)));
 		if (f != null) {
-			float sx, sy;
-			double theta = Math.random()*2*Math.PI;
-			double tstep = 2*Math.PI / f.size();
 			for (Body b : f) {
 				b.setBitmask(group);
-				sx = body.getPosition().getX();
-				sy = body.getPosition().getY();
+				double theta = Math.random()*2*Math.PI;
+				float sx = body.getPosition().getX();
+				float sy = body.getPosition().getY();
 				sx += e.getRadius() * (float)Math.sin(theta) / 2;
 				sy -= e.getRadius() * (float)Math.cos(theta) / 2;
 				sx += range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
@@ -98,10 +91,11 @@ public class Exploder implements CollisionListener {
 				b.setRotation((float)(2 * Math.PI * Math.random()));
 				b.adjustAngularVelocity(range(
 				   -body.getAngularVelocity(), body.getAngularVelocity()));
-				b.adjustVelocity(scale(direction(theta), RADIAL_VELOCITY));
-				b.adjustVelocity(v);
+				b.adjustVelocity(scale(direction(theta),
+					(float)Math.sqrt(Math.random()*2*v.length())));
+				if (!(body instanceof Ship)) // looks bad onscreen
+					b.adjustVelocity(v);
 				b.setPosition(sx, sy);
-				theta += tstep + range(-MAX_ANGLE_DEVIATION,MAX_ANGLE_DEVIATION);
 				world.add(b);
 			}
 		}
@@ -126,12 +120,19 @@ public class Exploder implements CollisionListener {
 		else if (other instanceof PowerUp) // got killed this way before :(
 			return 0;
 		double vmod = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
-		return Math.min(other.getMass(),1000) * vmod / 1e7;
+		return Math.min(other.getMass(),victim.getMass()) * vmod / 1e7;
 	}
-	
-	public Display getDisplay()
-	{
-		return display;
+
+	// precondition: body instanceof Visible
+	// only works for roughly circular asteroids (not ships, for example)
+	public boolean isStuck(Body body, Body other) {
+		if (!(body instanceof Asteroid && other instanceof Asteroid))
+			return false; // too risky to evaluate
+		Visible e = (Visible)body;
+		float diff = sub(body.getPosition(),other.getPosition()).length();
+		if (diff < e.getRadius() / 2)
+			return true;
+		return false;
 	}
 }
 

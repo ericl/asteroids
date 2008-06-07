@@ -10,6 +10,7 @@ import net.phys2d.math.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import java.util.List;
+import java.util.ArrayList;
 import static asteroids.Util.*;
 
 public class Ship extends Body
@@ -95,23 +96,21 @@ public class Ship extends Body
 	}
 
 	public List<Body> getFragments() {
-		HexAsteroid hull = new HexAsteroid(21);
-		hull.setColor(Color.DARK_GRAY);
-		// not realistic, but looks better onscreen
-		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
-		return hull.getFragments();
+		List<Body> f = new ArrayList<Body>(11);
+		for (int i=0; i < 11; i++) {
+			HexAsteroid tmp = new HexAsteroid(range(4,9));
+			tmp.setColor(Color.GRAY);
+			f.add(tmp);
+		}
+		return f;
 	}
 
 	public Color statusColor() {
 		long time = Timer.gameTime();
-		if (isInvincible() && time > warningStart) {
-			if (textStatus-- % 10 > 5)
+		if (isInvincible()) {
+			if (time < warningStart || textStatus-- % 10 > 5)
 				return Color.GREEN;
-			else
-				return Color.GRAY;
 		}
-		if (isInvincible())
-			return Color.GREEN;
 		if (getDamage() < .2)
 			return Color.RED;
 		else if (getDamage() < .6)
@@ -127,15 +126,11 @@ public class Ship extends Body
 		return v(33,32);
 	}
 
-	public double getRawDamage() {
-		return hull;
-	}
-
 	/**
 	 * @return Percent damage from max.
 	 */
 	public double getDamage() {
-		return isInvincible() ? Double.POSITIVE_INFINITY : hull < 0 ? 0 : hull/MAX;
+		return hull < 0 ? 0 : hull/MAX;
 	}
 
 	public boolean isInvincible() {

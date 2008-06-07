@@ -9,7 +9,7 @@ import static asteroids.Util.*;
  * Wrap around starfield that provides visual consistency at
  * the expense of speed (usually < 1ms)
  */
-public class FiniteStarField {
+public class StarField {
 	// hoping that no one has really high resolution monitors
 	private static int DIMENSION = 3000;
 	private static double DENSITY = 2e-4;
@@ -17,7 +17,7 @@ public class FiniteStarField {
 	private LinkedList<Star> stars = new LinkedList<Star>();
 	private Display display;
 
-	public FiniteStarField(Display d) {
+	public StarField(Display d) {
 		display = d;
 	}
 
