@@ -1,4 +1,5 @@
 package asteroids.weapons;
+import asteroids.handlers.*;
 import static asteroids.Util.*;
 import net.phys2d.math.*;
 
@@ -6,7 +7,7 @@ public class PowerUpExplosion extends Explosion {
 	static double FRAMETIME = 200;
 	static float SCALE = 1.5f;
 	static int FRAMES = 5;
-	double inittime = System.currentTimeMillis();
+	double inittime = Timer.gameTime();
 	int frame = 1;
 
 	public PowerUpExplosion() {
@@ -32,7 +33,7 @@ public class PowerUpExplosion extends Explosion {
 	}
 
 	public void endFrame() {
-		frame = 1 + (int)((System.currentTimeMillis() - inittime)/FRAMETIME*FRAMES);
+		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 
 	public boolean dead() {

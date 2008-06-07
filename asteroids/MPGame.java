@@ -41,7 +41,6 @@ public abstract class MPGame extends AbstractGame {
 
 	public void pause() {
 		if (!pause) {
-			enterPause(true);
 			pause = true;
 			synchronized (display) {
 				for (Graphics2D g2d : display.getAllGraphics()) {

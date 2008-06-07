@@ -13,7 +13,7 @@ import asteroids.handlers.Stats;
  * basic missile sys capable of only guiding one missile right now
  */
 
-public class MissileSys extends WeaponsSys {
+public class MissileSys extends WeaponSys {
 
 	public MissileSys(Weapon w, Stats s) {
 		super(w,s);

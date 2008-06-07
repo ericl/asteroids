@@ -18,18 +18,7 @@
 	<target name="jar" depends="compile">
 		<jar jarfile="Asteroids.jar" update="true">
 			<manifest>
-				<attribute name="Main-Class" value="asteroids.Asteroids"/>
-			</manifest>
-			<fileset dir=".">
-				<include name="asteroids/**/*.class"/>
-				<include name="asteroids/**/*.png"/>
-				<include name="asteroids/**/*.jpg"/>
-				<include name="net/**/*.class"/>
-			</fileset>
-		</jar>
-		<jar jarfile="MPAsteroids.jar" update="true">
-			<manifest>
-				<attribute name="Main-Class" value="asteroids.MPAsteroids"/>
+				<attribute name="Main-Class" value="asteroids.Chooser"/>
 			</manifest>
 			<fileset dir=".">
 				<include name="asteroids/**/*.class"/>

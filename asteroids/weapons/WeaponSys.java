@@ -1,14 +1,15 @@
 package asteroids.weapons;
-import java.util.*;
+import java.util.Queue;
+import java.util.LinkedList;
 import java.lang.reflect.*;
 import net.phys2d.raw.World;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import asteroids.bodies.Ship;
-import asteroids.handlers.Stats;
+import asteroids.handlers.*;
 import static asteroids.Util.*;
 
-public class WeaponsSys {
+public class WeaponSys {
 	
 	protected Weapon weapon;
 	protected Constructor<Weapon> cons;
@@ -17,12 +18,12 @@ public class WeaponsSys {
 	protected Stats stats;
 	protected float burst;
 
-	public WeaponsSys(Weapon w, Stats s) {
+	public WeaponSys(Weapon w, Stats s) {
 		stats = s;
 		setWeaponType(w);
 	}
 
-	public WeaponsSys(Stats s) {
+	public WeaponSys(Stats s) {
 		stats = s;
 		setRandomWeaponType();
 	}
@@ -46,7 +47,7 @@ public class WeaponsSys {
 	}
 
 	public boolean canFire() {
-		long current = System.currentTimeMillis();
+		long current = Timer.gameTime();
 		long disp = current - lastFired;
 		float test = Math.min(disp / weapon.getReloadTime(), weapon.getBurstLength());
 		if (test > burst)

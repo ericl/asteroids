@@ -1,11 +1,12 @@
 package asteroids.weapons;
 import static asteroids.Util.*;
+import asteroids.handlers.*;
 import net.phys2d.math.*;
 
 public class LaserExplosion extends Explosion {
 	static double FRAMETIME = 100;
 	static int FRAMES = 8;
-	double inittime = System.currentTimeMillis();
+	double inittime = Timer.gameTime();
 	int frame = 1;
 
 	public float getRadius() {
@@ -22,7 +23,7 @@ public class LaserExplosion extends Explosion {
 	}
 
 	public void endFrame() {
-		frame = 1 + (int)((System.currentTimeMillis() - inittime)/FRAMETIME*FRAMES);
+		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 
 	public boolean dead() {

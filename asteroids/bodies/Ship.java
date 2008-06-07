@@ -3,19 +3,18 @@ import asteroids.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.*;
-import java.util.*;
 import asteroids.display.*;
 import asteroids.weapons.*;
 import asteroids.handlers.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
+import java.util.List;
 import static asteroids.Util.*;
 
 public class Ship extends Body
 		implements Drawable, Textured, Explodable, KeyListener {
 	
-	private long pauseTime;
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	protected static Shape shape = new Polygon(poly);
 	protected static double MAX = 1;
@@ -26,13 +25,10 @@ public class Ship extends Body
 	protected boolean fire, explode;
 	protected long lastFired;
 	protected World world;
-	protected int warning; // for blinking only
-	protected int warntime; // assigned by gainInvincibility
-	protected long warningEnd; // end of warning -> not invincible
+	protected int textStatus = Integer.MAX_VALUE; // for blinking only
+	protected long warningStart; // end of warning -> not invincible
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
-	protected boolean invincibleFlag; // isInvincible() && ! in warning stage
-	protected long pauseTmp;
-	protected WeaponsSys weapons;
+	protected WeaponSys weapons;
 	protected MissileSys missiles;
 	public int deaths;
 
@@ -46,23 +42,10 @@ public class Ship extends Body
 		adjustAngularVelocity(-getAngularVelocity());
 		accel = torque = lastFired = 0;
 		fire = explode = false;
-		warning = 0;
-		warningEnd = invincibleEnd = 0;
-		pauseTime = 0;
-		invincibleFlag = false;
+		warningStart = invincibleEnd = 0;
 		hull = MAX;
 		thrust = 0;
 		weapons.setRandomWeaponType();
-	}
-
-	// misuse of these methods will break everything
-	public void pause() {
-		pauseTmp = System.currentTimeMillis();	
-	}
-
-	// misuse of these methods will break everything
-	public void unpause() {
-		pauseTime += System.currentTimeMillis() - pauseTmp;
 	}
 
 	public static void setMax(double damage) {
@@ -72,26 +55,14 @@ public class Ship extends Body
 	public Ship(World w, Stats s) {
 		super("Your ship", shape, 1000f);
 		world = w;
-		weapons = new WeaponsSys(s);
+		weapons = new WeaponSys(s);
 		missiles = new MissileSys(new Missile(),s);
 		setRotDamping(4000);
 	}
 
-	// only for testing
-	public void setInvincible(boolean b) {
-		invincibleEnd = b ? Long.MAX_VALUE : 0;		
-		invincibleFlag = b;
-	}
-
 	public void gainInvincibility(int time, int warn) {
-		invincibleFlag = true;
-		invincibleEnd = gameTime() + time;
-		warntime = warn;
-	}
-
-	public void loseInvincibility(int time) {
-		warning = Integer.MAX_VALUE;
-		warningEnd = gameTime() + time;
+		invincibleEnd = Timer.gameTime() + time;
+		warningStart = invincibleEnd - warn;
 	}
 
 	public void collided(CollisionEvent event) {
@@ -132,8 +103,9 @@ public class Ship extends Body
 	}
 
 	public Color statusColor() {
-		if (warning > 0) {
-			if (warning-- % 10 > 5)
+		long time = Timer.gameTime();
+		if (isInvincible() && time > warningStart) {
+			if (textStatus-- % 10 > 5)
 				return Color.GREEN;
 			else
 				return Color.GRAY;
@@ -167,7 +139,7 @@ public class Ship extends Body
 	}
 
 	public boolean isInvincible() {
-		return invincibleEnd > gameTime();
+		return invincibleEnd > Timer.gameTime();
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
@@ -212,14 +184,6 @@ public class Ship extends Body
 	}
 
 	public void endFrame() {
-		if (invincibleFlag && gameTime() > invincibleEnd - warntime) {
-			invincibleFlag = false;
-			loseInvincibility(warntime);
-		}
-		if (!invincibleFlag && gameTime() > warningEnd) {
-			setInvincible(false);
-			warning = 0;
-		}
 		super.endFrame();
 		float v = getVelocity().length();
 		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
@@ -252,9 +216,5 @@ public class Ship extends Body
 	
 	public void setArmor(double num) {
 		hull = num;
-	}
-
-	private long gameTime() {
-		return System.currentTimeMillis() - pauseTime;
 	}
 }

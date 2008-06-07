@@ -11,7 +11,7 @@ public class Stats {
 	public double dmg = 0.;
 
 	public void reset() {
-		list.clear();
+		list = new Vector<String>();
 		hit = att = kills = 0;
 		dmg = 0.;
 	}
@@ -52,6 +52,9 @@ public class Stats {
 			}
 			con.disconnect();
 		} catch (Exception e) {
+			if (output.isEmpty())
+				output.add("");
+			output.add(e.getClass().getName());
 			System.err.println(e);
 		}
 	}

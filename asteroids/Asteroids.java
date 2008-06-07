@@ -1,5 +1,6 @@
 package asteroids;
 import java.awt.*;
+import javax.swing.*;
 import java.awt.event.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
@@ -21,13 +22,6 @@ public class Asteroids extends AbstractGame {
 			stats.build(name, scenario);
 			scoresBuilt = true;
 		}
-	}
-
-	public void enterPause(boolean pause) {
-		if (pause)
-			ship.pause();
-		else
-			ship.unpause();
 	}
 
 	public static void main(String[] args) {
@@ -60,10 +54,11 @@ public class Asteroids extends AbstractGame {
 		if (scenario.done()) {
 			g2d.setColor(COLOR);
 			g2d.setFont(FONT_NORMAL);
+			g2d.drawString("N - Change Name", display.w(-115),display.h(-30));
 			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
 			g2d.setColor(COLOR_BOLD);
 			g2d.setFont(FONT_BOLD);
-			String score = "Your Score: " + scenario.score();
+			String score = name + "'s Score: " + scenario.score();
 			g2d.drawString(score, centerX(FONT_BOLD, score, g2d), display.h(0)/2-20);
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
@@ -97,6 +92,7 @@ public class Asteroids extends AbstractGame {
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
 			case 'r': restart = true; break;
+			case 'n': changeName(); break;
 		}
 	}
 
@@ -121,5 +117,16 @@ public class Asteroids extends AbstractGame {
 		g2d.setColor(COLOR);
 		g2d.drawString("Asteroids: " +
 			scenario.score(),display.w(-110),display.h(-15));
+	}
+
+	public void changeName() {
+		String s = (String)JOptionPane.showInputDialog(
+			new JFrame(),
+			"Who are you?",
+			"Asteroids",
+			JOptionPane.PLAIN_MESSAGE,
+			null, null, name);
+		if (s != null && !s.isEmpty())
+			name = s;
 	}
 }

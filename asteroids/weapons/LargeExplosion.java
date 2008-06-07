@@ -1,11 +1,12 @@
 package asteroids.weapons;
+import asteroids.handlers.*;
 import static asteroids.Util.*;
 import net.phys2d.math.*;
 
 public class LargeExplosion extends Explosion {
 	static double FRAMETIME = 500;
 	static int FRAMES = 11;
-	double inittime = System.currentTimeMillis();
+	double inittime = Timer.gameTime();
 	int frame = 1;
 	float scale = 1;
 
@@ -33,7 +34,7 @@ public class LargeExplosion extends Explosion {
 	}
 
 	public void endFrame() {
-		frame = 1 + (int)((System.currentTimeMillis() - inittime)/FRAMETIME*FRAMES);
+		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 
 	public boolean dead() {

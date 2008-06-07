@@ -2,6 +2,7 @@ package asteroids.weapons;
 import java.util.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
+import asteroids.handlers.Timer;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 
@@ -10,7 +11,7 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	protected boolean canFire = false;
 	private boolean exploded;
 	private long MAX_LIFETIME = 10000;
-	private long startTime = System.currentTimeMillis();
+	private long startTime = Timer.gameTime();
 
 	public Weapon(DynamicShape weap) {
 		super(weap, 1);
@@ -34,7 +35,7 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	}
 
 	public boolean exploded() {
-		if (System.currentTimeMillis() - startTime > MAX_LIFETIME)
+		if (Timer.gameTime() - startTime > MAX_LIFETIME)
 			return true;
 		return exploded;
 	}

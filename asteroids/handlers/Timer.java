@@ -5,21 +5,33 @@ package asteroids.handlers;
  * time elapsed since the last frame (useful for calculating physics steps.)
  */
 public class Timer {
+	private static long pauseTime, lastTime;
 	private final float target_ns;
 	private long old_ns, now_ns, old_diff, now_diff, sleep_ms;
+
+	/**
+	 * @return Time from the game's perspective in milliseconds.
+	 */
+	public static long gameTime() {
+		return System.currentTimeMillis() - pauseTime;
+	}
 
 	/**
 	 * @param targetFPS The framerate this timer will try to keep.
 	 */
 	public Timer(float targetFPS) {
 		target_ns = 1e9f / targetFPS;
+		lastTime = System.currentTimeMillis();
 		reset();
 	}
 
 	/**
-	 * Reset the timer, as if newly constructed.
+	 * Disregard the last segment of time.
+	 * The time delta is used to calculate gameTime.
 	 */
 	public void reset() {
+		pauseTime += System.currentTimeMillis() - lastTime;
+		lastTime = System.currentTimeMillis();
 		old_ns = System.nanoTime();
 		now_ns = old_ns;
 		now_diff = old_diff = 0;
@@ -48,6 +60,7 @@ public class Timer {
 		}
 		float frame_ns = now_ns - old_ns;
 		old_ns = now_ns;
+		lastTime = System.currentTimeMillis();
 		return frame_ns/1e9f;
 	}
 }

@@ -138,7 +138,7 @@ public class Demo {
 		k.init();
 		object.getRemnant().addExcludedBody(ship);
 		ship.addExcludedBody(object);
-		ship.setInvincible(true);
+		ship.gainInvincibility(Integer.MAX_VALUE,0);
 		frame.addKeyListener(ship);
 		ship.setPosition((xo+width/2),(yo+height/2));
 		world.add(ship);

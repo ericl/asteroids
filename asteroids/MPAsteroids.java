@@ -70,16 +70,6 @@ public class MPAsteroids extends MPGame {
 		}
 	}
 
-	public void enterPause(boolean pause) {
-		if (pause) {
-			ship1.pause();
-			ship2.pause();
-		} else {
-			ship1.unpause();
-			ship2.unpause();
-		}
-	}
-
 	public void newGame() {
 		k.init();
 		int id = Field.ids[(int)range(0,Field.ids.length)];
