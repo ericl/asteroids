@@ -1,4 +1,5 @@
 package asteroids.handlers;
+import asteroids.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
 import static net.phys2d.math.MathUtil.*;
@@ -12,10 +13,11 @@ import asteroids.display.*;
 
 public class Pointer {
 	private Display display;
-	private Ship o, target;
+	private Ship o;
+	private Explodable target;
 	private int rad;
 
-	public Pointer(Ship t, Ship x, Display d) {
+	public Pointer(Ship t, Explodable x, Display d) {
 		o = t;
 		target = x;
 		display = d;
@@ -25,7 +27,10 @@ public class Pointer {
 	 * Updates position and draws to the screen.
 	 */
 	public void drawTo(Graphics2D g2d) {
-		g2d.setColor(target.statusColor());
+		if (target instanceof Ship)
+			g2d.setColor(((Ship)target).statusColor());
+		else
+			g2d.setColor(AbstractGame.COLOR);
 		rad = Math.min(display.w(0),display.h(0))*9/20;
 		if (o.canExplode() || target.canExplode())
 			return;

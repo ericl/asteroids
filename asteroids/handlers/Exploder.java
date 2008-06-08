@@ -11,9 +11,9 @@ import java.util.*;
 public class Exploder implements CollisionListener {
 	private Queue<Explosion> explosionQueue = new LinkedList<Explosion>();
 	private Set<Body> exploded = new HashSet<Body>();
+	private List<Stats> stats = new LinkedList<Stats>();
 	private World world;
 	private Display display;
-	private Stats stats;
 	private CollisionGrouper grouper;
 
 	static boolean DOUBLE_GROUP = true;
@@ -43,15 +43,18 @@ public class Exploder implements CollisionListener {
 		}
 	}
 
-	public Exploder(World w, Display d, Stats s) {
+	public Exploder(World w, Display d) {
 		world = w;
 		display = d;
-		stats = s;
 		grouper = new CollisionGrouper();
 	}
 
 	public void endFrame() {
 		exploded.clear();
+	}
+
+	public void addStatsListener(Stats s) {
+		stats.add(s);
 	}
 
 	public void collisionOccured(CollisionEvent event) {
@@ -75,8 +78,8 @@ public class Exploder implements CollisionListener {
 		exploded.add(body);
 		Explodable e = (Explodable)body;
 		if (other instanceof Weapon) {
-			stats.hit++;
-			stats.dmg += getDamage(event, body);
+			for (Stats stat : stats)
+				stat.hit(body, event);
 		}
 		// don't explode some offscreen or non-exploding bodies
 		if (!isStuck(body, other) && (!e.canExplode()
@@ -86,7 +89,8 @@ public class Exploder implements CollisionListener {
 		}
 		world.remove(body);
 		if (other instanceof Weapon)
-			stats.kills++;
+			for (Stats stat : stats)
+				stat.kill(body, event);
 		Body rem = e.getRemnant();
 		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
 			return;

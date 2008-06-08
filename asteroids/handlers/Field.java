@@ -2,26 +2,28 @@ package asteroids.handlers;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
+import static java.lang.Math.*;
 import java.awt.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
 public class Field {
-	protected int[] density;
 	protected Ship[] ships;
 	protected World world;
 	protected Display display;
 	protected Dimension dim;
 	protected int count;
-	public int id, score = -1;
+	protected int score = -1;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
-	protected float I = 30, S = 1; // initial speed of asteroids; time scaler
+	protected static double D = 1;
+	protected float I = 30, S = 2; // initial speed of asteroids; scaling constant
 	public final static int HEX = 1;
 	public final static int LARGE = 2;
 	public final static int ROCKY = 3;
 	public final static int ICEY = 4;
 	public final static int[] ids = {HEX, LARGE, ROCKY, ICEY};
+	private int id;
 
 	public Field(World w, Display d, Ship ship, int id) {
 		this.id = id;
@@ -29,7 +31,6 @@ public class Field {
 		this.dim = d.getDimension();
 		ships = new Ship[1];
 		ships[0] = ship;
-		density = new int[ships.length];
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id == ids[i])
@@ -37,6 +38,10 @@ public class Field {
 		if (!ok)
 			throw new IllegalArgumentException("Unknown id " + id);
 		world = w;
+	}
+
+	public int getID() {
+		return id;
 	}
 
 	public Field(World w, Display d, Ship[] shiparray, int id) {
@@ -44,7 +49,6 @@ public class Field {
 		this.id = id;
 		this.dim = d.getDimension();
 		ships = shiparray;
-		density = new int[ships.length];
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id == ids[i])
@@ -54,11 +58,15 @@ public class Field {
 		world = w;
 	}
 
+	public void setDensity(double density) {
+		D = density;
+	}
+
 	public void setInitialSpeed(float speed) {
 		I = speed;
 	}
 
-	public void setSpeedScaling(float scale) {
+	public void setScalingConstant(float scale) {
 		S = scale;
 	}
 
@@ -83,17 +91,22 @@ public class Field {
 		return done() ? score : count;
 	}
 
+	protected Visible[] getTargets() {
+		return ships;
+	}
+
 	public void update() {
-		for (int i=0; i < density.length; i++)
-			density[i] = 0;
+		Visible[] targets = getTargets();
+		int[] density = new int[targets.length];
 		BodyList bodies = world.getBodies();
 		for (int i=0; i < bodies.size(); i++) {
 			Body body = bodies.get(i);
 			boolean outOfRange = true;
-			for (int j=0; j < ships.length; j++)
-				if (display.inViewFrom(ships[j].getPosition(),
+			for (int j=0; j < targets.length; j++)
+				if (display.inViewFrom(targets[j].getPosition(),
 						body.getPosition(), BORDER+BUF)) {
-					density[j]++;
+					if (body instanceof Visible && ((Visible)body).getRadius() > 15)
+						density[j]++;
 					outOfRange = false;
 				}
 			if (outOfRange) {
@@ -102,17 +115,11 @@ public class Field {
 			}
 		}
 		for (int i=0; i < density.length; i++)
-			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY)
-			{
-				world.add(newAsteroid(ships[i].getPosition()));
-			}
+			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D)
+				world.add(newAsteroid(targets[i].getPosition()));
 
-		if (done() && score < 0) {
-			for (Ship ship : ships)
-				if (ship.canExplode())
-					world.remove(ship);
+		if (done() && score < 0)
 			score = count;
-		}
 	}
 
 	protected Asteroid newAsteroid(ROVector2f origin) {
@@ -123,7 +130,7 @@ public class Field {
 				int max = 175;
 				if (oneIn(2))
 					max	= 50;
-				switch ((int)(Math.random()*3)) {
+				switch ((int)(random()*3)) {
 					case 0:
 						rock = new BigAsteroid(range(10,max));
 						break;
@@ -145,15 +152,19 @@ public class Field {
 				rock = new IceAsteroid(range(10,90));
 				break;
 		}
-		// workaround for rogue collisions
-		rock.setMaxVelocity(I+count/10*S, I+count/10*S);
-		rock.adjustAngularVelocity((float)(1.5*Math.random()-.75));
+		adjustForDifficulty(rock);
+		rock.adjustAngularVelocity((float)(1.5*random()-.75));
 		ROVector2f vo = display.getOffscreenCoords(
 			rock.getRadius(), BORDER, origin);
 		rock.setPosition(vo.getX(), vo.getY());
-		rock.adjustVelocity(v(range(-count/20*S-I,count/20*S+I),
-		                      range(count/-20*S-I,count/20*S+I)));
 		return rock;
+	}
+
+	private void adjustForDifficulty(Asteroid rock) {
+		// workaround for rogue collisions
+		rock.setMaxVelocity(I+S*(float)sqrt(count), I+S*(float)sqrt(count));
+		rock.adjustVelocity(v(range(-S*sqrt(count)-I,S*sqrt(count)+I),
+		                      range(-S*sqrt(count)-I,S*sqrt(count)+I)));
 	}
 
 	public String toString() {

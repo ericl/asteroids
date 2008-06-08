@@ -15,17 +15,17 @@ import asteroids.handlers.Stats;
 
 public class MissileSys extends WeaponSys {
 
-	public MissileSys(Weapon w, Stats s) {
-		super(w,s);
+	public MissileSys(Ship s, World world, Weapon w) {
+		super(s, world, w);
 	}
 	
 	
 	/*
 	 * create the missile...("launch")
 	 */
-	public void fire(Ship s, World w) {
+	public void fire() {
 		fired.clear();
-		Body target = getVictim(s,w);
+		Body target = getVictim();
 		
 		if (!canFire()) return;
 		Weapon c = null;
@@ -35,8 +35,6 @@ public class MissileSys extends WeaponSys {
 			e.printStackTrace();
 		}
 		
-		
-		stats.att++;
 		c.setRotation(s.getRotation());
 		float xc = (float)Math.sin(s.getRotation());
 		float yc = (float)Math.cos(s.getRotation());
@@ -46,7 +44,9 @@ public class MissileSys extends WeaponSys {
 		c.adjustVelocity((Vector2f)s.getVelocity());
 		c.addExcludedBody(s);
 		fired.add(c);
-		w.add(c);
+		for (Stats stat : stats)
+			stat.fired(c);
+		world.add(c);
 	}
 	
 	/*
@@ -70,8 +70,8 @@ public class MissileSys extends WeaponSys {
 	/*
 	 * @return self-explantory
 	 */
-	protected Body getVictim(Ship s, World w) {
-		BodyList potentialVictims = w.getBodies();
+	protected Body getVictim() {
+		BodyList potentialVictims = world.getBodies();
 		float temp = s.getPosition().distance(potentialVictims.get(0).getPosition());
 		Body target = potentialVictims.get(0);
 		

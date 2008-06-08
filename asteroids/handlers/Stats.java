@@ -3,17 +3,30 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.security.*;
-import asteroids.handlers.Field;
+import net.phys2d.raw.*;
 
 public class Stats {
 	private Vector<String> list = new Vector<String>();
-	public int hit = 0, att = 0, kills = 0;
-	public double dmg = 0.;
+	private int hit = 0, att = 0, kills = 0;
+	private double dmg = 0.;
 
 	public void reset() {
 		list = new Vector<String>();
 		hit = att = kills = 0;
 		dmg = 0.;
+	}
+
+	public void hit(Body body, CollisionEvent event) {
+		hit++;
+		dmg += Exploder.getDamage(event, body);
+	}
+
+	public void fired(Body weap) {
+		att++;
+	}
+
+	public void kill(Body body, CollisionEvent event) {
+		kills++;
 	}
 
 	public String get(int i) {
@@ -26,21 +39,23 @@ public class Stats {
 
 	public void build(String name, Field scenario) {
 		List<String> output = list;
-		scenario.score += kills*(hit/(double)att);
+		int score = scenario.score();
+		if (att > 0)
+			score += kills*(hit/(double)att);
 		if (!output.isEmpty())
 				return;
 		try {
 			URL init = new URL("http://a.cognoseed.org/post.php?scenario="
-					   + scenario.id + "&name=" + name + "&score=" +scenario.score() + "&chk="
-					   + md5(name+scenario.id+scenario.score()+hit+att
-						+(System.currentTimeMillis()/1000)));
+					   + scenario.getID() + "&name=" + name + "&score=" + score
+					   + "&chk=" + md5(name + scenario.getID() + score + hit + att
+							+ (System.currentTimeMillis()/1000)));
 			HttpURLConnection con = (HttpURLConnection)init.openConnection();
 			con.connect();
 			LineNumberReader content = new LineNumberReader(
 				new InputStreamReader(con.getInputStream()));
 			content.readLine();
 			con.disconnect();
-			init = new URL("http://a.cognoseed.org/get.php?scenario=" + scenario.id);
+			init = new URL("http://a.cognoseed.org/get.php?scenario=" + scenario.getID());
 			con = (HttpURLConnection) init.openConnection();
 			con.connect();
 			content = new LineNumberReader(

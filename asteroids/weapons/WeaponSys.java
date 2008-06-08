@@ -7,25 +7,25 @@ import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import asteroids.bodies.Ship;
 import asteroids.handlers.*;
+import asteroids.handlers.Timer;
+import java.util.*;
 import static asteroids.Util.*;
 
 public class WeaponSys {
 	protected static float ANGULAR_DISTRIBUTION = (float)Math.PI/48;
+	protected List<Stats> stats = new LinkedList<Stats>();
+	protected Ship s;
+	protected World world;
 	protected Weapon weapon;
 	protected Constructor<Weapon> cons;
 	protected long lastFired;
 	protected Queue<Weapon> fired = new LinkedList<Weapon>();
-	protected Stats stats;
 	protected float burst;
 
-	public WeaponSys(Weapon w, Stats s) {
-		stats = s;
+	public WeaponSys(Ship ship, World wo, Weapon w) {
 		setWeaponType(w);
-	}
-
-	public WeaponSys(Stats s) {
-		stats = s;
-		setRandomWeaponType();
+		s = ship;
+		world = wo;
 	}
 
 	public void setRandomWeaponType() {
@@ -68,27 +68,31 @@ public class WeaponSys {
 		return false;
 	}
 	
-	public void fire(Ship s, World w) {
+	public void fire() {
 		if (!canFire())
 			return;
 		float initialAngle = (weapon.getNum()-1)*ANGULAR_DISTRIBUTION/2;
 		for (int i=0; i < weapon.getNum(); i++) {
-			Weapon weap = makeWeapon(s,i*ANGULAR_DISTRIBUTION - initialAngle);
-			w.add(weap);
+			Weapon weap = makeWeapon(i*ANGULAR_DISTRIBUTION - initialAngle);
+			world.add(weap);
 			fired.add(weap);
 		}
 	}
 
+	public void addStatsListener(Stats s) {
+		stats.add(s);
+	}
+
 	// postcondition: nothing is modified
-	private Weapon makeWeapon(Ship s, float angle) {
+	private Weapon makeWeapon(float angle) {
 		Weapon c = null;
 		try {
 			c = cons.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		c.setOrigin(s);
 		c.setLevel(weapon.getLevel());
-		stats.att++;
 		c.setRotation(s.getRotation()+angle);
 		float xc = (float)Math.sin(s.getRotation()+angle);
 		float yc = (float)Math.cos(s.getRotation()+angle);
@@ -102,11 +106,16 @@ public class WeaponSys {
 			c.addExcludedBody(el.get(i));
 		for (Weapon f : fired)
 			c.addExcludedBody(f);
+		for (Stats stat : stats)
+			stat.fired(c);
 		return c;
 	}
 	
-	public void update(World w) {
-		while (!fired.isEmpty() && fired.peek().exploded())
-			w.remove(fired.remove());
+	public void update() {
+		while (!fired.isEmpty() && fired.peek().exploded()) {
+			Weapon w = fired.remove();
+			world.remove(w);
+			s.removeExcludedBody(w);
+		}
 	}
 }

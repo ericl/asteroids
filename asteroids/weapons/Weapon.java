@@ -13,6 +13,7 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	protected float lastFire = 0;
 	protected boolean canFire = false;
 	protected int level = 0;
+	protected Ship ship;
 	public final static int MAX_LEVEL = 2;
 
 	public Weapon(DynamicShape weap, float mass) {
@@ -21,6 +22,14 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 
 	public int getLevel() {
 		return level;
+	}
+
+	public Ship getOrigin() {
+		return ship;
+	}
+
+	public void setOrigin(Ship s) {
+		ship = s;
 	}
 
 	public void setLevel(int l) {

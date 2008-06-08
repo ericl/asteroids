@@ -3,12 +3,17 @@ import javax.swing.*;
 
 public class Chooser {
 	public static void main(String[] args) {
-		AbstractGame game = multiplayer() ? new MPAsteroids() : new Asteroids();
+		AbstractGame game = null;
+		switch (choose()) {
+			case 0: game = new MPAsteroids(); break;
+			case 1: game = new Asteroids(); break;
+			case 2: game = new Protect(); break;
+		}
 		game.mainLoop();
 	}
 
-	private static boolean multiplayer() {
-		String[] options = {"Multiplayer", "Single-player"};
+	private static int choose() {
+		String[] options = {"Multiplayer", "Single-player", "Defend Europa"};
 		int n = JOptionPane.showOptionDialog(new JFrame(),
 			"Choose a game mode:",
 			"Asteroids",
@@ -17,6 +22,6 @@ public class Chooser {
 			null, options, options[1]);
 		if (n == JOptionPane.CLOSED_OPTION)
 			System.exit(0);
-		return n == 0;
+		return n;
 	}
 }

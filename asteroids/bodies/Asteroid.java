@@ -6,7 +6,7 @@ import net.phys2d.raw.*;
 import java.util.*;
 
 public abstract class Asteroid extends Body implements Explodable {
-	public float damage;
+	protected float damage;
 	private static int MIN_SIZE = (int)Math.sqrt(10);
 	private static int BASE_CHANCE = 7;
 
@@ -25,10 +25,6 @@ public abstract class Asteroid extends Body implements Explodable {
 
 	public Asteroid(Circle shape) {
 		super(shape, (float)Math.pow(shape.getRadius(),2));
-	}
-
-	public Asteroid(DynamicShape shape, float mass) {
-		super(shape, mass);
 	}
 
 	/**

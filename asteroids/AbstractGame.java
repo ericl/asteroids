@@ -56,7 +56,6 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		frame = new JFrame(title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(dim);
-		frame.setLocationByPlatform(true);
 		frame.addKeyListener(this);
 		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
@@ -64,7 +63,9 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		display = makeDisplay();
 		stats = new Stats();
 		frame.addWindowFocusListener(this);
-		world.addListener(exploder = new Exploder(world, display, stats));
+		exploder = new Exploder(world, display);
+		world.addListener(exploder);
+		exploder.addStatsListener(stats);
 	}
 
 	public void mainLoop() {
@@ -102,6 +103,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	}
 
 	protected Display makeDisplay() {
+		frame.setLocationByPlatform(true);
 		return new BasicDisplay(frame, dim);
 	}
 

@@ -14,6 +14,7 @@ public abstract class MPGame extends AbstractGame {
 	}
 
 	protected Display makeDisplay() {
+		frame.setLocationByPlatform(true);
 		// redirect canvas keyevents to the frame
 		final KeyboardFocusManager manager =
 			KeyboardFocusManager.getCurrentKeyboardFocusManager();

@@ -22,11 +22,37 @@ public class MPAsteroids extends MPGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship2 = new Ship(world, stats));
-		frame.addKeyListener(ship1 = new Ship2(world, stats));
+		frame.addKeyListener(ship2 = new Ship(world));
+		frame.addKeyListener(ship1 = new Ship(world) {
+			public void keyPressed(KeyEvent e) {
+				switch (e.getKeyChar()) {
+					case 'a': torque = -.00008f; break;
+					case 'd': torque = .00008f; break;
+					case 'w': accel = 10; break;
+					case 's': accel = -5; break;
+					case '`': fire = true; break;
+				}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				switch (e.getKeyChar()) {
+					case 'a':
+					case 'd': torque = 0; break;
+					case 'w':
+					case 's': accel = 0; break;
+					case '`': fire = false; break;
+				}
+			}
+
+			public void reset() {
+				super.reset();
+				setPosition(-150,0);
+			}	
+		});
 		ships[0] = ship1;
 		ships[1] = ship2;
 		Ship.setMax(4);
+		Ship.setSpeed(.33f);
 		pLeft = new Pointer(ship1, ship2, display);
 		pRight = new Pointer(ship2, ship1, display);
 		display.setBackground("pixmaps/background2.jpg");
@@ -75,7 +101,7 @@ public class MPAsteroids extends MPGame {
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, ships, id);
 		scenario.setInitialSpeed(10);
-		scenario.setSpeedScaling(.5f);
+		scenario.setScalingConstant(.5f);
 		scenario.start();
 	}
 

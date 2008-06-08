@@ -15,17 +15,12 @@ public abstract class PowerUp extends Body implements Explodable {
 
 	public PowerUp(Polygon shape) {
 		super(shape, shape.getArea());
-	}	
+	}
 
 	public void collided(CollisionEvent e) {
-		Body a = e.getBodyA();
-		Body b = e.getBodyB();
-		if (a instanceof Ship) {
-			up((Ship)a);
-		}
-		if (b instanceof Ship) {
-			up((Ship)b);
-		}
+		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		if (other instanceof Ship)
+			up((Ship)other);
 	}
 
 	public PowerUp(DynamicShape shape) {

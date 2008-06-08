@@ -12,11 +12,7 @@ public class CircleAsteroid extends Asteroid implements Drawable {
 	private Color color = Color.orange;
 
 	public CircleAsteroid(float radius) {
-		super(new Circle(radius), (float)Math.pow(radius,2));
-	}
-
-	public CircleAsteroid(float radius, float fixedmass) {
-		super(new Circle(radius), fixedmass);
+		super(new Circle(radius));
 	}
 
 	public void setColor(Color c) {

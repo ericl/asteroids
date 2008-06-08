@@ -1,21 +1,20 @@
 package asteroids;
+import asteroids.display.*;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
-import static asteroids.Util.*;
 
-public class Asteroids extends AbstractGame {
-	private static final int BASE_WIDTH = 700;
-	private static final int BASE_HEIGHT = 700;
-	protected final Ship ship;
-	protected Field scenario;
-	protected boolean restart;
-	protected StarField k;
-	protected boolean scoresBuilt;
-	protected Thread scoreBuilder;
-	protected String name = System.getProperty("user.name");
+public class Protect extends AbstractGame {
+	private Ship ship;
+	private Defend scenario;
+	private StarField k;
+	private Pointer p;
+	private Thread scoreBuilder;
+	private String name = System.getProperty("user.name");
+	private boolean restart;
+	private boolean scoresBuilt;
 	
 	protected class ScoreBuilder extends Thread {
 		public void run() {
@@ -25,17 +24,17 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public static void main(String[] args) {
-		AbstractGame game = new Asteroids();
+		AbstractGame game = new Protect();
 		game.mainLoop();
 	}
 
-	public Asteroids() {
-		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
+	public Protect() {
+		super("Protect Europa", Toolkit.getDefaultToolkit().getScreenSize());
 		frame.addKeyListener(ship = new Ship(world));
-		ship.addStatsListener(stats);
-		Ship.setMax(2);
-		Ship.setSpeed(.75f);
 		display.setBackground("pixmaps/background2.jpg");
+		ship.addStatsListener(stats);
+		Ship.setSpeed(.75f);
+		Ship.setMax(20);
 		k = new StarField(display);
 		newGame();
 	}
@@ -45,15 +44,18 @@ public class Asteroids extends AbstractGame {
 			newGame();
 			restart = false;
 		}
-		scenario.update();
 		display.setCenter(ship.getPosition());
+		scenario.update();
+	}
+
+	protected Display makeDisplay() {
+		frame.setUndecorated(true);
+		return new BasicDisplay(frame, dim);
 	}
 
 	protected void postWorld() {
 		Graphics2D g2d = display.getGraphics();
-		g2d.setColor(COLOR);
-		g2d.setFont(FONT_BOLD);
-		g2d.drawString("\"" + scenario.toString() + "\"", 10, 40);
+		p.drawTo(g2d);
 		if (scenario.done()) {
 			g2d.setColor(COLOR);
 			g2d.setFont(FONT_NORMAL);
@@ -72,6 +74,9 @@ public class Asteroids extends AbstractGame {
 		} else {
 			shipStatus(g2d);
 		}
+		g2d.setColor(COLOR);
+		g2d.setFont(FONT_NORMAL);
+		g2d.drawString("Q - Quit Game", 15, 25);
 	}
 
 	public void drawHighScores(Graphics2D g2d) {
@@ -96,6 +101,7 @@ public class Asteroids extends AbstractGame {
 		switch (event.getKeyChar()) {
 			case 'r': restart = true; break;
 			case 'n': changeName(); break;
+			case 'q': System.exit(0); break;
 		}
 	}
 
@@ -104,11 +110,12 @@ public class Asteroids extends AbstractGame {
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
 		stats.reset();		
-		int id = Field.ids[(int)range(0,Field.ids.length)];
-		scenario = new Field(world, display, ship, id);
-		scenario.setDensity(.5f);
-		scenario.setScalingConstant(1f);
+		scenario = new Defend(world, display, ship);
+		scenario.setInitialSpeed(20);
+		scenario.setDensity(.1f);
+		scenario.setScalingConstant(.5f);
 		scenario.start();
+		p = new Pointer(ship, scenario.getObject(), display);
 	}
 
 	private void shipStatus(Graphics2D g2d) {
@@ -116,6 +123,9 @@ public class Asteroids extends AbstractGame {
 		String hull = "Infinity";
 		if (!ship.isInvincible())
 			hull = (int)(ship.getDamage()*1000)/10+"%";
+		g2d.setColor(scenario.getObject().statusColor());
+		g2d.drawString("Europa: " + scenario.getObject().getPercentDamage(),
+			display.w(-110),display.h(-55));
 		g2d.setColor(ship.statusColor());
 		g2d.drawString("Armor: " + hull,
 			display.w(-110),display.h(-35));
