@@ -1,7 +1,5 @@
 package asteroids.weapons;
 import java.util.List;
-
-import asteroids.display.*;
 import static asteroids.Util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
@@ -12,7 +10,7 @@ public class Missile extends Weapon {
 	protected Body myTarget;
 	
 	public Missile() {
-		super(new Circle(10));
+		super(new Circle(10), 10);
 	}
 	
 	public Body getRemnant() {
@@ -31,9 +29,6 @@ public class Missile extends Weapon {
 		return myTarget;
 	}
 	
-	public int getBurstLength() {
-		return 0;
-	}
 	public float getDamage() {
 		return .1f;
 	}

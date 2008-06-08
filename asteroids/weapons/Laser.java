@@ -9,15 +9,11 @@ public class Laser extends Weapon {
 	private static float myRadius = 2;
 
 	public Laser() {
-		super(new Circle(myRadius));
+		super(new Circle(myRadius), 1);
 	}
 
 	public Vector2f getTextureCenter() {
 		return v(7,3);
-	}
-
-	public int getBurstLength() {
-		return 0;
 	}
 
 	public boolean canExplode() {
@@ -25,7 +21,7 @@ public class Laser extends Weapon {
 	}
 
 	public float getDamage() {
-		return .075f;
+		return .075f + .0375f*level;
 	}
 
 	public float getReloadTime() {
@@ -33,7 +29,7 @@ public class Laser extends Weapon {
 	}
 
 	public float getSpeed() {
-		return 200;
+		return 200 - 30*level;
 	}
 
 	public Body getRemnant() {
@@ -49,10 +45,10 @@ public class Laser extends Weapon {
 	}
 
 	public float getTextureScaleFactor() {
-		return myRadius / 2;
+		return 1 + level*.3f;
 	}
 	
 	public float getRadius() {
-		return myRadius;
+		return myRadius + level*.5f;
 	}
 }

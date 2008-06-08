@@ -16,7 +16,7 @@ public class Field {
 	public int id, score = -1;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
-	protected float I = 30; // initial speed of asteroids
+	protected float I = 30, S = 1; // initial speed of asteroids; time scaler
 	public final static int HEX = 1;
 	public final static int LARGE = 2;
 	public final static int ROCKY = 3;
@@ -56,6 +56,10 @@ public class Field {
 
 	public void setInitialSpeed(float speed) {
 		I = speed;
+	}
+
+	public void setSpeedScaling(float scale) {
+		S = scale;
 	}
 
 	public void start() {
@@ -142,13 +146,13 @@ public class Field {
 				break;
 		}
 		// workaround for rogue collisions
-		rock.setMaxVelocity(I+count/10, I+count/10);
+		rock.setMaxVelocity(I+count/10*S, I+count/10*S);
 		rock.adjustAngularVelocity((float)(1.5*Math.random()-.75));
 		ROVector2f vo = display.getOffscreenCoords(
 			rock.getRadius(), BORDER, origin);
 		rock.setPosition(vo.getX(), vo.getY());
-		rock.adjustVelocity(v(range(-count/20-I,count/20+I),
-		                      range(count/-20-I,count/20+I)));
+		rock.adjustVelocity(v(range(-count/20*S-I,count/20*S+I),
+		                      range(count/-20*S-I,count/20*S+I)));
 		return rock;
 	}
 

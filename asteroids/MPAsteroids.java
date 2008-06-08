@@ -26,7 +26,7 @@ public class MPAsteroids extends MPGame {
 		frame.addKeyListener(ship1 = new Ship2(world, stats));
 		ships[0] = ship1;
 		ships[1] = ship2;
-		Ship.setMax(2);
+		Ship.setMax(4);
 		pLeft = new Pointer(ship1, ship2, display);
 		pRight = new Pointer(ship2, ship1, display);
 		display.setBackground("pixmaps/background2.jpg");
@@ -75,6 +75,7 @@ public class MPAsteroids extends MPGame {
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, ships, id);
 		scenario.setInitialSpeed(10);
+		scenario.setSpeedScaling(.5f);
 		scenario.start();
 	}
 

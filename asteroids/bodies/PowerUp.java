@@ -10,7 +10,7 @@ public abstract class PowerUp extends Body implements Explodable {
 	public static PowerUp random() {
 		if (oneIn(5))
 			return new Invincibility();
-		return new ArmorRecovery();
+		return oneIn(2) ? new WeaponPower() : new ArmorRecovery();
 	}
 
 	public PowerUp(Polygon shape) {

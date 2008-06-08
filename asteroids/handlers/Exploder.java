@@ -10,6 +10,7 @@ import java.util.*;
 
 public class Exploder implements CollisionListener {
 	private Queue<Explosion> explosionQueue = new LinkedList<Explosion>();
+	private Set<Body> exploded = new HashSet<Body>();
 	private World world;
 	private Display display;
 	private Stats stats;
@@ -19,12 +20,38 @@ public class Exploder implements CollisionListener {
 	static int MAX_BODIES = 300;
 	static float MAX_RADIAL_DEVIATION = 10;
 	static float COLLIDE_BOUNDS = 150;
+	static float MAX_J = 2;
+
+	/**
+	 * phys2d will not collide bodies with any matching bits...
+	 * we use this to stop runaway explosions...
+	 * there are 63 bits/groups available for use so they wrap around
+	 */
+	private class CollisionGrouper {
+		private long nextmask = 1l;
+
+		/**
+		 * @return bitmask of next available group
+		 */
+		public long findGroup(Body b) {
+			if (b.getBitmask() != 0)
+				return b.getBitmask();
+			nextmask = nextmask << 1;
+			if (nextmask == 0)
+				nextmask = 1l;
+			return nextmask;
+		}
+	}
 
 	public Exploder(World w, Display d, Stats s) {
 		world = w;
 		display = d;
 		stats = s;
-		grouper = new CollisionGrouper(w);
+		grouper = new CollisionGrouper();
+	}
+
+	public void endFrame() {
+		exploded.clear();
 	}
 
 	public void collisionOccured(CollisionEvent event) {
@@ -41,8 +68,11 @@ public class Exploder implements CollisionListener {
 	}
 
 	// precondition: body instanceof Explodable
-	// so many special cases!
+	// perhaps use setBitmask(group) instead of addBit(group)
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
+		if (exploded.contains(body)) // don't explode anything twice
+			return;
+		exploded.add(body);
 		Explodable e = (Explodable)body;
 		if (other instanceof Weapon) {
 			stats.hit++;
@@ -65,22 +95,22 @@ public class Exploder implements CollisionListener {
 		if (rem instanceof Explosion) // gah, another special case
 			explosionQueue.add((Explosion)rem);
 		if (rem != null)
-			rem.setBitmask(group);
+			rem.addBit(group);
 		if (DOUBLE_GROUP && !(other instanceof Ship || body instanceof Weapon))
-			other.setBitmask(group);
+			other.addBit(group);
 		// user-related stuff automatically passes the group limit
 		if (!(body instanceof Ship || other instanceof Ship
 				|| other instanceof Weapon || rem instanceof Explosion)) {
-			body.setBitmask(group);
-			if (!grouper.shouldFragment(body))
-				return;
+			body.addBit(group);
 		}
+		// not really J
 		float J = other.getMass() / body.getMass() *
 				   (body.getRestitution() + other.getRestitution()) / 2;
+		J = Math.min(MAX_J, J);
 		Vector2f v = sub(body.getVelocity(),(scale(other.getVelocity(),-J)));
 		if (f != null) {
 			for (Body b : f) {
-				b.setBitmask(group);
+				b.addBit(group);
 				double theta = Math.random()*2*Math.PI;
 				float sx = body.getPosition().getX();
 				float sy = body.getPosition().getY();
@@ -133,69 +163,5 @@ public class Exploder implements CollisionListener {
 		if (diff < e.getRadius() / 2)
 			return true;
 		return false;
-	}
-}
-
-/**
- * phys2d will not collide bodies with any matching bits...
- * we use this to stop runaway explosions...
- * there are 63 bits/groups available for use so they wrap around
- */
-class CollisionGrouper {
-	private long nextmask = 1l;
-	private int[] groups = new int[64];
-	private static int MAX_GROUP_SIZE = 40;
-	private World world;
-
-	public CollisionGrouper(World w) {
-		world = w;
-	}
-
-	/**
-	 * update the group numbers, very fast operation
-	 */
-	private void recount() {
-		int[] tmp = new int[65];
-		BodyList bodies = world.getBodies();
-		for (int i=0; i < bodies.size(); i++) {
-			Body b = bodies.get(i);
-			if (b != null) // check for concurrent modification
-				tmp[getBitIndex(b.getBitmask())]++;
-		}
-		groups = tmp;
-	}
-
-	/**
-	 * @return index of first bit found on, 0 <= index <= 64
-	 */
-	private int getBitIndex(long in) {
-		int j;
-		// backwards to make 0x0 get index 0
-		for (j = 64; j > 0; j--)
-			if ((in & 1l << j) != 0)
-				break;
-		return j;
-	}
-
-	/**
-	 * @return bitmask of next available group
-	 */
-	public long findGroup(Body b) {
-		if (b.getBitmask() != 0)
-			return b.getBitmask();
-		nextmask = nextmask << 1;
-		if (nextmask == 0)
-			nextmask = 1l;
-		return nextmask;
-	}
-
-	/**
-	 * @return whether the body should fragment
-	 */
-	public boolean shouldFragment(Body b) {
-		recount();
-		if (getBitIndex(b.getBitmask()) == 0)
-			return true;
-		return groups[getBitIndex(b.getBitmask())] < MAX_GROUP_SIZE;
 	}
 }

@@ -7,20 +7,44 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 
 public abstract class Weapon extends Body implements Textured, Explodable {
-	protected float lastFire = 0;
-	protected boolean canFire = false;
 	private boolean exploded;
 	private long MAX_LIFETIME = 10000;
 	private long startTime = Timer.gameTime();
+	protected float lastFire = 0;
+	protected boolean canFire = false;
+	protected int level = 0;
+	public final static int MAX_LEVEL = 2;
 
-	public Weapon(DynamicShape weap) {
-		super(weap, 1);
+	public Weapon(DynamicShape weap, float mass) {
+		super(weap, mass);
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int l) {
+		if (level > MAX_LEVEL || level < 0)
+			throw new IllegalArgumentException();
+		level = l;
+	}
+
+	public void incrementLevel() {
+		if (level < 3)
+			level++;
 	}
 
 	public abstract float getSpeed();
 	public abstract float getDamage();
 	public abstract float getReloadTime();
-	public abstract int getBurstLength();
+
+	public int getBurstLength() {
+		return 0;
+	}
+
+	public int getNum() {
+		return 1;
+	}
 	
 	public void collided(CollisionEvent event) {}
 	

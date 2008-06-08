@@ -10,7 +10,7 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 
 public class WeaponSys {
-	
+	protected static float ANGULAR_DISTRIBUTION = (float)Math.PI/48;
 	protected Weapon weapon;
 	protected Constructor<Weapon> cons;
 	protected long lastFired;
@@ -29,16 +29,23 @@ public class WeaponSys {
 	}
 
 	public void setRandomWeaponType() {
-		lastFired = 0;
 		switch ((int)(2*Math.random())) {
 			case 0: setWeaponType(new Laser()); break;
 			case 1: setWeaponType(new Laser2()); break;
 		}
 	}
 
+	public void upgrade() {
+		if (weapon.getLevel() < Weapon.MAX_LEVEL)
+			weapon.incrementLevel();
+		else if (!(weapon instanceof Laser2))
+			setWeaponType(new Laser2());
+	}
+
 	@SuppressWarnings(value = "unchecked")
 	public void setWeaponType(Weapon w) {
 		weapon = w;
+		lastFired = 0;
 		try {
 			cons = (Constructor<Weapon>)weapon.getClass().getConstructor();
 		} catch (NoSuchMethodException e) {
@@ -62,17 +69,29 @@ public class WeaponSys {
 	}
 	
 	public void fire(Ship s, World w) {
-		if (!canFire()) return;
+		if (!canFire())
+			return;
+		float initialAngle = (weapon.getNum()-1)*ANGULAR_DISTRIBUTION/2;
+		for (int i=0; i < weapon.getNum(); i++) {
+			Weapon weap = makeWeapon(s,i*ANGULAR_DISTRIBUTION - initialAngle);
+			w.add(weap);
+			fired.add(weap);
+		}
+	}
+
+	// postcondition: nothing is modified
+	private Weapon makeWeapon(Ship s, float angle) {
 		Weapon c = null;
 		try {
 			c = cons.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		c.setLevel(weapon.getLevel());
 		stats.att++;
-		c.setRotation(s.getRotation());
-		float xc = (float)Math.sin(s.getRotation());
-		float yc = (float)Math.cos(s.getRotation());
+		c.setRotation(s.getRotation()+angle);
+		float xc = (float)Math.sin(s.getRotation()+angle);
+		float yc = (float)Math.cos(s.getRotation()+angle);
 		float sr = s.getRadius() * 2 / 3; // estimated length
 		c.setPosition(s.getPosition().getX()+xc*sr,s.getPosition().getY()-yc*sr);
 		c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
@@ -83,8 +102,7 @@ public class WeaponSys {
 			c.addExcludedBody(el.get(i));
 		for (Weapon f : fired)
 			c.addExcludedBody(f);
-		fired.add(c);
-		w.add(c);
+		return c;
 	}
 	
 	public void update(World w) {

@@ -17,6 +17,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	protected final Dimension dim;
 	protected volatile boolean pause;
 	private MainLoop mainLoop;
+	private Exploder exploder;
 
 	public static Font FONT_BOLD = new Font("Serif", Font.BOLD, 15);
 	public static Font FONT_NORMAL = new Font("SansSerif", Font.PLAIN, 12);
@@ -40,6 +41,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 				update();
 				doGraphics();
 				doPhysics(dt);
+				exploder.endFrame();
 			}
 		}
 	}
@@ -62,7 +64,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		display = makeDisplay();
 		stats = new Stats();
 		frame.addWindowFocusListener(this);
-		world.addListener(new Exploder(world, display, stats));
+		world.addListener(exploder = new Exploder(world, display, stats));
 	}
 
 	public void mainLoop() {

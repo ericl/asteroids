@@ -1,11 +1,24 @@
 package asteroids.weapons;
 import static asteroids.Util.*;
+import java.util.*;
+import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
-public class Laser2 extends Laser {
+public class Laser2 extends Weapon {
+	static float myRadius = 2;
+
+	public Laser2() {
+		super(new Circle(myRadius), 100);
+		setRestitution(1);
+	}
+
 	public Body getRemnant() {
 		return new LargeExplosion();
+	}
+
+	public List<Body> getFragments() {
+		return null;
 	}
 
 	public float getDamage() {
@@ -13,7 +26,11 @@ public class Laser2 extends Laser {
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(4,4);
+		return v(3,3);
+	}
+
+	public float getTextureScaleFactor() {
+		return .9f;
 	}
 
 	public int getBurstLength() {
@@ -25,7 +42,15 @@ public class Laser2 extends Laser {
 	}
 
 	public float getSpeed() {
-		return 50;	
+		return 50;
+	}
+
+	public float getRadius() {
+		return myRadius;
+	}
+
+	public int getNum() {
+		return 1+level;
 	}
 
 	public float getReloadTime() {

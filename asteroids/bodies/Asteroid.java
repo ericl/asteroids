@@ -20,6 +20,7 @@ public abstract class Asteroid extends Body implements Explodable {
 
 	public Asteroid(Polygon shape) {
 		super(shape, shape.getArea());
+		setRestitution(.5f);
 	}
 
 	public Asteroid(Circle shape) {

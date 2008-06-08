@@ -44,9 +44,9 @@ public class Ship extends Body
 		accel = torque = lastFired = 0;
 		fire = explode = false;
 		warningStart = invincibleEnd = 0;
+		weapons.setWeaponType(new Laser());
 		hull = MAX;
 		thrust = 0;
-		weapons.setRandomWeaponType();
 	}
 
 	public static void setMax(double damage) {
@@ -56,7 +56,7 @@ public class Ship extends Body
 	public Ship(World w, Stats s) {
 		super("Your ship", shape, 1000f);
 		world = w;
-		weapons = new WeaponSys(s);
+		weapons = new WeaponSys(new Laser(), s);
 		missiles = new MissileSys(new Missile(),s);
 		setRotDamping(4000);
 	}
@@ -123,7 +123,7 @@ public class Ship extends Body
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(33,32);
+		return v(32,32);
 	}
 
 	/**
@@ -185,7 +185,8 @@ public class Ship extends Body
 		thrust--;
 		accel();
 		torque();
-		if(fire == true) fire();
+		if (fire)
+			fire();
 		weapons.update(world);
 	}
 
