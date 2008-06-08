@@ -19,7 +19,7 @@ public class Asteroids extends AbstractGame {
 	
 	protected class ScoreBuilder extends Thread {
 		public void run() {
-			stats.build(name, scenario);
+			stats.build(name);
 			scoresBuilt = true;
 		}
 	}
@@ -61,7 +61,7 @@ public class Asteroids extends AbstractGame {
 			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
 			g2d.setColor(COLOR_BOLD);
 			g2d.setFont(FONT_BOLD);
-			String score = name + "'s Score: " + scenario.score();
+			String score = name + "'s Score: " + stats.score();
 			g2d.drawString(score, centerX(FONT_BOLD, score, g2d), display.h(0)/2-20);
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
@@ -96,6 +96,7 @@ public class Asteroids extends AbstractGame {
 		switch (event.getKeyChar()) {
 			case 'r': restart = true; break;
 			case 'n': changeName(); break;
+			case 'q': System.exit(0); break;
 		}
 	}
 
@@ -103,9 +104,9 @@ public class Asteroids extends AbstractGame {
 		k.init();
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
-		stats.reset();		
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, ship, id);
+		stats.reset(scenario);		
 		scenario.setDensity(.5f);
 		scenario.setScalingConstant(1f);
 		scenario.start();
@@ -121,7 +122,7 @@ public class Asteroids extends AbstractGame {
 			display.w(-110),display.h(-35));
 		g2d.setColor(COLOR);
 		g2d.drawString("Asteroids: " +
-			scenario.score(),display.w(-110),display.h(-15));
+			scenario.asteroids(),display.w(-110),display.h(-15));
 	}
 
 	public void changeName() {

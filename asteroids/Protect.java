@@ -18,7 +18,7 @@ public class Protect extends AbstractGame {
 	
 	protected class ScoreBuilder extends Thread {
 		public void run() {
-			stats.build(name, scenario);
+			stats.build(name);
 			scoresBuilt = true;
 		}
 	}
@@ -50,6 +50,14 @@ public class Protect extends AbstractGame {
 
 	protected Display makeDisplay() {
 		frame.setUndecorated(true);
+		frame.setResizable(false);
+		GraphicsDevice myDevice =
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+		try {
+			myDevice.setFullScreenWindow(frame);
+		} catch (Exception e) {
+			e.printStackTrace();	
+		}
 		return new BasicDisplay(frame, dim);
 	}
 
@@ -63,7 +71,7 @@ public class Protect extends AbstractGame {
 			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
 			g2d.setColor(COLOR_BOLD);
 			g2d.setFont(FONT_BOLD);
-			String score = name + "'s Score: " + scenario.score();
+			String score = name + "'s Score: " + stats.score();
 			g2d.drawString(score, centerX(FONT_BOLD, score, g2d), display.h(0)/2-20);
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
@@ -109,8 +117,8 @@ public class Protect extends AbstractGame {
 		k.init();
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
-		stats.reset();		
 		scenario = new Defend(world, display, ship);
+		stats.reset(scenario);		
 		scenario.setInitialSpeed(20);
 		scenario.setDensity(.1f);
 		scenario.setScalingConstant(.5f);
@@ -131,7 +139,7 @@ public class Protect extends AbstractGame {
 			display.w(-110),display.h(-35));
 		g2d.setColor(COLOR);
 		g2d.drawString("Asteroids: " +
-			scenario.score(),display.w(-110),display.h(-15));
+			scenario.asteroids(),display.w(-110),display.h(-15));
 	}
 
 	public void changeName() {

@@ -88,7 +88,7 @@ public class Exploder implements CollisionListener {
 			return;
 		}
 		world.remove(body);
-		if (other instanceof Weapon)
+		if (other instanceof Weapon || other instanceof Ship)
 			for (Stats stat : stats)
 				stat.kill(body, event);
 		Body rem = e.getRemnant();

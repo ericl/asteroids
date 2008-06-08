@@ -87,7 +87,7 @@ public class Field {
 		return false;
 	}
 
-	public int score() {
+	public int asteroids() {
 		return done() ? score : count;
 	}
 
