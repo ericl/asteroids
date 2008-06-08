@@ -127,6 +127,6 @@ public class Asteroids extends AbstractGame {
 			JOptionPane.PLAIN_MESSAGE,
 			null, null, name);
 		if (s != null && !s.isEmpty())
-			name = s;
+			stats.edit(name = s);
 	}
 }

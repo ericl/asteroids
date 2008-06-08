@@ -7,6 +7,7 @@ import asteroids.handlers.Field;
 
 public class Stats {
 	private Vector<String> list = new Vector<String>();
+	private String lastChk;
 	public int hit = 0, att = 0, kills = 0;
 	public double dmg = 0.;
 
@@ -27,13 +28,14 @@ public class Stats {
 	public void build(String name, Field scenario) {
 		List<String> output = list;
 		scenario.score += kills*(hit/(double)att);
+		name = name.replace(" ", "%20");
 		if (!output.isEmpty())
-				return;
+			return;
 		try {
+			lastChk = md5(name+scenario.id+scenario.score()+hit+att+(System.currentTimeMillis()/1000));
 			URL init = new URL("http://a.cognoseed.org/post.php?scenario="
-					   + scenario.id + "&name=" + name + "&score=" +scenario.score() + "&chk="
-					   + md5(name+scenario.id+scenario.score()+hit+att
-						+(System.currentTimeMillis()/1000)));
+					+ scenario.id + "&name=" + name + "&score=" + scenario.score() + "&chk="
+					+ lastChk);
 			HttpURLConnection con = (HttpURLConnection)init.openConnection();
 			con.connect();
 			LineNumberReader content = new LineNumberReader(
@@ -41,7 +43,7 @@ public class Stats {
 			content.readLine();
 			con.disconnect();
 			init = new URL("http://a.cognoseed.org/get.php?scenario=" + scenario.id);
-			con = (HttpURLConnection) init.openConnection();
+			con = (HttpURLConnection)init.openConnection();
 			con.connect();
 			content = new LineNumberReader(
 				new InputStreamReader(con.getInputStream()));
@@ -55,6 +57,22 @@ public class Stats {
 			if (output.isEmpty())
 				output.add("");
 			output.add(e.getClass().getName());
+			System.err.println(e);
+		}
+	}
+
+	public void edit(String name) {
+		if (lastChk == null)
+			return;
+		name = name.replace(" ", "%20");
+		try {
+			URL init = new URL("http://a.cognoseed.org/edit.php?chk=" + lastChk + "&name=" + name);
+			HttpURLConnection con = (HttpURLConnection)init.openConnection();
+			con.connect();
+			LineNumberReader content = new LineNumberReader(new InputStreamReader(con.getInputStream()));
+			content.readLine();
+			con.disconnect();
+		} catch (Exception e) {
 			System.err.println(e);
 		}
 	}
