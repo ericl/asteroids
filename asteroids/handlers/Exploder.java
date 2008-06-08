@@ -160,7 +160,8 @@ public class Exploder implements CollisionListener {
 	// precondition: body instanceof Visible
 	// only works for roughly circular asteroids (not ships, for example)
 	public boolean isStuck(Body body, Body other) {
-		if (!(body instanceof Asteroid && other instanceof Asteroid))
+		if (!(body instanceof Asteroid && other instanceof Asteroid)
+				|| body instanceof Europa)
 			return false; // too risky to evaluate
 		Visible e = (Visible)body;
 		float diff = sub(body.getPosition(),other.getPosition()).length();

@@ -7,6 +7,7 @@ import net.phys2d.raw.*;
 
 public class Stats {
 	private Vector<String> list = new Vector<String>();
+	private String lastChk;
 	private int hit = 0, att = 0, kills = 0;
 	private double dmg = 0.;
 
@@ -42,13 +43,14 @@ public class Stats {
 		int score = scenario.score();
 		if (att > 0)
 			score += kills*(hit/(double)att);
+		name = name.replace(" ", "%20");
 		if (!output.isEmpty())
-				return;
+			return;
 		try {
+			lastChk = md5(name+scenario.getID()+score+hit+att+(System.currentTimeMillis()/1000));
 			URL init = new URL("http://a.cognoseed.org/post.php?scenario="
-					   + scenario.getID() + "&name=" + name + "&score=" + score
-					   + "&chk=" + md5(name + scenario.getID() + score + hit + att
-							+ (System.currentTimeMillis()/1000)));
+					+ scenario.getID() + "&name=" + name + "&score=" + score + "&chk="
+					+ lastChk);
 			HttpURLConnection con = (HttpURLConnection)init.openConnection();
 			con.connect();
 			LineNumberReader content = new LineNumberReader(
@@ -56,7 +58,7 @@ public class Stats {
 			content.readLine();
 			con.disconnect();
 			init = new URL("http://a.cognoseed.org/get.php?scenario=" + scenario.getID());
-			con = (HttpURLConnection) init.openConnection();
+			con = (HttpURLConnection)init.openConnection();
 			con.connect();
 			content = new LineNumberReader(
 				new InputStreamReader(con.getInputStream()));
@@ -70,6 +72,22 @@ public class Stats {
 			if (output.isEmpty())
 				output.add("");
 			output.add(e.getClass().getName());
+			System.err.println(e);
+		}
+	}
+
+	public void edit(String name) {
+		if (lastChk == null)
+			return;
+		name = name.replace(" ", "%20");
+		try {
+			URL init = new URL("http://a.cognoseed.org/edit.php?chk=" + lastChk + "&name=" + name);
+			HttpURLConnection con = (HttpURLConnection)init.openConnection();
+			con.connect();
+			LineNumberReader content = new LineNumberReader(new InputStreamReader(con.getInputStream()));
+			content.readLine();
+			con.disconnect();
+		} catch (Exception e) {
 			System.err.println(e);
 		}
 	}

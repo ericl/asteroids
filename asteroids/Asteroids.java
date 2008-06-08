@@ -7,15 +7,15 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 
 public class Asteroids extends AbstractGame {
+	private Ship ship;
+	private Field scenario;
+	private StarField k;
+	private Thread scoreBuilder;
+	private String name = System.getProperty("user.name");
+	private boolean restart;
+	private boolean scoresBuilt;
 	private static final int BASE_WIDTH = 700;
 	private static final int BASE_HEIGHT = 700;
-	protected final Ship ship;
-	protected Field scenario;
-	protected boolean restart;
-	protected StarField k;
-	protected boolean scoresBuilt;
-	protected Thread scoreBuilder;
-	protected String name = System.getProperty("user.name");
 	
 	protected class ScoreBuilder extends Thread {
 		public void run() {
@@ -132,6 +132,6 @@ public class Asteroids extends AbstractGame {
 			JOptionPane.PLAIN_MESSAGE,
 			null, null, name);
 		if (s != null && !s.isEmpty())
-			name = s;
+			stats.edit(name = s);
 	}
 }
