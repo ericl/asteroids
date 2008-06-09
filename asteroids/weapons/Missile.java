@@ -74,6 +74,10 @@ public class Missile extends Weapon {
 	 * problem exists below...
 	 * when commented/removed, missiles display on screen fine and act like lasers
 	 * when included, missiles magicly disappear
+	 * 
+	 * 
+	 * todo/fix on this to get missile working...
+	 * fix the force applied...missile is currently not capable of turning much
 	 */
 	public void endFrame() {
 		if(getTarget() != null) {
@@ -90,15 +94,23 @@ public class Missile extends Weapon {
 			float yd = getVelocity().getY() - getTarget().getVelocity().getY();
 			
 
+			//scale down a bit
+			vec.scale(0.4f);
 			
 			// adjust the velocity of the missile
 			adjustVelocity(new Vector2f(xd * 0.02f, yd * 0.02f));
 			
-			// scale
-			vec.scale(2);
+			// scale like crazy for force then control velocity
+			vec.scale(9);
 			
-			// add a force in same direction(after all, missiles do acceleration);
+			// add a force in same direction(after all, missiles do accelerate);
 			addForce(vec);
+			
+			// prep vec for controlling velocity
+			vec.scale(0.005f);
+			
+			// now control it
+			adjustVelocity(new Vector2f(vec.getX(), vec.getY()));
 		}
 	}
 	
