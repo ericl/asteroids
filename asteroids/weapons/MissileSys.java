@@ -98,12 +98,12 @@ public class MissileSys extends WeaponSys {
 			}
 		}
 		
-		System.out.println(temp);
+//		System.out.println(temp);
 		String tar;
-		if(target instanceof Ship) tar = "ship";
-		if(target instanceof Asteroid) tar = "asteroid";
-		else tar = "no idea...>.<";
-		System.out.println("Target: " + tar);
+//		if(target instanceof Ship) tar = "ship";
+//		if(target instanceof Asteroid) tar = "asteroid";
+//		else tar = "no idea...>.<";
+//		System.out.println("Target: " + tar);
 		
 		return target;
 		

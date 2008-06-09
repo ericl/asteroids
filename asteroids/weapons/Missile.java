@@ -65,15 +65,39 @@ public class Missile extends Weapon {
 		return myTarget;
 	}
 	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.phys2d.raw.Body#endFrame()
+	 * blah blah blah... ^ eclipse
+	 * 
+	 * problem exists below...
+	 * when commented/removed, missiles display on screen fine and act like lasers
+	 * when included, missiles magicly disappear
+	 */
 	public void endFrame() {
 		if(getTarget() != null) {
-			System.out.println("target locked");
+//			System.out.println("target locked");
+			
+			// get the target's velocity
 			Vector2f vec = new Vector2f(getTarget().getVelocity());
+			
+			// now add it to the missiles velocity (vectors)
 			vec.add(getVelocity());
+			
+			// get the difference in the missiles velocity and target velocity
 			float xd = getVelocity().getX() - getTarget().getVelocity().getX();
 			float yd = getVelocity().getY() - getTarget().getVelocity().getY();
+			
+
+			
+			// adjust the velocity of the missile
+			adjustVelocity(new Vector2f(xd * 0.02f, yd * 0.02f));
+			
+			// scale
 			vec.scale(2);
-			adjustVelocity(new Vector2f(xd * 20, yd * 20));
+			
+			// add a force in same direction(after all, missiles do acceleration);
 			addForce(vec);
 		}
 	}
