@@ -195,7 +195,7 @@ public class Ship extends Body
 		accel();
 		torque();
 		if (fire)
-			weapons.fire();
+			missiles.fire();
 		weapons.update();
 	}
 

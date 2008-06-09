@@ -5,6 +5,7 @@ import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.BodyList;
 import net.phys2d.raw.World;
+import asteroids.bodies.Asteroid;
 import asteroids.bodies.Ship;
 import asteroids.handlers.Stats;
 
@@ -19,12 +20,10 @@ public class MissileSys extends WeaponSys {
 		super(s, world, w);
 	}
 	
-	
 	/*
 	 * create the missile...("launch")
 	 */
 	public void fire() {
-		fired.clear();
 		Body target = getVictim();
 		
 		if (!canFire()) return;
@@ -35,52 +34,76 @@ public class MissileSys extends WeaponSys {
 			e.printStackTrace();
 		}
 		
-		c.setRotation(s.getRotation());
+		Missile mis = (Missile)c;
+		mis.setRotation(s.getRotation());
 		float xc = (float)Math.sin(s.getRotation());
 		float yc = (float)Math.cos(s.getRotation());
 		float sr = s.getRadius() * 2 / 3; // estimated length
-		c.setPosition(s.getPosition().getX()+xc*sr,s.getPosition().getY()-yc*sr);
-		c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
-		c.adjustVelocity((Vector2f)s.getVelocity());
-		c.addExcludedBody(s);
-		fired.add(c);
+		mis.setPosition(s.getPosition().getX()+xc*sr,s.getPosition().getY()-yc*sr);
+		mis.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
+		mis.adjustVelocity((Vector2f)s.getVelocity());
+		mis.addExcludedBody(s);
+		mis.setTarget(target);
 		for (Stats stat : stats)
-			stat.fired(c);
-		world.add(c);
+			stat.fired(mis);
+		world.add(mis);
 	}
 	
+	
 	/*
-	 * guide the missile...nah...it should just be a unguided rocket...nah...sajflkdsajg;lj
-	 * hopefully the user won't be able to spam missiles...
+	 * to be deleted
+	 * missiles guide themselves with their endFrame()
 	 */
 	
 	public void update() {
-		Missile missile = (Missile)(fired.peek());
-		Vector2f vec = new Vector2f(missile.getTarget().getVelocity());
-		vec.add(missile.getVelocity());
-		float xd = missile.getVelocity().getX() - missile.getTarget().getVelocity().getX();
-		float yd = missile.getVelocity().getY() - missile.getTarget().getVelocity().getY();
-		vec.scale(8e5f*missile.getMass());
-		if(missile != null) {
-			missile.adjustVelocity(new Vector2f(xd * 20, yd * 20));
-			missile.addForce(vec);
-		}
+//		Missile missile = (Missile)(fired.peek());
+//		Vector2f vec = new Vector2f(missile.getTarget().getVelocity());
+//		vec.add(missile.getVelocity());
+//		float xd = missile.getVelocity().getX() - missile.getTarget().getVelocity().getX();
+//		float yd = missile.getVelocity().getY() - missile.getTarget().getVelocity().getY();
+//		vec.scale(8e5f*missile.getMass());
+//		if(missile != null) {
+//			missile.adjustVelocity(new Vector2f(xd * 20, yd * 20));
+//			missile.addForce(vec);
+//		}
 	}
 	
 	/*
 	 * @return self-explantory
 	 */
 	protected Body getVictim() {
-		BodyList potentialVictims = world.getBodies();
+		// lots of target: no idea...
+		
+		// get list of bodies in world
+		BodyList bodies = world.getBodies();
+		BodyList potentialVictims = new BodyList();
+		
+		//quick and dirty...
+		for(int i = 0; i < bodies.size(); i++) {
+			if(!(bodies.get(i) instanceof Ship)) {
+				potentialVictims.add(bodies.get(i));
+			}
+		}
+		
+		// get the distance from one of the bodies
 		float temp = s.getPosition().distance(potentialVictims.get(0).getPosition());
 		Body target = potentialVictims.get(0);
 		
+		// compare the distance with others
+		// if one lower, make that the target
 		for(int count = 1; count < potentialVictims.size(); count++) {
 			if(s.getPosition().distance(potentialVictims.get(count).getPosition()) < temp) {
 				temp = s.getPosition().distance(potentialVictims.get(count).getPosition());
 				target = potentialVictims.get(count);
 			}
 		}
+		
+		System.out.println(temp);
+		String tar;
+		if(target instanceof Ship) tar = "ship";
+		if(target instanceof Asteroid) tar = "asteroid";
+		else tar = "no idea...>.<";
+		System.out.println("Target: " + tar);
 		
 		return target;
 		
