@@ -21,7 +21,10 @@
 				<attribute name="Main-Class" value="asteroids.Chooser"/>
 			</manifest>
 			<fileset dir=".">
+				<include name="license.txt"/>
+				<include name="phys2d-license.txt"/>
 				<include name="asteroids/**/*.class"/>
+				<include name="asteroids/**/*.java"/>
 				<include name="asteroids/**/*.png"/>
 				<include name="asteroids/**/*.jpg"/>
 				<include name="net/**/*.class"/>
