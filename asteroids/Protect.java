@@ -43,8 +43,7 @@ public class Protect extends AbstractGame {
 	private Pointer p;
 	private Thread scoreBuilder;
 	private String name = System.getProperty("user.name");
-	private boolean restart;
-	private boolean scoresBuilt;
+	private boolean restart, scoresBuilt;
 	
 	protected class ScoreBuilder extends Thread {
 		public void run() {

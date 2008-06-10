@@ -41,5 +41,6 @@ public abstract class Explosion extends Body implements Textured {
 		super(new Circle(1), 1);
 		setEnabled(false);
 	}
+
 	public abstract boolean dead();
 }

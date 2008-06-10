@@ -42,16 +42,12 @@ public class Field {
 	protected World world;
 	protected Display display;
 	protected Dimension dim;
-	protected int count;
-	protected int score = -1;
+	protected int count, score = -1;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
 	protected static double D = 1;
 	protected float I = 30, S = 2; // initial speed of asteroids; scaling constant
-	public final static int HEX = 1;
-	public final static int LARGE = 2;
-	public final static int ROCKY = 3;
-	public final static int ICEY = 4;
+	public final static int HEX = 1, LARGE = 2, ROCKY = 3, ICEY = 4;
 	public final static int[] ids = {HEX, LARGE, ROCKY, ICEY};
 	private int id;
 

@@ -34,7 +34,6 @@ import net.phys2d.raw.*;
 import asteroids.display.*;
 
 public interface Explodable extends Visible {
-
 	/**
 	 * @return True if the body should be exploded or has exploded.
 	 * Should be callable at any time.

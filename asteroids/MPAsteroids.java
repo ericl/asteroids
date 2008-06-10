@@ -36,8 +36,7 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 
 public class MPAsteroids extends MPGame {
-	private static final int BASE_WIDTH = 500;
-	private static final int BASE_HEIGHT = 500;
+	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
 	protected final Ship ship1, ship2;
 	protected Ship[] ships = new Ship[2];
 	protected Field scenario;

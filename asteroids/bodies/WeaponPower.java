@@ -36,7 +36,6 @@ import static asteroids.Util.*;
 import static asteroids.bodies.PolyAsteroid.*;
 
 public class WeaponPower extends PowerUp implements Textured {
-	
 	protected static ROVector2f[] raw = {v(11,1),v(20,10),v(11,20),v(1,11)};
 	protected static float RATIO = 1f;
 	protected float radius;

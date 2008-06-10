@@ -39,10 +39,9 @@ public class Stats {
 	private Vector<String> list = new Vector<String>();
 	private String lastChk;
 	private Field scenario;
-	private int hit = 0, att = 0, kills = 0;
+	private int hit = 0, att = 0, kills = 0, finalScore = -1;
 	private boolean finalized;
 	private double dmg = 0;
-	private int finalScore = -1;
 
 	public void reset(Field field) {
 		scenario = field;

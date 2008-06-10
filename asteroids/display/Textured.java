@@ -35,7 +35,6 @@ import net.phys2d.math.*;
  * Something with texture information that can be rendered by a Display.
  */
 public interface Textured extends Visible {
-
 	/**
 	 * Returns constant distance in pixels from the top-left corner
 	 * of the texture pixmap to its center of rotation. This should

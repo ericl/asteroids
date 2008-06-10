@@ -34,10 +34,10 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 
 public class LaserExplosion extends Explosion {
-	static double FRAMETIME = 100;
-	static int FRAMES = 8;
-	double inittime = Timer.gameTime();
-	int frame = 1;
+	private static double FRAMETIME = 100;
+	private static int FRAMES = 8;
+	private double inittime = Timer.gameTime();
+	private int frame = 1;
 
 	public float getRadius() {
 		return 30;	

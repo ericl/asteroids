@@ -36,7 +36,7 @@ import net.phys2d.math.*;
 import static asteroids.Util.*;
 
 public class Laser2 extends Weapon {
-	static float myRadius = 2;
+	private static float myRadius = 2;
 
 	public Laser2() {
 		super(new Circle(myRadius), 100);

@@ -34,11 +34,11 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 
 public class LargeExplosion extends Explosion {
-	static double FRAMETIME = 500;
-	static int FRAMES = 11;
-	double inittime = Timer.gameTime();
-	int frame = 1;
-	float scale = 1;
+	private static double FRAMETIME = 500;
+	private static int FRAMES = 11;
+	private double inittime = Timer.gameTime();
+	private int frame = 1;
+	private float scale = 1;
 
 	public LargeExplosion() {
 		super();

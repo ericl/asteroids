@@ -48,9 +48,7 @@ public class Exploder implements CollisionListener {
 
 	static boolean DOUBLE_GROUP = true;
 	static int MAX_BODIES = 300;
-	static float MAX_RADIAL_DEVIATION = 10;
-	static float COLLIDE_BOUNDS = 150;
-	static float MAX_J = 2;
+	static float MAX_RADIAL_DEVIATION = 10, COLLIDE_BOUNDS = 150, MAX_J = 2;
 
 	/**
 	 * phys2d will not collide bodies with any matching bits...

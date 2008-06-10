@@ -41,8 +41,7 @@ public class Invincibility extends PowerUp implements Textured {
 	private static float RATIO = .1f;
 	private Vector2f centroid;
 	private float radius;
-	private static int INVINCIBLE_TIME = 20000;
-	private static int WARNING_TIME = 4000;
+	private static int INVINCIBLE_TIME = 20000, WARNING_TIME = 4000;
 
 	public Invincibility() {
 		super(new Polygon(centralized(scaled(raw, RATIO))));

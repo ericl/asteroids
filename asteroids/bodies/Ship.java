@@ -45,7 +45,6 @@ import static asteroids.Util.*;
 
 public class Ship extends Body
 		implements Drawable, Textured, Explodable, KeyListener {
-	
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	protected static Shape shape = new Polygon(poly);
 	protected static double MAX = 1;

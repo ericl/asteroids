@@ -42,10 +42,8 @@ public class Asteroids extends AbstractGame {
 	private StarField k;
 	private Thread scoreBuilder;
 	private String name = System.getProperty("user.name");
-	private boolean restart;
-	private boolean scoresBuilt;
-	private static final int BASE_WIDTH = 700;
-	private static final int BASE_HEIGHT = 700;
+	private boolean restart, scoresBuilt;
+	private static final int BASE_WIDTH = 700, BASE_HEIGHT = 700;
 	
 	protected class ScoreBuilder extends Thread {
 		public void run() {

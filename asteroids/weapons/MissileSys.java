@@ -40,11 +40,9 @@ import static asteroids.Util.v;
  * basic missile sys capable of only guiding one missile right now
  */
 public class MissileSys extends WeaponSys {
-
 	public MissileSys(Ship s, World world, Weapon w) {
 		super(s, world, w);
 	}
-	
 	
 	/*
 	 * create the missile...("launch")
@@ -79,7 +77,6 @@ public class MissileSys extends WeaponSys {
 	 * guide the missile...nah...it should just be a unguided rocket...nah...sajflkdsajg;lj
 	 * hopefully the user won't be able to spam missiles...
 	 */
-	
 	public void update() {
 		Missile missile = (Missile)(fired.peek());
 		Vector2f vec = new Vector2f(missile.getTarget().getVelocity());
@@ -107,7 +104,6 @@ public class MissileSys extends WeaponSys {
 				target = potentialVictims.get(count);
 			}
 		}
-		return target;
-		
+		return target;		
 	}
 }

@@ -36,7 +36,6 @@ import asteroids.weapons.*;
 import static asteroids.Util.*;
 
 public abstract class PowerUp extends Body implements Explodable {
-
 	public static PowerUp random() {
 		if (oneIn(5))
 			return new Invincibility();

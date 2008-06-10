@@ -35,8 +35,6 @@ import net.phys2d.math.*;
 import static asteroids.Util.*;
 
 public class HexAsteroid extends PolyAsteroid {
-
-	// kinda like a smashed hexagon
 	private static ROVector2f[] geo = {v(-30,0),v(-10,-10),v(10,-10),v(30,0),v(10,20),v(-10,20)};
 
 	public HexAsteroid(float size) {

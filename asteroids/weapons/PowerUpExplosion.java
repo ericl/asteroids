@@ -34,11 +34,11 @@ import asteroids.handlers.*;
 import static asteroids.Util.*;
 
 public class PowerUpExplosion extends Explosion {
-	static double FRAMETIME = 200;
-	static float SCALE = 1.5f;
-	static int FRAMES = 5;
-	double inittime = Timer.gameTime();
-	int frame = 1;
+	private static double FRAMETIME = 200;
+	private static float SCALE = 1.5f;
+	private static int FRAMES = 5;
+	private double inittime = Timer.gameTime();
+	private int frame = 1;
 
 	public PowerUpExplosion() {
 		super();
