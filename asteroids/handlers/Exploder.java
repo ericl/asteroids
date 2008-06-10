@@ -111,9 +111,6 @@ public class Exploder implements CollisionListener {
 			for (Stats stat : stats)
 				stat.hit(body, event);
 		}
-		if( other instanceof Missile) {
-			System.out.println("missile just hit something");
-		}
 		// don't explode some offscreen or non-exploding bodies
 		if (!isStuck(body, other) && (!e.canExplode()
 				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)

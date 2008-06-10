@@ -32,7 +32,6 @@ package asteroids;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.image.ImageObserver;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
@@ -149,7 +148,6 @@ public class Asteroids extends AbstractGame {
 		if (!ship.isInvincible())
 			hull = (int)(ship.getDamage()*1000)/10+"%";
 		g2d.setColor(ship.statusColor());
-		//g2d.drawImage("pixmaps/health.jpg", 20, 20, -80, 0, );
 		g2d.drawString("Armor: " + hull,
 			display.w(-110),display.h(-35));
 		g2d.setColor(COLOR);

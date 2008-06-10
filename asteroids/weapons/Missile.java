@@ -38,20 +38,24 @@ import net.phys2d.raw.shapes.*;
 public class Missile extends Weapon {
 	protected Body myTarget;
 	
-	// to be deleted by will
-	private static float myRadius = 2;
-	/////
-	
 	public Missile() {
-		super(new Circle(myRadius), 1);
+		super(new Circle(10), 10);
 	}
 	
-	public Vector2f getTextureCenter() {
-		return v(7,3);
+	public Body getRemnant() {
+		return new LaserExplosion();
 	}
 	
-	public boolean canExplode() {
-		return true;
+	public List<Body> getFragments() {
+		return null;
+	}
+	
+	public void setTarget(Body b) {
+		myTarget = b;
+	}
+	
+	public Body getTarget() {
+		return myTarget;
 	}
 	
 	public float getDamage() {
@@ -66,32 +70,16 @@ public class Missile extends Weapon {
 		return 75;
 	}
 	
-	public Body getRemnant() {
-		return new LaserExplosion();
-	}
-	
-	public List<Body> getFragments() {
-		return null;
-	}
-	
 	public String getTexturePath() {
 		return "pixmaps/laser.png";
 	}
 
 	public float getTextureScaleFactor() {
 		return 2;
-	}	
-	
-	public float getRadius() {
-		return 2;
 	}
-	
-	public void setTarget(Body b) {
-		myTarget = b;
-	}
-	
-	public Body getTarget() {
-		return myTarget;
+
+	public Vector2f getTextureCenter() {
+		return v(0,0);
 	}
 	
 	
@@ -122,7 +110,6 @@ public class Missile extends Weapon {
 			float xd = getVelocity().getX() - getTarget().getVelocity().getX();
 			float yd = getVelocity().getY() - getTarget().getVelocity().getY();
 			
-
 			//scale down a bit
 			vec.scale(0.4f);
 			
@@ -142,5 +129,8 @@ public class Missile extends Weapon {
 			adjustVelocity(new Vector2f(vec.getX(), vec.getY()));
 		}
 	}
-	
+
+	public float getRadius() {
+		return 0;
+	}
 }
