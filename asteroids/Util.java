@@ -29,8 +29,8 @@
  */
 
 package asteroids;
-import net.phys2d.math.*;
 import java.awt.*;
+import net.phys2d.math.*;
 
 public class Util {
 	private Util() {

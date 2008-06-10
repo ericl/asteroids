@@ -29,11 +29,11 @@
  */
 
 package asteroids.bodies;
-import static asteroids.Util.*;
-import static asteroids.bodies.PolyAsteroid.*;
-import asteroids.display.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
+import asteroids.display.*;
+import static asteroids.Util.*;
+import static asteroids.bodies.PolyAsteroid.*;
 
 public class ArmorRecovery extends PowerUp implements Textured {
 	

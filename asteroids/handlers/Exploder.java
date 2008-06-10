@@ -29,14 +29,14 @@
  */
 
 package asteroids.handlers;
-import asteroids.weapons.*;
-import asteroids.bodies.*;
-import asteroids.display.*;
-import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
+import java.util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import java.util.*;
+import static net.phys2d.math.MathUtil.*;
+import asteroids.bodies.*;
+import asteroids.weapons.*;
+import asteroids.display.*;
+import static asteroids.Util.*;
 
 public class Exploder implements CollisionListener {
 	private Queue<Explosion> explosionQueue = new LinkedList<Explosion>();

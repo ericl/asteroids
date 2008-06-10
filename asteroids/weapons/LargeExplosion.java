@@ -29,9 +29,9 @@
  */
 
 package asteroids.weapons;
+import net.phys2d.math.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
-import net.phys2d.math.*;
 
 public class LargeExplosion extends Explosion {
 	static double FRAMETIME = 500;

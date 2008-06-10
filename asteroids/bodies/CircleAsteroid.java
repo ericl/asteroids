@@ -29,14 +29,14 @@
  */
 
 package asteroids.bodies;
-import static asteroids.Util.*;
-import asteroids.display.*;
+import java.util.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.util.*;
+import asteroids.display.*;
+import static asteroids.Util.*;
 
 public class CircleAsteroid extends Asteroid implements Drawable {
 	private Color color = Color.orange;

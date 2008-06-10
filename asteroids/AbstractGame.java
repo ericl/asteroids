@@ -29,14 +29,13 @@
  */
 
 package asteroids;
-import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.JFrame;
 import net.phys2d.raw.*;
 import net.phys2d.raw.strategies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
-import asteroids.handlers.Timer;
 import static asteroids.Util.*;
 
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {

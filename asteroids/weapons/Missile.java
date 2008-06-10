@@ -30,10 +30,10 @@
 
 package asteroids.weapons;
 import java.util.List;
-import static asteroids.Util.*;
 import net.phys2d.raw.*;
-import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
+import net.phys2d.math.*;
+import static asteroids.Util.*;
 
 public class Missile extends Weapon {
 	protected Body myTarget;

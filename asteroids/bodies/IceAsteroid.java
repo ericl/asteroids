@@ -29,15 +29,15 @@
  */
 
 package asteroids.bodies;
-import asteroids.handlers.*;
-import asteroids.display.*;
+import java.util.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
+import asteroids.display.*;
+import asteroids.handlers.*;
 import static asteroids.Util.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.util.*;
 
 public class IceAsteroid extends CircleAsteroid implements Textured {
 	private double melting;

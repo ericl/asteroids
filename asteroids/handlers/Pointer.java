@@ -29,13 +29,13 @@
  */
 
 package asteroids.handlers;
+import java.awt.*;
+import net.phys2d.math.*;
+import static net.phys2d.math.MathUtil.*;
 import asteroids.*;
 import asteroids.bodies.*;
-import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
-import net.phys2d.math.*;
-import java.awt.*;
 import asteroids.display.*;
+import static asteroids.Util.*;
 
 /**
  * Draws a small line that points towards another ship.

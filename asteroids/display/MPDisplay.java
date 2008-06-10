@@ -29,14 +29,14 @@
  */
 
 package asteroids.display;
-import javax.swing.JSplitPane;
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.awt.geom.*;
-import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
+import javax.swing.JSplitPane;
 import net.phys2d.math.*;
+import static net.phys2d.math.MathUtil.*;
+import static asteroids.Util.*;
 
 public class MPDisplay extends Display {
 	protected JSplitPane jsplit;

@@ -29,9 +29,9 @@
  */
 
 package asteroids.weapons;
-import asteroids.display.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
+import net.phys2d.raw.shapes.*;
+import asteroids.display.*;
 
 /**
  * Weapons should leave explosion remnants.

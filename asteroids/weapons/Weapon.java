@@ -30,11 +30,11 @@
 
 package asteroids.weapons;
 import java.util.*;
+import net.phys2d.raw.*;
+import net.phys2d.raw.shapes.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.Timer;
-import net.phys2d.raw.shapes.*;
-import net.phys2d.raw.*;
 
 public abstract class Weapon extends Body implements Textured, Explodable {
 	private boolean exploded;

@@ -29,11 +29,11 @@
  */
 
 package asteroids.bodies;
-import asteroids.display.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
-import java.awt.Graphics2D;
-import java.awt.Color;
+import asteroids.display.*;
 
 public abstract class PolyAsteroid extends Asteroid implements Drawable {
 	private float radius;

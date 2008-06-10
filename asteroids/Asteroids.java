@@ -30,8 +30,8 @@
 
 package asteroids;
 import java.awt.*;
-import javax.swing.*;
 import java.awt.event.*;
+import javax.swing.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;

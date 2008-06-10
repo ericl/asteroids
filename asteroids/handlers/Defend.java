@@ -29,9 +29,9 @@
  */
 
 package asteroids.handlers;
+import net.phys2d.raw.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
-import net.phys2d.raw.*;
 
 public class Defend extends Field {
 	private Europa europa;

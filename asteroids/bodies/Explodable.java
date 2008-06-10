@@ -29,9 +29,9 @@
  */
 
 package asteroids.bodies;
-import asteroids.display.*;
-import net.phys2d.raw.*;
 import java.util.*;
+import net.phys2d.raw.*;
+import asteroids.display.*;
 
 public interface Explodable extends Visible {
 

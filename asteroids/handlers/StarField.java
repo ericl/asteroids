@@ -30,9 +30,9 @@
 
 package asteroids.handlers;
 import java.awt.*;
+import java.util.*;
 import net.phys2d.math.*;
 import asteroids.display.*;
-import java.util.*;
 import static asteroids.Util.*;
 
 /**

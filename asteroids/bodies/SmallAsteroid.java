@@ -29,10 +29,10 @@
  */
 
 package asteroids.bodies;
-import static asteroids.Util.v;
 import java.util.*;
-import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.Body;
+import net.phys2d.math.ROVector2f;
+import static asteroids.Util.v;
 
 public class SmallAsteroid extends TexturedAsteroid {
 

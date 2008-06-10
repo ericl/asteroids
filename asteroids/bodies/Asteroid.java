@@ -29,11 +29,11 @@
  */
 
 package asteroids.bodies;
+import java.util.*;
+import net.phys2d.raw.*;
+import net.phys2d.raw.shapes.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
-import net.phys2d.raw.shapes.*;
-import net.phys2d.raw.*;
-import java.util.*;
 
 public abstract class Asteroid extends Body implements Explodable {
 	protected float damage;

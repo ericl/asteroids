@@ -29,10 +29,10 @@
  */
 
 package asteroids.bodies;
-import static asteroids.Util.*;
+import java.util.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import java.util.*;
+import static asteroids.Util.*;
 
 public class HexAsteroid extends PolyAsteroid {
 

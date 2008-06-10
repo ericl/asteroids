@@ -29,11 +29,11 @@
  */
 
 package asteroids.bodies;
+import java.util.*;
+import net.phys2d.raw.*;
+import net.phys2d.raw.shapes.*;
 import asteroids.weapons.*;
 import static asteroids.Util.*;
-import net.phys2d.raw.shapes.*;
-import net.phys2d.raw.*;
-import java.util.*;
 
 public abstract class PowerUp extends Body implements Explodable {
 

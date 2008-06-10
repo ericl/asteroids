@@ -29,11 +29,11 @@
  */
 
 package asteroids.weapons;
-import static asteroids.Util.*;
 import java.util.*;
-import net.phys2d.raw.shapes.*;
 import net.phys2d.raw.*;
+import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
+import static asteroids.Util.*;
 
 public class Laser2 extends Weapon {
 	static float myRadius = 2;

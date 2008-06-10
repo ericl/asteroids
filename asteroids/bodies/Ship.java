@@ -29,18 +29,18 @@
  */
 
 package asteroids.bodies;
-import asteroids.*;
+import java.util.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.*;
-import asteroids.display.*;
-import asteroids.weapons.*;
-import asteroids.handlers.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
-import java.util.List;
-import java.util.ArrayList;
+import asteroids.*;
+import asteroids.display.*;
+import asteroids.weapons.*;
+import asteroids.handlers.*;
+import asteroids.handlers.Timer;
 import static asteroids.Util.*;
 
 public class Ship extends Body

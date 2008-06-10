@@ -29,9 +29,9 @@
  */
 
 package asteroids;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 import asteroids.display.*;
 
 public abstract class MPGame extends AbstractGame {

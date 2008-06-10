@@ -30,12 +30,12 @@
 
 package asteroids.display;
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.awt.geom.*;
-import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
 import net.phys2d.math.*;
+import static net.phys2d.math.MathUtil.*;
+import static asteroids.Util.*;
 
 public class BasicDisplay extends Display {
 	protected BufferStrategy strategy;

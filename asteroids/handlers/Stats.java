@@ -29,9 +29,9 @@
  */
 
 package asteroids.handlers;
-import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 import java.security.*;
 import net.phys2d.raw.*;
 

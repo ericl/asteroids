@@ -29,8 +29,8 @@
  */
 
 package asteroids.display;
-import net.phys2d.math.*;
 import java.awt.Graphics2D;
+import net.phys2d.math.*;
 
 /**
  * Drawable object. This actually breaks the whole point of the

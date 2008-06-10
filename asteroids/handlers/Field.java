@@ -29,13 +29,13 @@
  */
 
 package asteroids.handlers;
+import java.awt.*;
+import static java.lang.Math.*;
+import net.phys2d.raw.*;
+import net.phys2d.math.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
-import static java.lang.Math.*;
-import java.awt.*;
-import net.phys2d.raw.*;
-import net.phys2d.math.*;
 
 public class Field {
 	protected Ship[] ships;

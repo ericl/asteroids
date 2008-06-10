@@ -29,13 +29,13 @@
  */
 
 package asteroids.display;
-import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
 import java.awt.*;
-import java.net.URL;
 import java.util.*;
+import java.net.URL;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
+import static net.phys2d.math.MathUtil.*;
+import static asteroids.Util.*;
 
 public abstract class Display {
 	protected MediaTracker tracker;

@@ -29,11 +29,11 @@
  */
 
 package asteroids;
-import asteroids.display.*;
 import java.awt.*;
-import javax.swing.*;
 import java.awt.event.*;
+import javax.swing.*;
 import asteroids.bodies.*;
+import asteroids.display.*;
 import asteroids.handlers.*;
 
 public class Protect extends AbstractGame {

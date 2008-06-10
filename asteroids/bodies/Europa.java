@@ -29,13 +29,13 @@
  */
 
 package asteroids.bodies;
-import asteroids.*;
 import java.util.*;
 import java.awt.Color;
+import net.phys2d.raw.*;
+import net.phys2d.math.*;
+import asteroids.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
-import net.phys2d.math.*;
-import net.phys2d.raw.*;
 
 public class Europa extends CircleAsteroid implements Textured {
 	private IceAsteroid core = new IceAsteroid(90);
