@@ -46,9 +46,8 @@ public class Exploder implements CollisionListener {
 	private Display display;
 	private CollisionGrouper grouper;
 
-	static boolean DOUBLE_GROUP = true;
-	static int MAX_BODIES = 300;
-	static float MAX_RADIAL_DEVIATION = 10, COLLIDE_BOUNDS = 150, MAX_J = 2;
+	final static int MAX_BODIES = 300;
+	final static float MAX_RADIAL_DEVIATION = 10, COLLIDE_BOUNDS = 150, MAX_J = 2;
 
 	/**
 	 * phys2d will not collide bodies with any matching bits...
@@ -128,7 +127,7 @@ public class Exploder implements CollisionListener {
 			explosionQueue.add((Explosion)rem);
 		if (rem != null)
 			rem.addBit(group);
-		if (DOUBLE_GROUP && !(other instanceof Ship || body instanceof Weapon))
+		if (!(other instanceof Ship || body instanceof Weapon))
 			other.addBit(group);
 		// user-related stuff automatically passes the group limit
 		if (!(body instanceof Ship || other instanceof Ship

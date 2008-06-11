@@ -59,7 +59,6 @@ public class Ship extends Body
 	protected long warningStart; // end of warning -> not invincible
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
 	protected WeaponSys weapons;
-	protected MissileSys missiles;
 	public int deaths;
 
 	public void reset() {
@@ -80,7 +79,6 @@ public class Ship extends Body
 
 	public void addStatsListener(Stats s) {
 		weapons.addStatsListener(s);	
-		missiles.addStatsListener(s);	
 	}
 
 	public static void setMax(double damage) {
@@ -95,7 +93,6 @@ public class Ship extends Body
 		super("Your ship", shape, 1000f);
 		world = w;
 		weapons = new WeaponSys(this, world, new Laser());
-		missiles = new MissileSys(this, world, new Missile());
 		setRotDamping(4000);
 	}
 
