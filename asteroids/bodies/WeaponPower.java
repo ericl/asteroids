@@ -48,26 +48,46 @@ public class WeaponPower extends PowerUp implements Textured {
 		centroid = new Polygon(raw).getCentroid();
 	}
 
+	/**
+	 * the rotation of the object is 0 because it does not spin
+	 * @return rotation number
+	 */
 	public float getRotation() {
 		return 0;
 	}
 
+	/**
+	 * @return the radius of the WeaponPower
+	 */
 	public float getRadius() {
 		return radius;
 	}
 
+	/**
+	 * upgrades the weapon of the ship
+	 * @param Ship to be weapon changed
+	 */
 	public void up(Ship ship) {
 		ship.weapons.upgrade();
 	}
 
+	/**
+	 * @return texturePath of the WeaponPower
+	 */
 	public String getTexturePath() {
 		return "pixmaps/dialog-question.png";
 	}
 
+	/**
+	 * @return the center of the texture in a Vector2f
+	 */
 	public Vector2f getTextureCenter() {
 		return centroid;
 	}
 
+	/**
+	 * @return scaling factor of the texture
+	 */
 	public float getTextureScaleFactor() {
 		return RATIO;
 	}

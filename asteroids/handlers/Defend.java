@@ -37,18 +37,33 @@ public class Defend extends Field {
 	private Europa europa;
 	public final static int DEFEND = 5;
 
+	/**
+	 * constructs a world where the asteroids are set to just rocky and a europa
+	 * @param world
+	 * @param display
+	 * @param Ship inside the world
+	 */
 	public Defend(World w, Display d, Ship ship) {
 		super(w, d, ship, Field.ROCKY);
 	}
-
+	
+	/**
+	 * @return Europa
+	 */
 	public Europa getObject() {
 		return europa;	
 	}
-
+	
+	/**
+	 * @returns defend which is the mission of this type of game
+	 */
 	public int getID() {
 		return DEFEND;
 	}
 
+	/**
+	 * starts the world in motion
+	 */
 	public void start() {
 		world.clear();
 		europa = new Europa();	
@@ -62,6 +77,9 @@ public class Defend extends Field {
 		score = -1;
 	}
 
+	/**
+	 * @returns a arraylist of visible objects the ship can see
+	 */
 	protected Visible[] getTargets() {
 		Visible[] targets = new Visible[ships.length+1];
 		System.arraycopy(ships, 0, targets, 0, ships.length);
@@ -69,12 +87,18 @@ public class Defend extends Field {
 		return targets;
 	}
 
+	/**
+	 * it updates the defend game
+	 */
 	public void update() {
 		if (europa.canExplode() && !ships[0].canExplode())
 			display.setCenter(europa.getPosition());
 		super.update();
 	}
 
+	/**
+	 * @returns a boolean reflecting if the game is done
+	 */
 	public boolean done() {
 		return super.done() || europa.canExplode();
 	}

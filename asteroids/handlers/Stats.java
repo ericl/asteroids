@@ -43,6 +43,9 @@ public class Stats {
 	private boolean finalized;
 	private double dmg = 0;
 
+	/**
+	 * resets the game and the scores
+	 */
 	public void reset(Field field) {
 		scenario = field;
 		lastChk = null;
@@ -53,6 +56,9 @@ public class Stats {
 		dmg = 0;
 	}
 
+	/**
+	 * records how many times one hits something
+	 */
 	public void hit(Body body, CollisionEvent event) {
 		if (finalized)
 			return;
@@ -60,12 +66,18 @@ public class Stats {
 		dmg += Exploder.getDamage(event, body);
 	}
 
+	/**
+	 * how many times fired by someone
+	 */
 	public void fired(Body weap) {
 		if (finalized)
 			return;
 		att++;
 	}
 
+	/**
+	 * how many times someone has killed
+	 */
 	public void kill(Body body, CollisionEvent event) {
 		if (finalized)
 			return;
@@ -80,6 +92,9 @@ public class Stats {
 		}
 	}
 
+	/**
+	 * @returns the high scores of the scenario
+	 */
 	public int score() {
 		if (finalized)
 			return finalScore;
@@ -88,13 +103,19 @@ public class Stats {
 				(att > 0 ? (int)(5*kills*(hit/(double)att)) : (int)(.5*scenario.asteroids()));
 	}
 
+	/**
+	 * stops the scores from getting any higher
+	 */
 	private void freezeScores() {
 		if (finalized)
 			return;
 		finalScore = score();
 		finalized = true;
 	}
-
+	
+	/**
+	 * makes so you can change your name when you get a high score
+	 */
 	public void build(String name) {
 		freezeScores();
 		name = name.replace(" ", "%20");
@@ -117,6 +138,9 @@ public class Stats {
 		}
 	}
 	
+	/**
+	 * prints out the list of high scores
+	 */
 	public void readScores() {
 		List<String> output = list;
 		output.clear();
@@ -139,6 +163,9 @@ public class Stats {
 		}
 	}
 
+	/**
+	 * editing the name in the high score when reached
+	 */
 	public void edit(String name) {
 		if (lastChk == null)
 			return;
@@ -159,6 +186,9 @@ public class Stats {
 		}
 	}
 
+	/**
+	 * @return string from hash
+	 */
 	private static String md5(String hash) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		byte[] retHash = new byte[32];

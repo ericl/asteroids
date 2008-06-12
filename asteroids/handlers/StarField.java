@@ -51,6 +51,9 @@ public class StarField {
 		display = d;
 	}
 
+	/**
+	 * creates stars and adds them to the linked list of stars
+	 */
 	public void init() {
 		int numstars = (int)(DIMENSION*DIMENSION*DENSITY);
 		stars.clear();
@@ -58,6 +61,9 @@ public class StarField {
 			stars.add(new Star(v(range(0,DIMENSION), range(0,DIMENSION))));
 	}
 	
+	/**
+	 * draws the stars on the window screen
+	 */
 	public void starField() {
 		for (Star star : stars)
 			display.drawDrawable(star);
@@ -70,6 +76,9 @@ public class StarField {
 		return c;
 	}
 
+	/**
+	 * constructs a star
+	 */
 	private class Star implements Drawable {
 		public final static int MIN_SIZE = 1;
 		public final static int MAX_SIZE = 4;

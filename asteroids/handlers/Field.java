@@ -51,6 +51,13 @@ public class Field {
 	public final static int[] ids = {HEX, LARGE, ROCKY, ICEY};
 	private int id;
 
+	/**
+	 * constructs a field with a world and a ship within it
+	 * @param World
+	 * @param display of the world
+	 * @param ship inside the world
+	 * @param id
+	 */
 	public Field(World w, Display d, Ship ship, int id) {
 		this.id = id;
 		this.display = d;
@@ -66,10 +73,19 @@ public class Field {
 		world = w;
 	}
 
+	/**
+	 * @returns the identification of the field
+	 */
 	public int getID() {
 		return id;
 	}
 
+	/**
+	 * @param world
+	 * @param display of the world
+	 * @param array of ships
+	 * @param id
+	 */
 	public Field(World w, Display d, Ship[] shiparray, int id) {
 		this.display = d;
 		this.id = id;
@@ -84,18 +100,33 @@ public class Field {
 		world = w;
 	}
 
+	/**
+	 * sets the density of the field in which how many asteroids are inside the field
+	 * @param double density num
+	 */
 	public void setDensity(double density) {
 		D = density;
 	}
 
+	/**
+	 * sets intial speed of objects inside the field
+	 * @param speed of the field
+	 */
 	public void setInitialSpeed(float speed) {
 		I = speed;
 	}
 
+	/**
+	 * constant scaling factor so that objects in the field are of same ratio
+	 * @param float scaling factor
+	 */
 	public void setScalingConstant(float scale) {
 		S = scale;
 	}
 
+	/**
+	 * starts the field world
+	 */
 	public void start() {
 		world.clear();
 		for (Ship ship : ships) {
@@ -106,6 +137,11 @@ public class Field {
 		score = -1;
 	}
 
+	/**
+	 * checks if the game is done
+	 * @return true if the ship is destroyed
+	 * @return false otherwise
+	 */
 	public boolean done() {
 		for (Ship ship : ships)
 			if (ship.dead())
@@ -113,14 +149,23 @@ public class Field {
 		return false;
 	}
 
+	/**
+	 * @return score
+	 */
 	public int asteroids() {
 		return done() ? score : count;
 	}
 
+	/**
+	 * @return list of Visible targets that can be seen by the ship
+	 */
 	protected Visible[] getTargets() {
 		return ships;
 	}
 
+	/**
+	 * updates the field in which adding new asteroids and removing other unneeded things
+	 */
 	public void update() {
 		Visible[] targets = getTargets();
 		int[] density = new int[targets.length];
@@ -148,6 +193,9 @@ public class Field {
 			score = count;
 	}
 
+	/**
+	 * @return a new asteroid at some point
+	 */
 	protected Asteroid newAsteroid(ROVector2f origin) {
 		// difficulty increases with count
 		Asteroid rock = null;
@@ -186,6 +234,9 @@ public class Field {
 		return rock;
 	}
 
+	/**
+	 * changes difficulty of the game
+	 */
 	private void adjustForDifficulty(Asteroid rock) {
 		// workaround for rogue collisions
 		rock.setMaxVelocity(I+S*(float)sqrt(count), I+S*(float)sqrt(count));
@@ -193,6 +244,9 @@ public class Field {
 		                      range(-S*sqrt(count)-I,S*sqrt(count)+I)));
 	}
 
+	/**
+	 * @return string of what kind of scenario you are playing
+	 */
 	public String toString() {
 		switch (id) {
 			case HEX: return "Hexagons";

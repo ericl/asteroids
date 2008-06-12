@@ -77,14 +77,24 @@ public class Exploder implements CollisionListener {
 		grouper = new CollisionGrouper();
 	}
 
+	/**
+	 * clears all explosions in the world
+	 */
 	public void endFrame() {
 		exploded.clear();
 	}
 
+	/**
+	 * add a stats to the list of stats
+	 */
 	public void addStatsListener(Stats s) {
 		stats.add(s);
 	}
 
+	/**
+	 * clears the queue of collisions so the world is not overloaded
+	 * @param the collision event between two bodies
+	 */
 	public void collisionOccured(CollisionEvent event) {
 		while (!explosionQueue.isEmpty() && explosionQueue.peek().dead())
 			world.remove(explosionQueue.remove());
@@ -98,8 +108,12 @@ public class Exploder implements CollisionListener {
 			tryExplode(event.getBodyB(), event.getBodyA(), event);
 	}
 
-	// precondition: body instanceof Explodable
-	// perhaps use setBitmask(group) instead of addBit(group)
+	/**
+	 * collision algorithm between the two bodies
+	 * @param body one
+	 * @param body two
+	 * @param the collision event between body one and two
+	 */
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		if (exploded.contains(body)) // don't explode anything twice
 			return;
@@ -175,6 +189,9 @@ public class Exploder implements CollisionListener {
 		}
 	}
 
+	/**
+	 * @return damage done to a body
+	 */
 	public static double getDamage(CollisionEvent e, Body victim) {
 		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Weapon)
@@ -185,8 +202,12 @@ public class Exploder implements CollisionListener {
 		return Math.min(other.getMass(),victim.getMass()) * vmod / 1e7;
 	}
 
-	// precondition: body instanceof Visible
-	// only works for roughly circular asteroids (not ships, for example)
+	/**
+	 * checks if the two bodies are stuck 
+	 * @param body one
+	 * @param body two
+	 * @return false
+	 */
 	public boolean isStuck(Body body, Body other) {
 		if (!(body instanceof Asteroid && other instanceof Asteroid)
 				|| body instanceof Europa)

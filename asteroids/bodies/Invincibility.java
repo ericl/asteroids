@@ -50,23 +50,38 @@ public class Invincibility extends PowerUp implements Textured {
 		centroid = new Polygon(raw).getCentroid();
 	}
 
+	/**
+	 * @return the center of the invincibility power up in a Vector2f
+	 */
 	public Vector2f getTextureCenter() {
 		return centroid;
 	}
 	
+	/**
+	 * @return radius of the Invincibility Power Up
+	 */
 	public float getRadius() {
 		return radius;
 	}
 
+	/**
+	 * @return scaling factor of the texture
+	 */
 	public float getTextureScaleFactor() {
 		return RATIO;
 	}
-	
+
+	/**
+	 * @param Ship that is to be invincitize
+	 */
 	public void up(Ship ship) {
 		if (!ship.isInvincible())
 			ship.gainInvincibility(INVINCIBLE_TIME, WARNING_TIME);
 	}
-
+	
+	/**
+	 * @return the texture of the invincibility Power Up
+	 */
 	public String getTexturePath() {
 		return "pixmaps/invincibility.png";
 	}
