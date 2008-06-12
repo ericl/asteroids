@@ -47,15 +47,13 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	protected volatile boolean pause;
 	private MainLoop mainLoop;
 	private Exploder exploder;
-	public static Font FONT_BOLD = new Font("Serif", Font.BOLD, 15);
-	public static Font FONT_NORMAL = new Font("SansSerif", Font.PLAIN, 12);
-	public static String RESTART_MSG = "R - Restart Game";
-	public static Color COLOR_BOLD = Color.ORANGE, COLOR = Color.lightGray;
+	public final static Font FONT_BOLD = new Font("Serif", Font.BOLD, 15);
+	public final static Font FONT_NORMAL = new Font("SansSerif", Font.PLAIN, 12);
+	public final static String RESTART_MSG = "R - Restart Game";
+	public final static Color COLOR_BOLD = Color.ORANGE, COLOR = Color.lightGray;
 
 	private class MainLoop extends Thread {
 		public void run() {
-			if (display == null)
-				throw new IllegalStateException("Display not initialized.");
 			Timer timer = new Timer(60f);
 			float dt;
 			while (true) {
@@ -68,7 +66,6 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 				update();
 				doGraphics();
 				doPhysics(dt);
-				exploder.endFrame();
 			}
 		}
 	}
@@ -141,6 +138,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	private void doPhysics(float timestep) {
 		for (int i=0; i < 5; i++)
 			world.step(timestep);
+		exploder.endFrame();
 	}
 
 	private void doGraphics() {
