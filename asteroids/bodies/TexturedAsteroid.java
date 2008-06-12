@@ -32,6 +32,9 @@ package asteroids.bodies;
 import net.phys2d.math.*;
 import asteroids.display.*;
 
+/**
+ * Polygonal asteroid that also implements Textured.
+ */
 public abstract class TexturedAsteroid extends PolyAsteroid implements Textured {
 	private String img;
 

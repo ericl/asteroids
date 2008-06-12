@@ -71,7 +71,7 @@ public class StarField {
 
 	
 	/**
-	 * @return Returns a random color
+	 * @return Returns a random star color
 	 */
 	private static Color starColor() {
 		Color c = oneIn(5) ? Color.WHITE : Color.GRAY;

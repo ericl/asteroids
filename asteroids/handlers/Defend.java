@@ -33,15 +33,18 @@ import net.phys2d.raw.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
 
+/**
+ * Field that provides a central object to be defended.
+ */
 public class Defend extends Field {
 	private Europa europa;
 	public final static int DEFEND = 5;
 
 	/**
 	 * constructs a world where the asteroids are set to just rocky and a europa
-	 * @param world the world
-	 * @param display the display
-	 * @param Ship The ship inside the world
+	 * @param w the world
+	 * @param d the display
+	 * @param ship The ship inside the world
 	 */
 	public Defend(World w, Display d, Ship ship) {
 		super(w, d, ship, Field.ROCKY);
@@ -55,7 +58,9 @@ public class Defend extends Field {
 	}
 	
 	/**
-	 * @returns defend which is the mission of this type of game
+	 * Overrides the 'real' id to provide a unique high score identifier.
+	 *
+	 * @return the mission of this type of game
 	 */
 	public int getID() {
 		return DEFEND;
@@ -78,7 +83,7 @@ public class Defend extends Field {
 	}
 
 	/**
-	 * @returns a arraylist of visible objects the ship can see
+	 * @return a arraylist of targets that should be surrounded by asteroids
 	 */
 	protected Visible[] getTargets() {
 		Visible[] targets = new Visible[ships.length+1];
@@ -88,7 +93,7 @@ public class Defend extends Field {
 	}
 
 	/**
-	 * it updates the defend game
+	 * it updates the defend game logic
 	 */
 	public void update() {
 		if (europa.canExplode() && !ships[0].canExplode())
@@ -97,7 +102,7 @@ public class Defend extends Field {
 	}
 
 	/**
-	 * @returns a boolean reflecting if the game is done
+	 * @return a boolean reflecting if the game is done
 	 */
 	public boolean done() {
 		return super.done() || europa.canExplode();

@@ -37,6 +37,9 @@ import net.phys2d.math.*;
 import static net.phys2d.math.MathUtil.*;
 import static asteroids.Util.*;
 
+/**
+ * A single-player implementation of the display.
+ */
 public class BasicDisplay extends Display {
 	protected BufferStrategy strategy;
 	protected Graphics2D buf;

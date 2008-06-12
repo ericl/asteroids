@@ -35,6 +35,9 @@ import asteroids.display.*;
 import static asteroids.Util.*;
 import static asteroids.bodies.PolyAsteroid.*;
 
+/**
+ * Powerup that interacts with the weapon systems of the ship.
+ */
 public class WeaponPower extends PowerUp implements Textured {
 	protected static ROVector2f[] raw = {v(11,1),v(20,10),v(11,20),v(1,11)};
 	protected static float RATIO = 1f;
@@ -56,38 +59,26 @@ public class WeaponPower extends PowerUp implements Textured {
 		return 0;
 	}
 
-	/**
-	 * @return the radius of the WeaponPower
-	 */
 	public float getRadius() {
 		return radius;
 	}
 
 	/**
 	 * upgrades the weapon of the ship
-	 * @param Ship to be weapon changed
+	 * @param ship to be weapon changed
 	 */
-	public void up(Ship ship) {
+	protected void up(Ship ship) {
 		ship.weapons.upgrade();
 	}
 
-	/**
-	 * @return texturePath of the WeaponPower
-	 */
 	public String getTexturePath() {
 		return "pixmaps/dialog-question.png";
 	}
 
-	/**
-	 * @return the center of the texture in a Vector2f
-	 */
 	public Vector2f getTextureCenter() {
 		return centroid;
 	}
 
-	/**
-	 * @return scaling factor of the texture
-	 */
 	public float getTextureScaleFactor() {
 		return RATIO;
 	}

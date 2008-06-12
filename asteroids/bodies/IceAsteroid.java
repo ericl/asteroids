@@ -39,6 +39,9 @@ import asteroids.display.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * Fuzzy-looking asteroids that shrinks instead of exploding.
+ */
 public class IceAsteroid extends CircleAsteroid implements Textured {
 	private double melting;
 	private int count = 0;

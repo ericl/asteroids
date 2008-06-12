@@ -33,6 +33,9 @@ import net.phys2d.math.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * "Fireball" type explosion remnant.
+ */
 public class LargeExplosion extends Explosion {
 	private static double FRAMETIME = 500;
 	private static int FRAMES = 11;

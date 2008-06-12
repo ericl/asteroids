@@ -38,9 +38,15 @@ import asteroids.weapons.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
 
+/**
+ * Listens for collision events and processes them accordingly.
+ */
 public class Exploder implements CollisionListener {
+	// queue of explosions that will likey be removed soon
 	private Queue<Explosion> explosionQueue = new LinkedList<Explosion>();
+	// prevent rare double/triple collisionevents from creating multiple explosions
 	private Set<Body> exploded = new HashSet<Body>();
+	// statistics listeners
 	private List<Stats> stats = new LinkedList<Stats>();
 	private World world;
 	private Display display;
@@ -76,7 +82,7 @@ public class Exploder implements CollisionListener {
 	}
 
 	/**
-	 * clears all explosions in the world
+	 * clears the anti-explosion-duplication list
 	 */
 	public void endFrame() {
 		exploded.clear();

@@ -36,6 +36,9 @@ import asteroids.display.*;
 import static asteroids.Util.*;
 import static asteroids.bodies.PolyAsteroid.*;
 
+/**
+ * Grants invincibility to the ship for a short period.
+ */
 public class Invincibility extends PowerUp implements Textured {
 	private static ROVector2f[] raw = { v(111,23), v(145,78), v(205,90), v(162,137), v(171,199), v(111,174), v(54,201), v(62,139), v(19,92), v(79,78)};
 	private static float RATIO = .1f;
@@ -50,16 +53,10 @@ public class Invincibility extends PowerUp implements Textured {
 		centroid = new Polygon(raw).getCentroid();
 	}
 
-	/**
-	 * @return the center of the invincibility power up in a Vector2f
-	 */
 	public Vector2f getTextureCenter() {
 		return centroid;
 	}
 	
-	/**
-	 * @return radius of the Invincibility Power Up
-	 */
 	public float getRadius() {
 		return radius;
 	}
@@ -72,16 +69,13 @@ public class Invincibility extends PowerUp implements Textured {
 	}
 
 	/**
-	 * @param Ship that is to be invincitize
+	 * @param ship Ship that is to be made invincible
 	 */
-	public void up(Ship ship) {
+	protected void up(Ship ship) {
 		if (!ship.isInvincible())
 			ship.gainInvincibility(INVINCIBLE_TIME, WARNING_TIME);
 	}
 	
-	/**
-	 * @return the texture of the invincibility Power Up
-	 */
 	public String getTexturePath() {
 		return "pixmaps/invincibility.png";
 	}

@@ -36,6 +36,9 @@ import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
 
+/**
+ * Fullscreen game similar to Asteroids but using the Defend handler.
+ */
 public class Protect extends AbstractGame {
 	private Ship ship;
 	private Defend scenario;

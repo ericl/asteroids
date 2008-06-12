@@ -48,7 +48,6 @@ import net.phys2d.math.Vector2f;
  * A joint providing a springy resistance between bodies. Wiring a series together
  * gives an effective bopper spring. 
  * 
- * @see net.phys2d.raw.test.SpringyTest
  * @author guRuQu
  */
 public class SpringyAngleJoint implements Joint {

@@ -37,6 +37,9 @@ import asteroids.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
 
+/**
+ * The jovian moon Europa.
+ */
 public class Europa extends CircleAsteroid implements Textured {
 	private IceAsteroid core = new IceAsteroid(90);
 	public static int MAX = 10;

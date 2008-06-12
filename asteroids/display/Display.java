@@ -37,6 +37,9 @@ import net.phys2d.math.*;
 import static net.phys2d.math.MathUtil.*;
 import static asteroids.Util.*;
 
+/**
+ * Common drawing operations used by both Basic and MPDisplay.
+ */
 public abstract class Display {
 	protected MediaTracker tracker;
 	protected int index = 1;
@@ -92,7 +95,8 @@ public abstract class Display {
 	public abstract void show();
 
 	/**
-	 * @return Valid Graphics2D for the current frame.
+	 * Returns drawing buffer currently used by the display.
+	 * @return Graphics2D for the current frame
 	 */
 	public abstract Graphics2D getGraphics();
 

@@ -1,0 +1,1 @@
+To build the jar file and javadoc run 'ant all'. This requires ant to be installed.

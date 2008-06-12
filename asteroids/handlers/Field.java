@@ -37,6 +37,9 @@ import asteroids.bodies.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
 
+/**
+ * Responsible for asteroid field creation; closely coupled with ship handling.
+ */
 public class Field {
 	protected Ship[] ships;
 	protected World world;
@@ -53,10 +56,10 @@ public class Field {
 
 	/**
 	 * constructs a field with a world and a ship within it
-	 * @param World
-	 * @param display of the world
-	 * @param ship inside the world
-	 * @param id
+	 * @param w The world.
+	 * @param d The display.
+	 * @param ship The ship inside the world.
+	 * @param id What type of field to be created.
 	 */
 	public Field(World w, Display d, Ship ship, int id) {
 		this.id = id;
@@ -74,7 +77,7 @@ public class Field {
 	}
 
 	/**
-	 * @returns the identification of the field
+	 * @return the unique identifier of the field
 	 */
 	public int getID() {
 		return id;
@@ -84,7 +87,7 @@ public class Field {
 	 * @param w The World
 	 * @param d Display of the world
 	 * @param shiparray Array of ships
-	 * @param id id
+	 * @param id what type of field to be created
 	 */
 	public Field(World w, Display d, Ship[] shiparray, int id) {
 		this.display = d;
@@ -139,7 +142,7 @@ public class Field {
 
 	/**
 	 * checks if the game is done
-	 * @return true if the ship is destroyed; false otherwise
+	 * @return true if the scenario should be restarted, false otherwise
 	 */
 	public boolean done() {
 		for (Ship ship : ships)
@@ -156,7 +159,7 @@ public class Field {
 	}
 
 	/**
-	 * @return list of Visible targets that can be seen by the ship
+	 * @return list of targets to be surrounded by asteroids
 	 */
 	protected Visible[] getTargets() {
 		return ships;
@@ -234,7 +237,7 @@ public class Field {
 	}
 
 	/**
-	 * changes difficulty of the game
+	 * adjust asteroid attributes to make the game more difficult as time goes on
 	 */
 	private void adjustForDifficulty(Asteroid rock) {
 		// workaround for rogue collisions

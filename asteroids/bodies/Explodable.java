@@ -33,6 +33,9 @@ import java.util.*;
 import net.phys2d.raw.*;
 import asteroids.display.*;
 
+/**
+ * Interface for explosion handling by Exploder.
+ */
 public interface Explodable extends Visible {
 	/**
 	 * @return True if the body should be exploded or has exploded.

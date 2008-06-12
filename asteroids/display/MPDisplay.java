@@ -38,6 +38,9 @@ import net.phys2d.math.*;
 import static net.phys2d.math.MathUtil.*;
 import static asteroids.Util.*;
 
+/**
+ * A dualscreen display that works for MPGame.
+ */
 public class MPDisplay extends Display {
 	protected JSplitPane jsplit;
 	protected BufferStrategy strategyA, strategyB;

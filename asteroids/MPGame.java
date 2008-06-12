@@ -34,6 +34,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import asteroids.display.*;
 
+/**
+ * Adapts AbstractGame to be suitable for multiplayer operations.
+ */
 public abstract class MPGame extends AbstractGame {
 	protected JSplitPane jsplit;
 	protected MPDisplay display;

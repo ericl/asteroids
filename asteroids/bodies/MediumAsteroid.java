@@ -34,6 +34,9 @@ import net.phys2d.raw.Body;
 import net.phys2d.math.ROVector2f;
 import static asteroids.Util.v;
 
+/**
+ * Medium rocky asteroid that leaves behind SmallAsteroids.
+ */
 public class MediumAsteroid extends TexturedAsteroid {
 	private static ROVector2f[] raw = {v(57,2), v(96,17), v(103,27), v(103,41), v(108,55), v(100,79), v(89,87), v(87,94), v(54,102), v(15,85), v(17,82), v(0,57), v(3,51), v(1,44), v(5,39), v(6,29)};
 	

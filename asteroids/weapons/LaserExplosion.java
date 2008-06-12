@@ -33,6 +33,9 @@ import net.phys2d.math.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * "Blue flash" explosion remnant.
+ */
 public class LaserExplosion extends Explosion {
 	private static double FRAMETIME = 100;
 	private static int FRAMES = 8;

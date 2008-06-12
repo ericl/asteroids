@@ -35,6 +35,7 @@ import asteroids.display.*;
 
 /**
  * Weapons should leave explosion remnants.
+ * Explosions are processed as a special case by Exploder.
  */
 public abstract class Explosion extends Body implements Textured {
 	public Explosion() {
@@ -42,5 +43,8 @@ public abstract class Explosion extends Body implements Textured {
 		setEnabled(false);
 	}
 
+	/**
+	 * @return True if the explosion should be removed from the world.
+	 */
 	public abstract boolean dead();
 }

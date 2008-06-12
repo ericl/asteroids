@@ -35,6 +35,9 @@ import net.phys2d.raw.shapes.*;
 import asteroids.weapons.*;
 import static asteroids.Util.*;
 
+/**
+ * Body that adjust ship attributes on collision.
+ */
 public abstract class PowerUp extends Body implements Explodable {
 	public static PowerUp random() {
 		if (oneIn(5))
@@ -56,7 +59,10 @@ public abstract class PowerUp extends Body implements Explodable {
 		super(shape, 1e-10f);
 	}
 
-	public abstract void up(Ship ship);
+	/**
+	 * @param ship The ship to be powered up.
+	 */
+	protected abstract void up(Ship ship);
 
 	public abstract float getRadius();
 

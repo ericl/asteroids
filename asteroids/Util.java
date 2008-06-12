@@ -32,6 +32,9 @@ package asteroids;
 import java.awt.*;
 import net.phys2d.math.*;
 
+/**
+ * Common operation shortcuts to avoid cluttering the code.
+ */
 public class Util {
 	private Util() {
 		// prevent construction

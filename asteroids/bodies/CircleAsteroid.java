@@ -38,6 +38,9 @@ import net.phys2d.raw.shapes.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
 
+/**
+ * Boring circle asteroids not directly used in the game.
+ */
 public class CircleAsteroid extends Asteroid implements Drawable {
 	private Color color = Color.orange;
 

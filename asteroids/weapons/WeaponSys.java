@@ -38,6 +38,9 @@ import asteroids.handlers.*;
 import asteroids.handlers.Timer;
 import static asteroids.Util.*;
 
+/**
+ * Handles mechanics of weapons fire from ships.
+ */
 public class WeaponSys {
 	protected static float ANGULAR_DISTRIBUTION = (float)Math.PI/48;
 	protected List<Stats> stats = new LinkedList<Stats>();

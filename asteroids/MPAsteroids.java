@@ -35,6 +35,9 @@ import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * Two-player, unscored game where the players compete against each other.
+ */
 public class MPAsteroids extends MPGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
 	protected final Ship ship1, ship2;

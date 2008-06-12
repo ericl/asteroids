@@ -35,6 +35,10 @@ import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
 import asteroids.display.*;
 
+/**
+ * An abstract polygonal asteroid that calculates scaling, center of mass,
+ * and geometry automatically.
+ */
 public abstract class PolyAsteroid extends Asteroid implements Drawable {
 	private float radius;
 	private Vector2f centroid;

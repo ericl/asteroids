@@ -35,6 +35,9 @@ import net.phys2d.raw.shapes.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * An abstract generic asteroid.
+ */
 public abstract class Asteroid extends Body implements Explodable {
 	protected float damage;
 	private static int MIN_SIZE = (int)Math.sqrt(10), BASE_CHANCE = 7;

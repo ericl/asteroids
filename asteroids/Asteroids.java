@@ -36,6 +36,9 @@ import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * Single-player asteroid game.
+ */
 public class Asteroids extends AbstractGame {
 	private Ship ship;
 	private Field scenario;

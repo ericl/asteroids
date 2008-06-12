@@ -35,6 +35,9 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 import static asteroids.Util.*;
 
+/**
+ * More powerful, slow-moving laser.
+ */
 public class Laser2 extends Weapon {
 	private static float myRadius = 2;
 

@@ -82,7 +82,6 @@ import net.phys2d.math.Vector2f;
  * the ingoing to the outgoing intersection. </li>
  * <li>The penetration depth, which is determined by tracing along the in-out 
  * line for the longest line parallel to the normal in the overlapping area 
- * (see {@link PenetrationSweep}).</li>
  * </ol>
  * Retrieving these pairs is relatively easy. We simply sort the gathered 
  * intersections in the order they would occur when tracing the contour of A.</p>
@@ -177,7 +176,6 @@ import net.phys2d.math.Vector2f;
  * intersection was created. I've had some much trouble and uncertainty here that
  * I don't know if this is still a problem.</li>
  * <li>Finally an issue that will be hard to solve: the orderings defined by
- * {@link IntersectionComparator} and {@link PointerTableComparator} suffer of
  * floating point rounding errors when in- and outgoing edges are close together.</li>
  * </ol>
  * 
@@ -281,7 +279,6 @@ public class IntersectionGatherer {
 	
 	/**
 	 * Get the list of intersections, sorted by the order defined by
-	 * {@link IntersectionComparator}.
 	 * 
 	 * @return A sorted list of intersections
 	 */
@@ -362,7 +359,6 @@ public class IntersectionGatherer {
 	 * 
 	 * @param pointers An array of pointers which are the indices of the
 	 * intersections array. The list should be sorted with the order defined by
-	 * {@link PointerTableComparator}.
 	 * @return The reference pointer which is an outgoing intersection. 
 	 */
 	private int getReferencePointer(Integer[] pointers) {
@@ -402,7 +398,6 @@ public class IntersectionGatherer {
 	 * at the first outgoing intersection after the reference vertex.
 	 * @param pointers An array of pointers which are the indices of the
 	 * intersections array. The list should be sorted with the order defined by
-	 * {@link PointerTableComparator}.
 	 */
 	private void filterIntersections(int referencePointer, Integer[] pointers) {
 		// make sure the reference vertex is real

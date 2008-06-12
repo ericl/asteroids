@@ -35,6 +35,9 @@ import java.util.*;
 import java.security.*;
 import net.phys2d.raw.*;
 
+/**
+ * Listens to game operations and prepares high scores for submission.
+ */
 public class Stats {
 	private Vector<String> list = new Vector<String>();
 	private String lastChk;
@@ -93,7 +96,7 @@ public class Stats {
 	}
 
 	/**
-	 * @returns the high scores of the scenario
+	 * @return the high scores of the scenario
 	 */
 	public int score() {
 		if (finalized)
@@ -105,6 +108,7 @@ public class Stats {
 
 	/**
 	 * stops the scores from getting any higher
+	 * prevents score inconsistencies / race conditions
 	 */
 	private void freezeScores() {
 		if (finalized)
@@ -140,7 +144,7 @@ public class Stats {
 	}
 	
 	/**
-	 * prints out the list of high scores
+	 * loads the latest list of high scores for get()ing
 	 */
 	public void readScores() {
 		List<String> output = list;
@@ -165,8 +169,8 @@ public class Stats {
 	}
 
 	/**
+	 * Changes the last submitted high score to a new name.
 	 * @param name The name to change to
-	 * editing the name in the high score when reached
 	 */
 	public void edit(String name) {
 		if (lastChk == null)
@@ -189,7 +193,7 @@ public class Stats {
 	}
 
 	/**
-	 * @return string from hash
+	 * @return hex string from md5 hashing
 	 */
 	private static String md5(String hash) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");

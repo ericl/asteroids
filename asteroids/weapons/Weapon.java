@@ -36,6 +36,10 @@ import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.Timer;
 
+/**
+ * Weapons are emitted from the ship by a weapon system.
+ * Weapons are handled as a special case by Exploder.
+ */
 public abstract class Weapon extends Body implements Textured, Explodable {
 	private boolean exploded;
 	private long MAX_LIFETIME = 10000;

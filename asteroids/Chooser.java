@@ -31,6 +31,9 @@
 package asteroids;
 import javax.swing.*;
 
+/**
+ * Dialog to choose between 3x game versions.
+ */
 public class Chooser {
 	public static void main(String[] args) {
 		AbstractGame game = null;

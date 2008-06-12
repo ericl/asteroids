@@ -38,6 +38,9 @@ import asteroids.display.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * Common game GUI and main loop.
+ */
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
 	protected Display display;
 	protected JFrame frame;

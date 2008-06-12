@@ -33,6 +33,9 @@ import net.phys2d.math.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
+/**
+ * Explosion for destruction of powerups.
+ */
 public class PowerUpExplosion extends Explosion {
 	private static double FRAMETIME = 200;
 	private static float SCALE = 1.5f;
