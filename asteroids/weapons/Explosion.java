@@ -44,7 +44,7 @@ public abstract class Explosion extends Body implements Textured {
 	}
 
 	/**
-	 * @return True if the explosion should be removed from the world.
+	 * @return	True if the explosion should be removed from the world.
 	 */
 	public abstract boolean dead();
 }

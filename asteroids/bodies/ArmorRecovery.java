@@ -45,7 +45,7 @@ public class ArmorRecovery extends PowerUp implements Textured {
 	protected Vector2f centroid;
 
 	/**
-	 * constructs the ArmorRecovery Powerup
+	 * Constructs the ArmorRecovery Powerup.
 	 */
 	public ArmorRecovery() {
 		super(new Polygon(centralized(scaled(raw, RATIO))));
@@ -55,44 +55,44 @@ public class ArmorRecovery extends PowerUp implements Textured {
 	}
 	
 	/**
-	 * @return the radius of the ArmorRecovery PowerUp
+	 * @return	The radius of the ArmorRecovery PowerUp.
 	 */
 	public float getRadius() {
 		return radius;
 	}
 	
 	/**
-	 * rotation number is 0 because it does not spin
-	 * @return the Rotation number
+	 * Rotation number is 0 because it does not spin.
+	 * @return	The rotation number.
 	 */
 	public float getRotation() {
 		return 0;
 	}
 
 	/**
-	 * changes the armor of the ship to 100
-	 * @param ship being powered up
+	 * Changes the armor of the ship to 100.
+	 * @param	ship	The Ship being powered up.
 	 */
 	protected void up(Ship ship) {
 		if (ship.getDamage() < Double.POSITIVE_INFINITY)
 			ship.setArmor(Ship.MAX);
 	}
 	/**
-	 * @return the texture of the ArmorRecovery powerup
+	 * @return	The texture of the ArmorRecovery powerup.
 	 */
 	public String getTexturePath() {
 		return "pixmaps/armor2.png";
 	}
 
 	/**
-	 * @return the Vector2f center of the ArmorRecovery powerup
+	 * @return	The Vector2f center of the ArmorRecovery powerup.
 	 */
 	public Vector2f getTextureCenter() {
 		return centroid;
 	}
 
 	/**
-	 * @return the scaling factor of the texture
+	 * @return	The scaling factor of the texture.
 	 */
 	public float getTextureScaleFactor() {
 		return RATIO;

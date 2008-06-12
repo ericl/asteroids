@@ -52,8 +52,8 @@ public class WeaponPower extends PowerUp implements Textured {
 	}
 
 	/**
-	 * the rotation of the object is 0 because it does not spin
-	 * @return rotation number
+	 * The rotation of the object is 0 because it does not spin.
+	 * @return	The rotation number.
 	 */
 	public float getRotation() {
 		return 0;
@@ -64,8 +64,8 @@ public class WeaponPower extends PowerUp implements Textured {
 	}
 
 	/**
-	 * upgrades the weapon of the ship
-	 * @param ship to be weapon changed
+	 * Upgrades the weapon of the ship.
+	 * @param	ship	The Ship to receive the upgrade.
 	 */
 	protected void up(Ship ship) {
 		ship.weapons.upgrade();

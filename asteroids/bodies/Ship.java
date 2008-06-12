@@ -165,7 +165,7 @@ public class Ship extends Body
 	}
 
 	/**
-	 * @return Percent damage from max.
+	 * @return	Percent damage from max.
 	 */
 	public double getDamage() {
 		return hull < 0 ? 0 : hull/MAX;

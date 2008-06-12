@@ -39,10 +39,10 @@ public abstract class TexturedAsteroid extends PolyAsteroid implements Textured 
 	private String img;
 
 	/**
-	 * @param raw The coordinates making up the polygon.
-	 * @param img The image the coordinates reflect.
-	 * @param nativesize The body's qualitative radius compared to a circle.
-	 * @param size The radius of the body to create in relation to nativesize.
+	 * @param	raw	The coordinates making up the polygon.
+	 * @param	img	The image the coordinates reflect.
+	 * @param	nativesize	The body's qualitative radius compared to a circle.
+	 * @param	size	The radius of the body to create in relation to nativesize.
 	 */
 	public TexturedAsteroid(ROVector2f[] raw, String img,
 			float nativesize, float size) {

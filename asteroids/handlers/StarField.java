@@ -52,7 +52,7 @@ public class StarField {
 	}
 
 	/**
-	 * creates stars and adds them to the linked list of stars
+	 * Creates stars and adds them to the linked list of stars.
 	 */
 	public void init() {
 		int numstars = (int)(DIMENSION*DIMENSION*DENSITY);
@@ -62,7 +62,7 @@ public class StarField {
 	}
 	
 	/**
-	 * draws the stars on the window screen
+	 * Draws the stars on the window screen.
 	 */
 	public void starField() {
 		for (Star star : stars)
@@ -71,7 +71,7 @@ public class StarField {
 
 	
 	/**
-	 * @return Returns a random star color
+	 * @return	A random star color.
 	 */
 	private static Color starColor() {
 		Color c = oneIn(5) ? Color.WHITE : Color.GRAY;
@@ -81,7 +81,7 @@ public class StarField {
 	}
 
 	/**
-	 * constructs a star
+	 * Constructs a star.
 	 */
 	private class Star implements Drawable {
 		public final static int MIN_SIZE = 1;

@@ -69,7 +69,7 @@ public class BasicDisplay extends Display {
 	}
 
 	/**
-	 * @param center The vector x*y representing the center of the display.
+	 * @param	center	The vector x*y representing the center of the display.
 	 */
 	public void setCenter(ROVector2f center) {
 		origin = sub(center, scale(v(dim), .5f));

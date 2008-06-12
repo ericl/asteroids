@@ -40,14 +40,14 @@ public class Timer {
 	private long old_ns, now_ns, old_diff, now_diff, sleep_ms;
 
 	/**
-	 * @return Time from the game's perspective in milliseconds.
+	 * @return	Time from the game's perspective in milliseconds.
 	 */
 	public static long gameTime() {
 		return System.currentTimeMillis() - pauseTime;
 	}
 
 	/**
-	 * @param targetFPS The framerate this timer will try to keep.
+	 * @param	targetFPS	The framerate this timer will try to keep.
 	 */
 	public Timer(float targetFPS) {
 		target_ns = 1e9f / targetFPS;
@@ -70,7 +70,7 @@ public class Timer {
 
 	/**
 	 * Step into the next frame.
-	 * @return The approximate dt in seconds for the last tick.
+	 * @return	The approximate dt in seconds for the last tick.
 	 */
 	public float tick() {
 		now_ns = System.nanoTime();

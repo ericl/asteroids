@@ -63,7 +63,7 @@ public class Exploder implements CollisionListener {
 		private long nextmask = 1l;
 
 		/**
-		 * @return bitmask of next available group
+		 * @return	Bitmask of next available group.
 		 */
 		public long findGroup(Body b) {
 			if (b.getBitmask() != 0)
@@ -82,23 +82,23 @@ public class Exploder implements CollisionListener {
 	}
 
 	/**
-	 * clears the anti-explosion-duplication list
+	 * Clears the anti-explosion-duplication list.
 	 */
 	public void endFrame() {
 		exploded.clear();
 	}
 
 	/**
-	 * add a stats to the list of stats
-	 * @param s the stats to add
+	 * Add a Stats to the list of Stats.
+	 * @param	s	The Stats to add.
 	 */
 	public void addStatsListener(Stats s) {
 		stats.add(s);
 	}
 
 	/**
-	 * clears the queue of collisions so the world is not overloaded
-	 * @param event the collision event between two bodies
+	 * Clears the queue of collisions so the world is not overloaded.
+	 * @param	event	The collision event between two bodies.
 	 */
 	public void collisionOccured(CollisionEvent event) {
 		while (!explosionQueue.isEmpty() && explosionQueue.peek().dead())
@@ -114,10 +114,10 @@ public class Exploder implements CollisionListener {
 	}
 
 	/**
-	 * collision algorithm between the two bodies
-	 * @param body The body that has collided
-	 * @param other The other body that it has collided with
-	 * @param event the collision event between body one and two
+	 * Collision algorithm between the two bodies.
+	 * @param	body	The body that has collided.
+	 * @param	other	The other body that it has collided with.
+	 * @param	event	The collision event between body one and two.
 	 */
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		if (exploded.contains(body)) // don't explode anything twice
@@ -195,7 +195,7 @@ public class Exploder implements CollisionListener {
 	}
 
 	/**
-	 * @return damage done to a body
+	 * @return	Damage done to a body.
 	 */
 	public static double getDamage(CollisionEvent e, Body victim) {
 		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
@@ -208,10 +208,10 @@ public class Exploder implements CollisionListener {
 	}
 
 	/**
-	 * checks if the two bodies are stuck 
-	 * @param body First body
-	 * @param other Second body
-	 * @return True if both bodies are stuck to each other
+	 * Checks if the two bodies are stuck.
+	 * @param	body	First body.
+	 * @param	other	Second body.
+	 * @return	True if both bodies are stuck to each other.
 	 */
 	public boolean isStuck(Body body, Body other) {
 		if (!(body instanceof Asteroid && other instanceof Asteroid)

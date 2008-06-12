@@ -62,14 +62,14 @@ public class Invincibility extends PowerUp implements Textured {
 	}
 
 	/**
-	 * @return scaling factor of the texture
+	 * @return	The scaling factor of the texture.
 	 */
 	public float getTextureScaleFactor() {
 		return RATIO;
 	}
 
 	/**
-	 * @param ship Ship that is to be made invincible
+	 * @param	ship	Ship that is to be made invincible.
 	 */
 	protected void up(Ship ship) {
 		if (!ship.isInvincible())

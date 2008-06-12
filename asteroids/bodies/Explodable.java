@@ -38,18 +38,18 @@ import asteroids.display.*;
  */
 public interface Explodable extends Visible {
 	/**
-	 * @return True if the body should be exploded or has exploded.
+	 * @return	True if the body should be exploded or has exploded.
 	 * Should be callable at any time.
 	 */
 	public boolean canExplode();
 
 	/**
-	 * @return Fragments from exploding the body.
+	 * @return	Fragments from exploding the body.
 	 */
 	public List<Body> getFragments();
 
 	/**
-	 * @return Largest fragment of the body, null if none.
+	 * @return	Largest fragment of the body, null if none.
 	 */
 	public Body getRemnant();
 

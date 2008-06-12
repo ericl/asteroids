@@ -72,19 +72,19 @@ public abstract class Display {
 	}
 
 	/**
-	 * @param center The new origin of the display.
+	 * @param	center	The new origin of the display.
 	 */
 	public abstract void setCenter(ROVector2f center);
 
 	/**
 	 * Tells a drawable object to draw itself.
-	 * @param thing The drawable object.
+	 * @param	thing	The drawable object.
 	 */
 	public abstract void drawDrawable(Drawable thing);
 
 	/**
 	 * Draws a Textured object about the center.
-	 * @param thing The textured object to be drawn.
+	 * @param	thing	The textured object to be drawn.
 	 */
 	public abstract void drawTextured(Textured thing);
 
@@ -96,26 +96,26 @@ public abstract class Display {
 
 	/**
 	 * Returns drawing buffer currently used by the display.
-	 * @return Graphics2D for the current frame
+	 * @return	Graphics2D for the current frame
 	 */
 	public abstract Graphics2D getGraphics();
 
 	/**
-	 * @return True if the object is visible from the last set center.
-	 * @param test The coordinate of the object.
-	 * @param r The radius of the object.
+	 * @return	True if the object is visible from the last set center.
+	 * @param	test	The coordinate of the object.
+	 * @param	r	The radius of the object.
 	 */
 	public abstract boolean inView(ROVector2f test, float r);
 
 	/**
-	 * @param o The origin used for testing viewability.
+	 * @param	o	The origin used for testing viewability.
 	 */
 	public abstract boolean inViewFrom(ROVector2f o, ROVector2f test, float r);
 
 	/**
 	 * Sets the background image, which will be drawn scaled to the offscreen
 	 * buffer before anything else.
-	 * @param path Path to the image to be set as the background.
+	 * @param	path	Path to the image to be set as the background.
 	 */
 	public abstract	void setBackground(String path);
 
@@ -135,10 +135,10 @@ public abstract class Display {
 
 
 	/**
-	 * @param o The center of the screen.
-	 * @param dim The dimensions of the screen.
-	 * @param v The absolute location of the object.
-	 * @param r The visible radius of the object.
+	 * @param	o	The center of the screen.
+	 * @param	dim	The dimensions of the screen.
+	 * @param	v	The absolute location of the object.
+	 * @param	r	The visible radius of the object.
 	 */
 	protected static boolean isVisible(ROVector2f o, Dimension dim,
 			ROVector2f v, float r) {
@@ -149,9 +149,9 @@ public abstract class Display {
 
 	/**
 	 * Get offscreen coords for a shape of radius r.
-	 * @param r The radius of the new object.
-	 * @param b The maximum distance from the display boundary.
-	 * @param o The origin of the area to be considered.
+	 * @param	r	The radius of the new object.
+	 * @param	b	The maximum distance from the display boundary.
+	 * @param	o	The origin of the area to be considered.
 	 */
 	public ROVector2f getOffscreenCoords(float r, float b, ROVector2f o) {
 		ROVector2f v = o;

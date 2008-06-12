@@ -80,7 +80,7 @@ public abstract class PolyAsteroid extends Asteroid implements Drawable {
 	}
 
 	/**
-	 * Transforms a ROVector2f[] such that its center of mass will be at v(0,0)
+	 * Transforms a ROVector2f[] such that its center of mass will be at v(0,0).
 	 */
 	public static ROVector2f[] centralized(ROVector2f[] in) {
 		ROVector2f c = new Polygon(in).getCentroid();

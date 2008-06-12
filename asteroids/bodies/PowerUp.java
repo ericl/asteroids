@@ -60,7 +60,7 @@ public abstract class PowerUp extends Body implements Explodable {
 	}
 
 	/**
-	 * @param ship The ship to be powered up.
+	 * @param	ship	The ship to be powered up.
 	 */
 	protected abstract void up(Ship ship);
 

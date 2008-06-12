@@ -41,17 +41,17 @@ public class Defend extends Field {
 	public final static int DEFEND = 5;
 
 	/**
-	 * constructs a world where the asteroids are set to just rocky and a europa
-	 * @param w the world
-	 * @param d the display
-	 * @param ship The ship inside the world
+	 * Constructs a world where the asteroids are set to just rocky and a Europa.
+	 * @param	w	The world.
+	 * @param	d	The display.
+	 * @param	ship	The ship inside the world.
 	 */
 	public Defend(World w, Display d, Ship ship) {
 		super(w, d, ship, Field.ROCKY);
 	}
 	
 	/**
-	 * @return Europa
+	 * @return	Europa.
 	 */
 	public Europa getObject() {
 		return europa;	
@@ -60,14 +60,14 @@ public class Defend extends Field {
 	/**
 	 * Overrides the 'real' id to provide a unique high score identifier.
 	 *
-	 * @return the mission of this type of game
+	 * @return	The mission of this type of game.
 	 */
 	public int getID() {
 		return DEFEND;
 	}
 
 	/**
-	 * starts the world in motion
+	 * Starts the world in motion.
 	 */
 	public void start() {
 		world.clear();
@@ -83,7 +83,7 @@ public class Defend extends Field {
 	}
 
 	/**
-	 * @return a arraylist of targets that should be surrounded by asteroids
+	 * @return	An array of Visible targets that should be surrounded by asteroids.
 	 */
 	protected Visible[] getTargets() {
 		Visible[] targets = new Visible[ships.length+1];
@@ -93,7 +93,7 @@ public class Defend extends Field {
 	}
 
 	/**
-	 * it updates the defend game logic
+	 * Updates the defend game logic.
 	 */
 	public void update() {
 		if (europa.canExplode() && !ships[0].canExplode())
@@ -102,7 +102,7 @@ public class Defend extends Field {
 	}
 
 	/**
-	 * @return a boolean reflecting if the game is done
+	 * @return	A boolean reflecting if the game is done.
 	 */
 	public boolean done() {
 		return super.done() || europa.canExplode();

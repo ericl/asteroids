@@ -47,7 +47,7 @@ public class Stats {
 	private double dmg = 0;
 
 	/**
-	 * resets the game and the scores
+	 * Resets the game and the scores.
 	 */
 	public void reset(Field field) {
 		scenario = field;
@@ -60,7 +60,7 @@ public class Stats {
 	}
 
 	/**
-	 * records how many times one hits something
+	 * Records how many times one hits something.
 	 */
 	public void hit(Body body, CollisionEvent event) {
 		if (finalized)
@@ -70,7 +70,7 @@ public class Stats {
 	}
 
 	/**
-	 * how many times fired by someone
+	 * How many times fired by someone.
 	 */
 	public void fired(Body weap) {
 		if (finalized)
@@ -79,7 +79,7 @@ public class Stats {
 	}
 
 	/**
-	 * how many times someone has killed
+	 * How many times someone has killed.
 	 */
 	public void kill(Body body, CollisionEvent event) {
 		if (finalized)
@@ -96,7 +96,7 @@ public class Stats {
 	}
 
 	/**
-	 * @return the high scores of the scenario
+	 * @return	The current score of the scenario.
 	 */
 	public int score() {
 		if (finalized)
@@ -107,8 +107,8 @@ public class Stats {
 	}
 
 	/**
-	 * stops the scores from getting any higher
-	 * prevents score inconsistencies / race conditions
+	 * Stops the scores from getting any higher.
+	 * Prevents score inconsistencies / race conditions.
 	 */
 	private void freezeScores() {
 		if (finalized)
@@ -118,8 +118,8 @@ public class Stats {
 	}
 	
 	/**
-	 * @param name Name to change to
-	 * makes so you can change your name when you get a high score
+	 * Sends the current score to the high score tables.
+	 * @param	name	Name of user.
 	 */
 	public void build(String name) {
 		freezeScores();
@@ -144,7 +144,7 @@ public class Stats {
 	}
 	
 	/**
-	 * loads the latest list of high scores for get()ing
+	 * Loads the latest list of high scores for get().
 	 */
 	public void readScores() {
 		List<String> output = list;
@@ -170,7 +170,7 @@ public class Stats {
 
 	/**
 	 * Changes the last submitted high score to a new name.
-	 * @param name The name to change to
+	 * @param	name	The name to change to.
 	 */
 	public void edit(String name) {
 		if (lastChk == null)
@@ -193,7 +193,7 @@ public class Stats {
 	}
 
 	/**
-	 * @return hex string from md5 hashing
+	 * @return	Hex string from md5 hashing.
 	 */
 	private static String md5(String hash) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");
