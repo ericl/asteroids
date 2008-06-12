@@ -39,9 +39,9 @@ public class Defend extends Field {
 
 	/**
 	 * constructs a world where the asteroids are set to just rocky and a europa
-	 * @param world
-	 * @param display
-	 * @param Ship inside the world
+	 * @param world the world
+	 * @param display the display
+	 * @param Ship The ship inside the world
 	 */
 	public Defend(World w, Display d, Ship ship) {
 		super(w, d, ship, Field.ROCKY);

@@ -69,6 +69,10 @@ public class StarField {
 			display.drawDrawable(star);
 	}
 
+	
+	/**
+	 * @return Returns a random color
+	 */
 	private static Color starColor() {
 		Color c = oneIn(5) ? Color.WHITE : Color.GRAY;
 		if (oneIn(10))

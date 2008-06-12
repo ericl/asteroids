@@ -84,6 +84,7 @@ public class Exploder implements CollisionListener {
 
 	/**
 	 * add a stats to the list of stats
+	 * @param the stats to add
 	 */
 	public void addStatsListener(Stats s) {
 		stats.add(s);
@@ -91,7 +92,7 @@ public class Exploder implements CollisionListener {
 
 	/**
 	 * clears the queue of collisions so the world is not overloaded
-	 * @param the collision event between two bodies
+	 * @param event the collision event between two bodies
 	 */
 	public void collisionOccured(CollisionEvent event) {
 		while (!explosionQueue.isEmpty() && explosionQueue.peek().dead())
@@ -108,9 +109,9 @@ public class Exploder implements CollisionListener {
 
 	/**
 	 * collision algorithm between the two bodies
-	 * @param body one
-	 * @param body two
-	 * @param the collision event between body one and two
+	 * @param body The body that has collided
+	 * @param other The other body that it has collided with
+	 * @param event the collision event between body one and two
 	 */
 	private void tryExplode(Body body, Body other, CollisionEvent event) {
 		if (exploded.contains(body)) // don't explode anything twice
@@ -202,9 +203,9 @@ public class Exploder implements CollisionListener {
 
 	/**
 	 * checks if the two bodies are stuck 
-	 * @param body one
-	 * @param body two
-	 * @return false
+	 * @param body First body
+	 * @param body Second body
+	 * @return True if both bodies are stuck to each other
 	 */
 	public boolean isStuck(Body body, Body other) {
 		if (!(body instanceof Asteroid && other instanceof Asteroid)

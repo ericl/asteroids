@@ -81,10 +81,10 @@ public class Field {
 	}
 
 	/**
-	 * @param world
-	 * @param display of the world
-	 * @param array of ships
-	 * @param id
+	 * @param w The World
+	 * @param d Display of the world
+	 * @param shiparray Array of ships
+	 * @param id id
 	 */
 	public Field(World w, Display d, Ship[] shiparray, int id) {
 		this.display = d;
@@ -102,7 +102,7 @@ public class Field {
 
 	/**
 	 * sets the density of the field in which how many asteroids are inside the field
-	 * @param double density num
+	 * @param density The density of which to set the star field to
 	 */
 	public void setDensity(double density) {
 		D = density;
@@ -110,7 +110,7 @@ public class Field {
 
 	/**
 	 * sets intial speed of objects inside the field
-	 * @param speed of the field
+	 * @param speed The speed of the field
 	 */
 	public void setInitialSpeed(float speed) {
 		I = speed;
@@ -118,7 +118,7 @@ public class Field {
 
 	/**
 	 * constant scaling factor so that objects in the field are of same ratio
-	 * @param float scaling factor
+	 * @param scale the scaling factor
 	 */
 	public void setScalingConstant(float scale) {
 		S = scale;
@@ -139,8 +139,7 @@ public class Field {
 
 	/**
 	 * checks if the game is done
-	 * @return true if the ship is destroyed
-	 * @return false otherwise
+	 * @return true if the ship is destroyed; false otherwise
 	 */
 	public boolean done() {
 		for (Ship ship : ships)
@@ -245,7 +244,7 @@ public class Field {
 	}
 
 	/**
-	 * @return string of what kind of scenario you are playing
+	 * @return What scenario is being played
 	 */
 	public String toString() {
 		switch (id) {

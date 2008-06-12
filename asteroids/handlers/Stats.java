@@ -114,6 +114,7 @@ public class Stats {
 	}
 	
 	/**
+	 * @param name Name to change to
 	 * makes so you can change your name when you get a high score
 	 */
 	public void build(String name) {
@@ -164,6 +165,7 @@ public class Stats {
 	}
 
 	/**
+	 * @param name The name to change to
 	 * editing the name in the high score when reached
 	 */
 	public void edit(String name) {
