@@ -84,7 +84,7 @@ public class Exploder implements CollisionListener {
 
 	/**
 	 * add a stats to the list of stats
-	 * @param the stats to add
+	 * @param s the stats to add
 	 */
 	public void addStatsListener(Stats s) {
 		stats.add(s);
@@ -204,7 +204,7 @@ public class Exploder implements CollisionListener {
 	/**
 	 * checks if the two bodies are stuck 
 	 * @param body First body
-	 * @param body Second body
+	 * @param other Second body
 	 * @return True if both bodies are stuck to each other
 	 */
 	public boolean isStuck(Body body, Body other) {
