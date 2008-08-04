@@ -46,8 +46,8 @@ public class Defend extends Field {
 	 * @param	d	The display.
 	 * @param	ship	The ship inside the world.
 	 */
-	public Defend(World w, Display d, Ship ship) {
-		super(w, d, ship, Field.ROCKY);
+	public Defend(World w, Display2 d, Ship ship) {
+		super(w, d, Field.ROCKY, ship);
 	}
 	
 	/**

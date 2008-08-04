@@ -35,6 +35,7 @@ import javax.swing.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
+import static net.phys2d.math.MathUtil.*;
 
 /**
  * Single-player asteroid game.
@@ -77,11 +78,11 @@ public class Asteroids extends AbstractGame {
 			restart = false;
 		}
 		scenario.update();
-		display.setCenter(ship.getPosition());
+		display.setCenter(sub(ship.getPosition(), scale(v(dim), .5f)));
 	}
 
 	protected void postWorld() {
-		Graphics2D g2d = display.getGraphics();
+		Graphics2D g2d = display.getGraphics()[0];
 		g2d.setColor(COLOR);
 		g2d.setFont(FONT_BOLD);
 		g2d.drawString("\"" + scenario.toString() + "\"", 10, 40);
@@ -136,7 +137,7 @@ public class Asteroids extends AbstractGame {
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
 		int id = Field.ids[(int)range(0,Field.ids.length)];
-		scenario = new Field(world, display, ship, id);
+		scenario = new Field(world, display, id, ship);
 		stats.reset(scenario);		
 		scenario.setDensity(.5f);
 		scenario.setScalingConstant(1f);

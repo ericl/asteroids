@@ -45,9 +45,9 @@ public class StarField {
 	private static double DENSITY = 2e-4;
 	private static Color[] colors = {Color.yellow,Color.orange,Color.cyan};
 	private LinkedList<Star> stars = new LinkedList<Star>();
-	private Display display;
+	private Display2 display;
 
-	public StarField(Display d) {
+	public StarField(Display2 d) {
 		display = d;
 	}
 

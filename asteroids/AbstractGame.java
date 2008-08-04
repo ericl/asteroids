@@ -42,7 +42,7 @@ import static asteroids.Util.*;
  * Common game GUI and main loop.
  */
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
-	protected Display display;
+	protected Display2 display;
 	protected JFrame frame;
 	protected World world;
 	protected Stats stats;
@@ -111,12 +111,13 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		if (!pause) {
 			pause = true;
 			synchronized (display) {
-				Graphics2D g2d = display.getGraphics();
-				g2d.setColor(new Color(100,100,100,100));
-				g2d.fillRect(0,0,display.w(0),display.h(0));
-				g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
-				g2d.setColor(Color.RED);
-				g2d.drawString("PAUSED",20,display.h(-20));
+				for (Graphics2D g2d : display.getGraphics()) {
+					g2d.setColor(new Color(100,100,100,100));
+					g2d.fillRect(0,0,display.w(0),display.h(0));
+					g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
+					g2d.setColor(Color.RED);
+					g2d.drawString("PAUSED",20,display.h(-20));
+				}
 				display.show();
 			}
 		}
@@ -129,9 +130,9 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		}
 	}
 
-	protected Display makeDisplay() {
+	protected Display2 makeDisplay() {
 		frame.setLocationByPlatform(true);
-		return new BasicDisplay(frame, dim);
+		return new Display2(frame, dim);
 	}
 
 	protected void preWorld() {}

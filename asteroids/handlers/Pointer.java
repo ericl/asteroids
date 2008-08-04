@@ -41,12 +41,12 @@ import static asteroids.Util.*;
  * Draws a small line that points towards another ship.
  */
 public class Pointer {
-	private Display display;
+	private Display2 display;
 	private Ship o;
 	private Explodable target;
 	private int rad;
 
-	public Pointer(Ship t, Explodable x, Display d) {
+	public Pointer(Ship t, Explodable x, Display2 d) {
 		o = t;
 		target = x;
 		display = d;
@@ -67,7 +67,7 @@ public class Pointer {
 		if (display.inViewFrom(origin, target.getPosition(), target.getRadius()))
 			return;
 		Vector2f delta = sub(target.getPosition(), o.getPosition());
-		double xo = display.w(0)/2;
+		double xo = display.w(0)/4;
 		double yo = display.h(0)/2;
 		double m = Math.sqrt(delta.length())/2;
 		delta.normalise();

@@ -43,7 +43,7 @@ import static asteroids.Util.*;
 public class Field {
 	protected Ship[] ships;
 	protected World world;
-	protected Display display;
+	protected Display2 display;
 	protected Dimension dim;
 	protected int count, score = -1;
 	protected final static int BORDER = 300, BUF = 500;
@@ -55,28 +55,6 @@ public class Field {
 	private int id;
 
 	/**
-	 * Constructs a field with a world and a ship within it.
-	 * @param	w	The world.
-	 * @param	d	The display.
-	 * @param	ship	The ship inside the world.
-	 * @param	id	What type of field to be created.
-	 */
-	public Field(World w, Display d, Ship ship, int id) {
-		this.id = id;
-		this.display = d;
-		this.dim = d.getDimension();
-		ships = new Ship[1];
-		ships[0] = ship;
-		boolean ok = false;
-		for (int i=0; i < ids.length; i++)
-			if (id == ids[i])
-				ok = true;
-		if (!ok)
-			throw new IllegalArgumentException("Unknown id " + id);
-		world = w;
-	}
-
-	/**
 	 * @return	The unique identifier of the field.
 	 */
 	public int getID() {
@@ -86,14 +64,14 @@ public class Field {
 	/**
 	 * @param	w	The world.
 	 * @param	d	The display.
-	 * @param	shiparray	Array of ships inside the world.
 	 * @param	id	What type of field to be created.
+	 * @param	ships Ships inside the world.
 	 */
-	public Field(World w, Display d, Ship[] shiparray, int id) {
+	public Field(World w, Display2 d, int id, Ship ... ships) {
 		this.display = d;
 		this.id = id;
 		this.dim = d.getDimension();
-		ships = shiparray;
+		this.ships = ships;
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id == ids[i])
@@ -188,8 +166,9 @@ public class Field {
 			}
 		}
 		for (int i=0; i < density.length; i++)
-			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D)
-				world.add(newAsteroid(targets[i].getPosition()));
+			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D
+				/display.getNumScreens())
+					world.add(newAsteroid(targets[i].getPosition()));
 
 		if (done() && score < 0)
 			score = count;

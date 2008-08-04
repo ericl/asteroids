@@ -35,6 +35,8 @@ import javax.swing.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
+import static asteroids.Util.*;
+import static net.phys2d.math.MathUtil.*;
 
 /**
  * Fullscreen game similar to Asteroids but using the Defend handler.
@@ -76,11 +78,11 @@ public class Protect extends AbstractGame {
 			newGame();
 			restart = false;
 		}
-		display.setCenter(ship.getPosition());
+		display.setCenter(sub(ship.getPosition(), scale(v(dim), .5f)));
 		scenario.update();
 	}
 
-	protected Display makeDisplay() {
+	protected Display2 makeDisplay() {
 		frame.setUndecorated(true);
 		frame.setResizable(false);
 		GraphicsDevice myDevice =
@@ -90,11 +92,11 @@ public class Protect extends AbstractGame {
 		} catch (Exception e) {
 			e.printStackTrace();	
 		}
-		return new BasicDisplay(frame, dim);
+		return new Display2(frame, dim);
 	}
 
 	protected void postWorld() {
-		Graphics2D g2d = display.getGraphics();
+		Graphics2D g2d = display.getGraphics()[0];
 		p.drawTo(g2d);
 		if (scenario.done()) {
 			g2d.setColor(COLOR);
