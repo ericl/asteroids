@@ -40,13 +40,12 @@ public class Chooser {
 		switch (choose()) {
 			case 0: game = new MPAsteroids(); break;
 			case 1: game = new Asteroids(); break;
-			case 2: game = new Protect(); break;
 		}
 		game.mainLoop();
 	}
 
 	private static int choose() {
-		String[] options = {"Multiplayer", "Single-player", "Defend Europa"};
+		String[] options = {"Multiplayer", "Single-player"};
 		int n = JOptionPane.showOptionDialog(new JFrame(),
 			"Choose a game mode:",
 			"Asteroids",
