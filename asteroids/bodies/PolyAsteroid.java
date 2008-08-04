@@ -43,7 +43,6 @@ public abstract class PolyAsteroid extends Asteroid implements Drawable {
 	private float radius;
 	private Vector2f centroid;
 	protected float ratio;
-	protected Color color = Color.blue;
 
 	// ratio is the scaling of the polygon
 	public PolyAsteroid(ROVector2f[] raw, float scale) {
@@ -56,7 +55,6 @@ public abstract class PolyAsteroid extends Asteroid implements Drawable {
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
 		Polygon poly = (Polygon)getShape();
-		g2d.setColor(color);
 		ROVector2f[] verts = poly.getVertices(getPosition(), getRotation());
 		int[] xcoords = new int[verts.length];
 		int[] ycoords = new int[verts.length];

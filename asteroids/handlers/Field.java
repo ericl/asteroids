@@ -70,8 +70,8 @@ public class Field {
 	public Field(World w, Display2 d, int id, Ship ... ships) {
 		this.display = d;
 		this.id = id;
-		this.dim = d.getDimension();
 		this.ships = ships;
+		dim = display.getDimension();
 		boolean ok = false;
 		for (int i=0; i < ids.length; i++)
 			if (id == ids[i])
@@ -166,9 +166,8 @@ public class Field {
 			}
 		}
 		for (int i=0; i < density.length; i++)
-			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D
-				/display.getNumScreens())
-					world.add(newAsteroid(targets[i].getPosition()));
+			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D)
+				world.add(newAsteroid(targets[i].getPosition()));
 
 		if (done() && score < 0)
 			score = count;

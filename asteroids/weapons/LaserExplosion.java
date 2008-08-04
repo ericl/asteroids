@@ -29,8 +29,11 @@
  */
 
 package asteroids.weapons;
-import net.phys2d.math.*;
+
 import asteroids.handlers.*;
+
+import net.phys2d.math.*;
+
 import static asteroids.Util.*;
 
 /**

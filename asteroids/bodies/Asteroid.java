@@ -29,10 +29,17 @@
  */
 
 package asteroids.bodies;
+
+import java.awt.Color;
+
 import java.util.*;
-import net.phys2d.raw.*;
-import net.phys2d.raw.shapes.*;
+
 import asteroids.handlers.*;
+
+import net.phys2d.raw.*;
+
+import net.phys2d.raw.shapes.*;
+
 import static asteroids.Util.*;
 
 /**
@@ -40,6 +47,7 @@ import static asteroids.Util.*;
  */
 public abstract class Asteroid extends Body implements Explodable {
 	protected float damage;
+	protected Color color = Color.darkGray;
 	private static int MIN_SIZE = (int)Math.sqrt(10), BASE_CHANCE = 7;
 
 	public void powerup(List<Body> list) {
@@ -57,6 +65,14 @@ public abstract class Asteroid extends Body implements Explodable {
 
 	public Asteroid(Circle shape) {
 		super(shape, (float)Math.pow(shape.getRadius(),2));
+	}
+
+	public void setColor(Color c) {
+		color = c;
+	}
+
+	public Color getColor() {
+		return color;
 	}
 
 	/**

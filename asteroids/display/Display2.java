@@ -32,6 +32,7 @@ package asteroids.display;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -61,10 +62,12 @@ import static asteroids.Util.*;
 import static net.phys2d.math.MathUtil.*;
 
 /**
- * Common drawing operations used by both Basic and MPDisplay.
+ * Draws onto component(s) that support createBufferStrategy().
+ * All components should be the same size.
  */
 public class Display2 {
 	protected BufferStrategy[] strategies;
+	protected Component[] screens;
 	protected Frame frame;
 	protected Graphics2D[] bufs;
 	protected HashMap<String,Image> cache;
@@ -72,17 +75,46 @@ public class Display2 {
 	protected MediaTracker tracker;
 	protected ROVector2f[] centers;
 	protected String bgpath;
-	protected final Dimension dim;
-	protected final String dir = getClass().getResource("/asteroids/").toString();
-	protected final int ORIGINAL_WIDTH, ORIGINAL_HEIGHT;
-	protected final int n; // num views
+	protected Dimension dim;
+	protected String dir = getClass().getResource("/asteroids/").toString();
+	protected int ORIGINAL_WIDTH, ORIGINAL_HEIGHT;
 	protected int index = 1; // mediatracker image loading
+	protected int n; // num views
 	protected long resizetime = Long.MAX_VALUE;
 
+	/**
+	 * Instantiate a display that draws onto a frame.
+	 * Recommended for full-screen games only.
+	 */
+	public Display2(Frame f, Dimension d) {
+		init(f, d, new Component[]{f});
+		f.createBufferStrategy(2);
+		strategies[0] = f.getBufferStrategy();
+		getNewBufs();
+	}
+
+	/**
+	 * Instantiate a display that draws onto canvases.
+	 */
 	public Display2(Frame f, Dimension d, Canvas ... canvases) {
-		n = Math.max(1, canvases.length);
-		frame = f;
-		dim = d;
+		init(f, d, canvases);
+		for (int i=0; i < n; i++) {
+			canvases[i].createBufferStrategy(2);
+			strategies[i] = canvases[i].getBufferStrategy();
+		}
+		getNewBufs();
+	}
+
+	/**
+	 * Common construction operations. Does not initialize buffers.
+	 */
+	protected void init(Frame frame, final Dimension dim, final Component[] screens) {
+		n = screens.length;
+		if (n < 1)
+			throw new IllegalArgumentException("Illegal number of screens.");
+		this.frame = frame;
+		this.dim = dim;
+		this.screens = screens;
 		strategies = new BufferStrategy[n];
 		centers = new ROVector2f[n];
 		bufs = new Graphics2D[n];
@@ -90,34 +122,18 @@ public class Display2 {
 		ORIGINAL_HEIGHT = (int)dim.getHeight();
 		cache = new HashMap<String,Image>();
 		tracker = new MediaTracker(frame);
-		for (int i=0; i < n; i++)
+		for (int i=0; i < n; i++) {
 			centers[i] = v(0,0);
+			screens[i].setIgnoreRepaint(true);
+		}
 		frame.setVisible(true);
 		frame.setIgnoreRepaint(true);
-		if (canvases.length > 0) {
-			for (int i=0; i < n; i++) {
-				canvases[i].setIgnoreRepaint(true);
-				canvases[i].createBufferStrategy(2);
-				strategies[i] = canvases[i].getBufferStrategy();
-			}
-		} else { // draw directly to frame
-			frame.createBufferStrategy(2);
-			strategies[0] = frame.getBufferStrategy();
-		}
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
-				dim.setSize(frame.getSize());
+				dim.setSize(screens[0].getSize()); // assume all are the same size
 				resizetime = System.currentTimeMillis();
 			}
 		});
-		getNewBufs();
-	}
-
-	/**
-	 * @return Number of screens drawn to.
-	 */
-	public int getNumScreens() {
-		return n;
 	}
 
 	/**
@@ -136,7 +152,8 @@ public class Display2 {
 	 * @param	updates	The new origin(s) of the display.
 	 */
 	public void setCenter(ROVector2f ... updates) {
-		centers = updates;
+		for (int i=0; i < n; i++)
+			centers[i] = sub(updates[i], scale(v(dim), .5f));
 	}
 
 	/**
@@ -145,8 +162,10 @@ public class Display2 {
 	 */
 	public void drawDrawable(Drawable thing) {
 		for (int i=0; i < n; i++)
-			if (isVisible(centers[i], dim, thing.getPosition(), thing.getRadius()))
+			if (isVisible(centers[i], dim, thing.getPosition(), thing.getRadius())) {
+				bufs[i].setColor(thing.getColor());
 				thing.drawTo(bufs[i], centers[i]);
+			}
 	}
 
 	/**
@@ -191,7 +210,7 @@ public class Display2 {
 	/**
 	 * Gets new accelerated buffers from the bufferstrategies.
 	 */
-	private void getNewBufs() {
+	protected void getNewBufs() {
 		for (int i=0; i < n; i++) {
 			bufs[i] = (Graphics2D)strategies[i].getDrawGraphics();
 			bufs[i].setRenderingHint(RenderingHints.KEY_RENDERING,
@@ -202,7 +221,7 @@ public class Display2 {
 	/**
 	 * Draws specified background image to all buffers or solid black.
 	 */
-	private void drawBackground() {
+	protected void drawBackground() {
 		for (Graphics2D g2d : bufs) {
 			if (bg == null) {
 				g2d.setColor(Color.BLACK);
@@ -271,7 +290,11 @@ public class Display2 {
 		}
 	}
 
-	public Image loadImage(String path) {
+	/**
+	 * @return Image from a path.
+	 * @param	path	The path of the image to be loaded.
+	 */
+	protected Image loadImage(String path) {
 		Image i = cache.get(path);
 		if (i == null)
 			try {
@@ -316,7 +339,8 @@ public class Display2 {
 	}
 
 	/**
-	 * @return Dimension of the frame.
+	 * @return Dimension of an arbitrary component, updated as it changes size.
+	 * Behavior will be unpredictable if the components aren't the same size.
 	 */
 	public Dimension getDimension() {
 		return dim;

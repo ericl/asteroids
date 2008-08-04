@@ -31,10 +31,9 @@
 package asteroids;
 
 import java.awt.*;
+import java.awt.GridLayout;
 
 import java.awt.event.*;
-
-import javax.swing.JSplitPane;
 
 import asteroids.bodies.*;
 
@@ -42,11 +41,7 @@ import asteroids.display.Display2;
 
 import asteroids.handlers.*;
 
-import net.phys2d.math.Vector2f;
-
 import static asteroids.Util.*;
-
-import static net.phys2d.math.MathUtil.*;
 
 /**
  * Two-player, unscored game where the players compete against each other.
@@ -54,7 +49,6 @@ import static net.phys2d.math.MathUtil.*;
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
 	protected Field scenario;
-	protected JSplitPane jsplit;
 	protected Pointer pLeft, pRight;
 	protected Ship[] ships = new Ship[2];
 	protected StarField k;
@@ -68,40 +62,18 @@ public class MPAsteroids extends AbstractGame {
 
 	protected Display2 makeDisplay() {
 		frame.setLocationByPlatform(true);
-		// redirect canvas keyevents to the frame
-		final KeyboardFocusManager manager =
-			KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(new KeyEventDispatcher() {
-			public boolean dispatchKeyEvent(KeyEvent e) {
-				if (e.getSource() == frame)
-					return false;
-				manager.redispatchEvent(frame, e);
-				return true;
-			}
-		});
-		Canvas a, b;
-		jsplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-		         a = new Canvas(), b = new Canvas());
-		a.setSize(dim);
-		b.setSize(dim);
-		a.setMinimumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-		b.setMinimumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-		jsplit.setSize(new Dimension((int)dim.getWidth()*2,(int)dim.getHeight()));
+		GridLayout layout = new GridLayout();
+		layout.setHgap(2);
+		frame.setLayout(layout);
+		Canvas a = new Canvas(), b = new Canvas();
 		frame.setSize(new Dimension((int)dim.getWidth()*2,(int)dim.getHeight()));
-		jsplit.setDividerLocation(.5);
-		jsplit.setVisible(true);
-		frame.setContentPane(jsplit);
+		frame.add(a);
+		frame.add(b);
 		return new Display2(frame, dim, a, b);
 	}
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		dim.setSize(BASE_WIDTH*2, BASE_HEIGHT); // workaround
-		frame.addComponentListener(new ComponentAdapter() {
-			public void componentResized(ComponentEvent e) {
-				jsplit.setDividerLocation(.5);
-			}
-		});
 		frame.addKeyListener(ship2 = new Ship(world));
 		frame.addKeyListener(ship1 = new Ship(world) {
 			public void keyPressed(KeyEvent e) {
@@ -135,8 +107,6 @@ public class MPAsteroids extends AbstractGame {
 		Ship.setSpeed(.33f);
 		pLeft = new Pointer(ship1, display, ship2);
 		pRight = new Pointer(ship2, display, ship1);
-		pLeft.setFraction(.25, .5);
-		pRight.setFraction(.25, .5);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newGame();
@@ -148,9 +118,7 @@ public class MPAsteroids extends AbstractGame {
 			restart = false;
 		}
 		scenario.update();
-		Vector2f scaler = v(dim.getWidth()*.25, dim.getHeight()*.5);
-		display.setCenter(sub(ship1.getPosition(), scaler),
-		                  sub(ship2.getPosition(), scaler));
+		display.setCenter(ship1.getPosition(), ship2.getPosition());
 	}
 
 	protected void preWorld() {
@@ -167,16 +135,11 @@ public class MPAsteroids extends AbstractGame {
 				g2ds[i].setColor(COLOR);
 				g2ds[i].setFont(FONT_NORMAL);
 				g2ds[i].drawString(RESTART_MSG,
-					centerX2(FONT_NORMAL, RESTART_MSG, g2ds[i]), display.h(0)/2-5);
+					centerX(FONT_NORMAL, RESTART_MSG, g2ds[i]), display.h(0)/2-5);
 			}
 		}
 		shipStatus(g2ds[0], ship1);
 		shipStatus(g2ds[1], ship2);
-	}
-
-	protected int centerX2(Font f, String s, Graphics2D g2d) {
-		return (int)((dim.getWidth()/2 - g2d.getFontMetrics(f)
-				.getStringBounds(s, g2d).getWidth())/2);
 	}
 
 	public void keyTyped(KeyEvent event) {
@@ -187,7 +150,7 @@ public class MPAsteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
-		int id = Field.ids[(int)range(0,Field.ids.length)];
+		int id = Field.ids[(int)range(0, Field.ids.length)];
 		scenario = new Field(world, display, id, ships);
 		scenario.setInitialSpeed(10);
 		scenario.setScalingConstant(.5f);
@@ -199,11 +162,11 @@ public class MPAsteroids extends AbstractGame {
 		String hull = "Infinity";
 		if (!ship.isInvincible())
 			hull = (int)(ship.getDamage()*1000)/10+"%";
-		g2d.setColor(ship.statusColor());
+		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
-			display.w(0)/2-110,display.h(-59));
+			display.w(-110), display.h(-39));
 		g2d.setColor(COLOR);
 		g2d.drawString("Deaths: " + ship.deaths,
-			display.w(0)/2-110,display.h(-39));
+			display.w(-110), display.h(-19));
 	}
 }

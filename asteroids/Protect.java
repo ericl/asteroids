@@ -35,8 +35,6 @@ import javax.swing.*;
 import asteroids.bodies.*;
 import asteroids.display.*;
 import asteroids.handlers.*;
-import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
 
 /**
  * Fullscreen game similar to Asteroids but using the Defend handler.
@@ -78,7 +76,7 @@ public class Protect extends AbstractGame {
 			newGame();
 			restart = false;
 		}
-		display.setCenter(sub(ship.getPosition(), scale(v(dim), .5f)));
+		display.setCenter(ship.getPosition());
 		scenario.update();
 	}
 
@@ -168,7 +166,7 @@ public class Protect extends AbstractGame {
 		g2d.setColor(scenario.getObject().statusColor());
 		g2d.drawString("Europa: " + scenario.getObject().getPercentDamage(),
 			display.w(-110),display.h(-55));
-		g2d.setColor(ship.statusColor());
+		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
 			display.w(-110),display.h(-35));
 		g2d.setColor(COLOR);

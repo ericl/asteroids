@@ -88,6 +88,17 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
 		mainLoop = new MainLoop();
 		display = makeDisplay();
+		final KeyboardFocusManager manager =
+		      KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(new KeyEventDispatcher() {
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getSource() instanceof Canvas) {
+					manager.redispatchEvent(frame, e);
+					return true;
+				}
+				return false;
+			}
+		});
 		stats = new Stats();
 		frame.addWindowFocusListener(this);
 		exploder = new Exploder(world, display);
@@ -132,7 +143,9 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 
 	protected Display2 makeDisplay() {
 		frame.setLocationByPlatform(true);
-		return new Display2(frame, dim);
+		Canvas a = new Canvas();
+		frame.add(a);
+		return new Display2(frame, dim, a);
 	}
 
 	protected void preWorld() {}

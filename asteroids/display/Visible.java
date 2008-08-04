@@ -29,12 +29,17 @@
  */
 
 package asteroids.display;
+
+import java.awt.Color;
+
 import net.phys2d.math.*;
 
 /**
  * Common "visible" attributes used by almost all bodies in the game.
  */
 public interface Visible {
+	public Color getColor();
+
 	/**
 	 * Approximate mxa visible radius of body for visual calculations only.
 	 * @return	The visible radius of the body.

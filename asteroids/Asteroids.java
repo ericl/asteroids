@@ -35,7 +35,6 @@ import javax.swing.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
 
 /**
  * Single-player asteroid game.
@@ -78,14 +77,14 @@ public class Asteroids extends AbstractGame {
 			restart = false;
 		}
 		scenario.update();
-		display.setCenter(sub(ship.getPosition(), scale(v(dim), .5f)));
+		display.setCenter(ship.getPosition());
 	}
 
 	protected void postWorld() {
 		Graphics2D g2d = display.getGraphics()[0];
 		g2d.setColor(COLOR);
 		g2d.setFont(FONT_BOLD);
-		g2d.drawString("\"" + scenario.toString() + "\"", 10, 40);
+		g2d.drawString("\"" + scenario.toString() + "\"", 10, 20);
 		if (scenario.done()) {
 			g2d.setColor(COLOR);
 			g2d.setFont(FONT_NORMAL);
@@ -149,7 +148,7 @@ public class Asteroids extends AbstractGame {
 		String hull = "Infinity";
 		if (!ship.isInvincible())
 			hull = (int)(ship.getDamage()*1000)/10+"%";
-		g2d.setColor(ship.statusColor());
+		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
 			display.w(-110),display.h(-35));
 		g2d.setColor(COLOR);
@@ -158,6 +157,7 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public void changeName() {
+		pause();
 		String s = (String)JOptionPane.showInputDialog(
 			new JFrame(),
 			"Who are you?",
@@ -166,5 +166,6 @@ public class Asteroids extends AbstractGame {
 			null, null, name);
 		if (s != null && !s.equals(""))
 			stats.edit(name = s);
+		unpause();
 	}
 }

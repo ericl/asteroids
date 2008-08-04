@@ -29,8 +29,11 @@
  */
 
 package asteroids.weapons;
-import net.phys2d.math.*;
+
 import asteroids.handlers.*;
+
+import net.phys2d.math.*;
+
 import static asteroids.Util.*;
 
 /**
@@ -44,7 +47,6 @@ public class PowerUpExplosion extends Explosion {
 	private int frame = 1;
 
 	public PowerUpExplosion() {
-		super();
 		setEnabled(true);
 	}
 

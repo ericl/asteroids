@@ -44,11 +44,10 @@ public class LargeExplosion extends Explosion {
 	private float scale = 1;
 
 	public LargeExplosion() {
-		super();
+		// noop
 	}
 
 	public LargeExplosion(float scaler) {
-		super();
 		scale = scaler;
 	}
 

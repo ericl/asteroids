@@ -29,10 +29,17 @@
  */
 
 package asteroids.bodies;
+
+import java.awt.Color;
+
 import java.util.*;
-import net.phys2d.raw.*;
-import net.phys2d.raw.shapes.*;
+
 import asteroids.weapons.*;
+
+import net.phys2d.raw.*;
+
+import net.phys2d.raw.shapes.*;
+
 import static asteroids.Util.*;
 
 /**
@@ -47,6 +54,10 @@ public abstract class PowerUp extends Body implements Explodable {
 
 	public PowerUp(Polygon shape) {
 		super(shape, shape.getArea());
+	}
+
+	public Color getColor() {
+		return Color.GREEN;
 	}
 
 	public void collided(CollisionEvent e) {

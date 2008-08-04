@@ -29,10 +29,16 @@
  */
 
 package asteroids.handlers;
+
 import java.awt.*;
+import java.awt.Toolkit;
+
 import java.util.*;
-import net.phys2d.math.*;
+
 import asteroids.display.*;
+
+import net.phys2d.math.*;
+
 import static asteroids.Util.*;
 
 /**
@@ -41,7 +47,7 @@ import static asteroids.Util.*;
  */
 public class StarField {
 	// hoping that no one has really high resolution monitors
-	private static int DIMENSION = 3000;
+	private static int DIMENSION = 2*maxRes();
 	private static double DENSITY = 2e-4;
 	private static Color[] colors = {Color.yellow,Color.orange,Color.cyan};
 	private LinkedList<Star> stars = new LinkedList<Star>();
@@ -49,6 +55,11 @@ public class StarField {
 
 	public StarField(Display2 d) {
 		display = d;
+	}
+
+	public static int maxRes() {
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		return (int)Math.max(screen.getWidth(), screen.getHeight());
 	}
 
 	/**
@@ -90,12 +101,16 @@ public class StarField {
 		private int radius = (int)range(MIN_SIZE,MAX_SIZE);
 		private Color color = starColor();
 
+		public Color getColor() {
+			return color;
+		}
+
 		public Star(Vector2f v) {
 			loc = v;
 		}
 
 		public float getRadius() {
-			// XXX trick the display
+			// XXX trick the display into letting us handle clipping
 			return Float.POSITIVE_INFINITY;
 		}
 

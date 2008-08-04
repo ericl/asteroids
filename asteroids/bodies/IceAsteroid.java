@@ -31,7 +31,6 @@
 package asteroids.bodies;
 import java.util.*;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
@@ -48,6 +47,7 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 
 	public IceAsteroid(float radius) {
 		super(radius);
+		color = Color.CYAN;
 	}
 
 	public Vector2f getTextureCenter() {
@@ -60,15 +60,6 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 
 	public String getTexturePath() {
 		return "pixmaps/fog.png";
-	}
-
-	public void drawTo(Graphics2D g2d, ROVector2f o) {
-		Circle circle = (Circle)getShape();
-		g2d.setColor(Color.CYAN);
-		float x = getPosition().getX() - o.getX();
-		float y = getPosition().getY() - o.getY();
-		float r = circle.getRadius();
-		g2d.fillOval((int) (x-r),(int) (y-r),(int) (r*2),(int) (r*2));
 	}
 
 	public void endFrame() {

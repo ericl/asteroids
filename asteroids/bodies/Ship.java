@@ -143,7 +143,7 @@ public class Ship extends Body
 		return f;
 	}
 
-	public Color statusColor() {
+	public Color getColor() {
 		long time = Timer.gameTime();
 		if (isInvincible()) {
 			if (time < warningStart || textStatus-- % 10 > 5)
@@ -177,7 +177,6 @@ public class Ship extends Body
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
 		Polygon poly = (Polygon)getShape();
-		g2d.setColor(Color.black);
 		ROVector2f[] verts = poly.getVertices(getPosition(), getRotation());
 		int[] xcoords = new int[verts.length];
 		int[] ycoords = new int[verts.length];

@@ -29,12 +29,20 @@
  */
 
 package asteroids.weapons;
+
+import java.awt.Color;
+
 import java.util.*;
-import net.phys2d.raw.*;
-import net.phys2d.raw.shapes.*;
+
 import asteroids.bodies.*;
+
 import asteroids.display.*;
+
 import asteroids.handlers.Timer;
+
+import net.phys2d.raw.*;
+
+import net.phys2d.raw.shapes.*;
 
 /**
  * Weapons are emitted from the ship by a weapon system.
@@ -52,6 +60,10 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 
 	public Weapon(DynamicShape weap, float mass) {
 		super(weap, mass);
+	}
+
+	public Color getColor() {
+		return Color.ORANGE;
 	}
 
 	public int getLevel() {
@@ -73,7 +85,7 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	}
 
 	public void incrementLevel() {
-		if (level < 3)
+		if (level <= MAX_LEVEL)
 			level++;
 	}
 

@@ -42,19 +42,18 @@ import static asteroids.Util.*;
  * Boring circle asteroids not directly used in the game.
  */
 public class CircleAsteroid extends Asteroid implements Drawable {
-	private Color color = Color.orange;
 
 	public CircleAsteroid(float radius) {
 		super(new Circle(radius));
+		color = Color.orange;
 	}
 
-	public void setColor(Color c) {
-		color = c;
+	public Color getColor() {
+		return getRadius() < 100 ? color : Color.darkGray;
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
 		Circle circle = (Circle)getShape();
-		g2d.setColor(getRadius() < 100 ? color : Color.darkGray);
 		float x = getPosition().getX() - o.getX();
 		float y = getPosition().getY() - o.getY();
 		float r = circle.getRadius();

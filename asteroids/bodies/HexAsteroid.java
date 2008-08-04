@@ -29,9 +29,15 @@
  */
 
 package asteroids.bodies;
+
+import java.awt.Color;
+
 import java.util.*;
-import net.phys2d.raw.*;
+
 import net.phys2d.math.*;
+
+import net.phys2d.raw.*;
+
 import static asteroids.Util.*;
 
 /**
@@ -42,6 +48,7 @@ public class HexAsteroid extends PolyAsteroid {
 
 	public HexAsteroid(float size) {
 		super(geo, size / 25);
+		color = Color.BLUE;
 	}
 
 	public Body getRemnant() {
