@@ -157,7 +157,7 @@ public class Protect extends AbstractGame {
 		scenario.setDensity(.1f);
 		scenario.setScalingConstant(.5f);
 		scenario.start();
-		p = new Pointer(ship, scenario.getObject(), display);
+		p = new Pointer(ship, display, scenario.getObject());
 	}
 
 	private void shipStatus(Graphics2D g2d) {
@@ -183,7 +183,7 @@ public class Protect extends AbstractGame {
 			"Asteroids",
 			JOptionPane.PLAIN_MESSAGE,
 			null, null, name);
-		if (s != null && !s.isEmpty())
+		if (s != null && !s.equals(""))
 			stats.edit(name = s);
 	}
 }

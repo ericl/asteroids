@@ -38,42 +38,54 @@ import asteroids.display.*;
 import static asteroids.Util.*;
 
 /**
- * Draws a small line that points towards another ship.
+ * Draws a small line that points towards another targets.
  */
 public class Pointer {
 	private Display2 display;
-	private Ship o;
-	private Explodable target;
-	private int rad;
+	private Ship ship;
+	private Explodable[] targets;
+	private double xf = .5, yf = .5;
 
-	public Pointer(Ship t, Explodable x, Display2 d) {
-		o = t;
-		target = x;
-		display = d;
+	public Pointer(Ship ship, Display2 display, Explodable ... targets) {
+		this.ship = ship;
+		this.targets = targets;
+		this.display = display;
+	}
+
+	/**
+	 * Set center of line(s) in relation to the frame; default 0.5 for each
+	 * @param	xf	ratio between frame width and the display center
+	 * @param	yf	ratio between frame height and the display center
+	 */
+	public void setFraction(double xf, double yf) {
+		this.xf = xf;
+		this.yf = yf;
 	}
 
 	/**
 	 * Updates position and draws to the screen.
 	 */
 	public void drawTo(Graphics2D g2d) {
-		if (target instanceof Ship)
-			g2d.setColor(((Ship)target).statusColor());
-		else
-			g2d.setColor(AbstractGame.COLOR);
-		rad = Math.min(display.w(0),display.h(0))*9/20;
-		if (o.canExplode() || target.canExplode())
-			return;
-		Vector2f origin = sub(o.getPosition(), scale(v(display.getDimension()),.5f));
-		if (display.inViewFrom(origin, target.getPosition(), target.getRadius()))
-			return;
-		Vector2f delta = sub(target.getPosition(), o.getPosition());
-		double xo = display.w(0)/4;
-		double yo = display.h(0)/2;
-		double m = Math.sqrt(delta.length())/2;
-		delta.normalise();
-		g2d.drawLine((int)(xo - 5  + rad*delta.getX()),
-					 (int)(yo - 15 + rad*delta.getY()),
-					 (int)(xo - 5  + (rad-m)*delta.getX()),
-					 (int)(yo - 15 + (rad-m)*delta.getY()));
+		Vector2f o = sub(ship.getPosition(), scale(v(display.getDimension()), .5f));
+		int length = Math.min(display.w(0),display.h(0))*9/20;
+		for (Explodable target : targets) {
+			if (target instanceof Ship)
+				g2d.setColor(((Ship)target).statusColor());
+			else
+				g2d.setColor(AbstractGame.COLOR);
+			if (ship.canExplode() || target.canExplode())
+				return;
+			if (display.inViewFrom(o, target.getPosition(), target.getRadius()))
+				return;
+			Vector2f delta = sub(target.getPosition(), ship.getPosition());
+			double xo = display.w(0) * xf;
+			double yo = display.h(0) * yf;
+			double m = Math.sqrt(delta.length())/2;
+			delta.normalise();
+			g2d.drawLine((int)(xo - 5  + length*delta.getX()),
+						 (int)(yo - 15 + length*delta.getY()),
+						 (int)(xo - 5  + (length-m)*delta.getX()),
+						 (int)(yo - 15 + (length-m)*delta.getY()));
+		}
 	}
 }

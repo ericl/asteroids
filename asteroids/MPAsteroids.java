@@ -133,8 +133,10 @@ public class MPAsteroids extends AbstractGame {
 		ships[1] = ship2;
 		Ship.setMax(4);
 		Ship.setSpeed(.33f);
-		pLeft = new Pointer(ship1, ship2, display);
-		pRight = new Pointer(ship2, ship1, display);
+		pLeft = new Pointer(ship1, display, ship2);
+		pRight = new Pointer(ship2, display, ship1);
+		pLeft.setFraction(.25, .5);
+		pRight.setFraction(.25, .5);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newGame();

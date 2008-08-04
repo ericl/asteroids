@@ -33,8 +33,7 @@ import java.awt.Graphics2D;
 import net.phys2d.math.*;
 
 /**
- * Drawable object. This actually breaks the whole point of the
- * Display interface since it relies on Graphics2D....
+ * Drawable object.
  */
 public interface Drawable extends Visible {
 	public void drawTo(Graphics2D g2d, ROVector2f o);

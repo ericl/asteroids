@@ -164,7 +164,7 @@ public class Asteroids extends AbstractGame {
 			"Asteroids",
 			JOptionPane.PLAIN_MESSAGE,
 			null, null, name);
-		if (s != null && !s.isEmpty())
+		if (s != null && !s.equals(""))
 			stats.edit(name = s);
 	}
 }
