@@ -151,9 +151,9 @@ public class Protect extends AbstractGame {
 		scoresBuilt = false;
 		scenario = new Defend(world, display, ship);
 		stats.reset(scenario);		
-		scenario.setInitialSpeed(20);
 		scenario.setDensity(.1f);
-		scenario.setScalingConstant(.5f);
+		scenario.setSpeedRatio(.5f);
+		scenario.setScalingRatio(.5f);
 		scenario.start();
 		p = new Pointer(ship, display, scenario.getObject());
 	}

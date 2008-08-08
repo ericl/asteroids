@@ -42,7 +42,7 @@ public class Laser extends Weapon {
 	private static float myRadius = 2;
 
 	public Laser() {
-		super(new Circle(myRadius), 1);
+		super(new Circle(myRadius), 50);
 	}
 
 	public Vector2f getTextureCenter() {

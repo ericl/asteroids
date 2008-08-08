@@ -49,7 +49,9 @@ public class Field {
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
 	protected static double D = 1;
-	protected float I = 30, S = 2; // initial speed of asteroids; scaling constant
+	protected static final float INIT_I = 40, INIT_S = 1;
+	protected float I = INIT_I, S = INIT_S; // speed of asteroids; scaling constant
+	protected float rI = 1, rS = 1; // scalers for above
 	public final static int HEX = 1, LARGE = 2, ROCKY = 3, ICEY = 4;
 	public final static int[] ids = {HEX, LARGE, ROCKY, ICEY};
 	private int id;
@@ -90,19 +92,19 @@ public class Field {
 	}
 
 	/**
-	 * Sets intial speed of objects inside the field.
-	 * @param	speed	The speed of the field.
+	 * Set ratio that scales initial speed of generated asteroids.
+	 * @param	ratio	The scale ratio, where 1.0 = 100%
 	 */
-	public void setInitialSpeed(float speed) {
-		I = speed;
+	public void setSpeedRatio(float ratio) {
+		I = INIT_I*ratio;
 	}
 
 	/**
-	 * Constant scaling factor so that objects in the field are of same ratio.
-	 * @param	scale	The scaling factor.
+	 * Set ratio that scales the speed increase of generated asteroids.
+	 * @param	ratio	The scale ratio, where 1.0 = 100%
 	 */
-	public void setScalingConstant(float scale) {
-		S = scale;
+	public void setScalingRatio(float ratio) {
+		S = INIT_S*ratio;
 	}
 
 	/**
@@ -218,10 +220,9 @@ public class Field {
 	 * Adjust asteroid attributes to make the game more difficult as time goes on.
 	 */
 	private void adjustForDifficulty(Asteroid rock) {
-		// workaround for rogue collisions
-		rock.setMaxVelocity(I+S*(float)sqrt(count), I+S*(float)sqrt(count));
-		rock.adjustVelocity(v(range(-S*sqrt(count)-I,S*sqrt(count)+I),
-		                      range(-S*sqrt(count)-I,S*sqrt(count)+I)));
+		float max = I + (float)Math.max(S*log10(count)*cbrt(count), 0);
+		rock.setMaxVelocity(max,max);
+		rock.adjustVelocity(v(range(-max,max), range(-max,max)));
 	}
 
 	/**

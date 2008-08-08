@@ -139,7 +139,6 @@ public class Asteroids extends AbstractGame {
 		scenario = new Field(world, display, id, ship);
 		stats.reset(scenario);		
 		scenario.setDensity(.5f);
-		scenario.setScalingConstant(1f);
 		scenario.start();
 	}
 

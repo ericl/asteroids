@@ -152,8 +152,8 @@ public class MPAsteroids extends AbstractGame {
 		k.init();
 		int id = Field.ids[(int)range(0, Field.ids.length)];
 		scenario = new Field(world, display, id, ships);
-		scenario.setInitialSpeed(10);
-		scenario.setScalingConstant(.5f);
+		scenario.setSpeedRatio(.25f);
+		scenario.setScalingRatio(.25f);
 		scenario.start();
 	}
 

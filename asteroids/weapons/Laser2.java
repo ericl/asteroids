@@ -42,7 +42,7 @@ public class Laser2 extends Weapon {
 	private static float myRadius = 2;
 
 	public Laser2() {
-		super(new Circle(myRadius), 100);
+		super(new Circle(myRadius), 200);
 		setRestitution(1);
 	}
 
