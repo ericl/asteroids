@@ -74,25 +74,25 @@ public class MPAsteroids extends AbstractGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship2 = new Ship(world));
-		frame.addKeyListener(ship1 = new Ship(world) {
+		frame.addKeyListener(ship2 = new ComputerShip(world));
+		frame.addKeyListener(ship1 = new ComputerShip(world) {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
-					case 'a': torque = -.00008f; break;
-					case 'd': torque = .00008f; break;
-					case 'w': accel = 10; break;
-					case 's': accel = -5; break;
-					case '`': fire = true; break;
+					case 'a': torque = -8e-5f; notifyInput(); break;
+					case 'd': torque = 8e-5f; notifyInput(); break;
+					case 'w': accel = 30*A; notifyInput(); break;
+					case 's': accel = -15*A; notifyInput(); break;
+					case '`': fire = true; notifyInput(); break;
 				}
 			}
 
 			public void keyReleased(KeyEvent e) {
 				switch (e.getKeyChar()) {
 					case 'a':
-					case 'd': torque = 0; break;
+					case 'd': torque = 0; notifyInput(); break;
 					case 'w':
-					case 's': accel = 0; break;
-					case '`': fire = false; break;
+					case 's': accel = 0; notifyInput(); break;
+					case '`': fire = false; notifyInput(); break;
 				}
 			}
 
@@ -152,8 +152,10 @@ public class MPAsteroids extends AbstractGame {
 		k.init();
 		int id = Field.ids[(int)range(0, Field.ids.length)];
 		scenario = new Field(world, display, id, ships);
+		scenario.setAIFrequency(10);
 		scenario.setSpeedRatio(.25f);
 		scenario.setScalingRatio(.25f);
+		scenario.setDensity(.25f);
 		scenario.start();
 	}
 

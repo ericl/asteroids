@@ -44,6 +44,15 @@ public class LaserExplosion extends Explosion {
 	private static int FRAMES = 8;
 	private double inittime = Timer.gameTime();
 	private int frame = 1;
+	private float scale = 1;
+
+	public LaserExplosion() {
+		// noop
+	}
+
+	public LaserExplosion(float scaler) {
+		scale = scaler;
+	}
 
 	public float getRadius() {
 		return 30;	
@@ -67,6 +76,6 @@ public class LaserExplosion extends Explosion {
 	}
 
 	public float getTextureScaleFactor() {
-		return 1f;
+		return scale;
 	}
 }

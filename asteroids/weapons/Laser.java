@@ -42,7 +42,7 @@ public class Laser extends Weapon {
 	private static float myRadius = 2;
 
 	public Laser() {
-		super(new Circle(myRadius), 50);
+		super(new Circle(myRadius), 1);
 	}
 
 	public Vector2f getTextureCenter() {
@@ -53,8 +53,12 @@ public class Laser extends Weapon {
 		return true;
 	}
 
+	protected long getLifetime() {
+		return 2;
+	}
+
 	public float getDamage() {
-		return .075f + .0375f*level;
+		return .075f + .0375f * Math.min(3, level);
 	}
 
 	public float getReloadTime() {
@@ -62,7 +66,7 @@ public class Laser extends Weapon {
 	}
 
 	public float getSpeed() {
-		return 200 - 30*level;
+		return 100 - 5 * Math.min(3, level);
 	}
 
 	public Body getRemnant() {
@@ -78,10 +82,10 @@ public class Laser extends Weapon {
 	}
 
 	public float getTextureScaleFactor() {
-		return 1 + level*.3f;
+		return 1 + Math.min(2, level) * .3f;
 	}
 	
 	public float getRadius() {
-		return myRadius + level*.5f;
+		return myRadius + Math.min(2, level) * .5f;
 	}
 }

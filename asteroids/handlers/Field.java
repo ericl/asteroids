@@ -44,6 +44,7 @@ public class Field {
 	protected Ship[] ships;
 	protected World world;
 	protected Display2 display;
+	protected int ai_frequency = 50;
 	protected Dimension dim;
 	protected int count, score = -1;
 	protected final static int BORDER = 300, BUF = 500;
@@ -89,6 +90,13 @@ public class Field {
 	 */
 	public void setDensity(double density) {
 		D = density;
+	}
+
+	/**
+	 * oneIn(chance)
+	 */
+	public void setAIFrequency(int chance) {
+		ai_frequency = chance;
 	}
 
 	/**
@@ -168,17 +176,29 @@ public class Field {
 			}
 		}
 		for (int i=0; i < density.length; i++)
-			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D)
-				world.add(newAsteroid(targets[i].getPosition()));
+			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D) {
+				if (oneIn(ai_frequency))
+					world.add(newAI(targets[i].getPosition()));
+				else
+					world.add(newAsteroid(targets[i].getPosition()));
+			}
 
 		if (done() && score < 0)
 			score = count;
 	}
 
+	public Body newAI(ROVector2f origin) {
+		ComputerShip ai = new ComputerShip(world);
+		ROVector2f vo = display.getOffscreenCoords(
+			ai.getRadius(), BORDER, origin);
+		ai.setPosition(vo.getX(), vo.getY());
+		return ai;
+	}
+
 	/**
 	 * @return	A new asteroid at some point.
 	 */
-	protected Asteroid newAsteroid(ROVector2f origin) {
+	protected Body newAsteroid(ROVector2f origin) {
 		// difficulty increases with count
 		Asteroid rock = null;
 		switch (id) {

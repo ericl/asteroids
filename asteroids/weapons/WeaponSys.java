@@ -53,23 +53,35 @@ public class WeaponSys {
 	protected float burst;
 
 	public WeaponSys(Ship ship, World wo, Weapon w) {
-		setWeaponType(w);
+		if (w != null)
+			setWeaponType(w);
+		else
+			setRandomWeaponType();
 		s = ship;
 		world = wo;
 	}
 
 	public void setRandomWeaponType() {
-		switch ((int)(2*Math.random())) {
+		switch ((int)(3*Math.random())) {
 			case 0: setWeaponType(new Laser()); break;
 			case 1: setWeaponType(new Laser2()); break;
+			case 2: setWeaponType(new Laser3()); break;
 		}
 	}
 
-	public void upgrade() {
-		if (weapon.getLevel() < Weapon.MAX_LEVEL)
+	public void incrRandomWeaponLevel() {
+		if (weapon instanceof Laser && (oneIn(2) || oneIn(2)))
 			weapon.incrementLevel();
-		else if (!(weapon instanceof Laser2))
-			setWeaponType(new Laser2());
+		else if (weapon instanceof Laser2 && oneIn(2))
+			weapon.incrementLevel();
+		if (oneIn(3))
+			weapon.incrementLevel();
+		if (oneIn(4))
+			weapon.incrementLevel();
+	}
+
+	public void upgrade() {
+		weapon.incrementLevel();
 	}
 
 	@SuppressWarnings(value = "unchecked")

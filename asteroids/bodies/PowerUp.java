@@ -46,14 +46,23 @@ import static asteroids.Util.*;
  * Body that adjust ship attributes on collision.
  */
 public abstract class PowerUp extends Body implements Explodable {
+	protected boolean explode;
+
 	public static PowerUp random() {
-		if (oneIn(5))
-			return new Invincibility();
-		return oneIn(2) ? new WeaponPower() : new ArmorRecovery();
+		switch ((int)(10*Math.random())) {
+			case 0: return new Invincibility();
+			case 1: return new RandomWeapon();
+			case 2:
+			case 3:
+			case 4: return new WeaponPower();
+			default: return new ArmorRecovery();
+		}
 	}
 
 	public PowerUp(Polygon shape) {
 		super(shape, shape.getArea());
+		setDamping(1);
+		setMaxVelocity(20, 20);
 	}
 
 	public Color getColor() {
@@ -62,8 +71,10 @@ public abstract class PowerUp extends Body implements Explodable {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		if (other instanceof Ship)
+		if (other instanceof Ship) {
 			up((Ship)other);
+			explode = true;
+		}
 	}
 
 	public PowerUp(DynamicShape shape) {
@@ -86,6 +97,6 @@ public abstract class PowerUp extends Body implements Explodable {
 	}
 	
 	public boolean canExplode() {
-		return true;
+		return explode;
 	}
 }

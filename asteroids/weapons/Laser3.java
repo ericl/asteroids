@@ -29,92 +29,74 @@
  */
 
 package asteroids.weapons;
-
-import java.awt.Color;
-
 import java.util.*;
-
-import asteroids.bodies.*;
-
-import asteroids.display.*;
-
-import asteroids.handlers.Timer;
-
 import net.phys2d.raw.*;
-
 import net.phys2d.raw.shapes.*;
+import net.phys2d.math.*;
+import static asteroids.Util.*;
 
 /**
- * Weapons are emitted from the ship by a weapon system.
- * Weapons are handled as a special case by Exploder.
+ * Powerful, fast-moving blast.
  */
-public abstract class Weapon extends Body implements Textured, Explodable {
-	private boolean exploded;
-	private long startTime = Timer.gameTime();
-	protected float lastFire = 0;
-	protected boolean canFire = false;
-	protected int level = 0;
-	protected Ship ship;
+public class Laser3 extends Weapon {
+	private static float myRadius = 3;
+	private boolean explode;
 
-	public Weapon(DynamicShape weap, float mass) {
-		super(weap, mass);
+	public Laser3() {
+		super(new Circle(myRadius), 100);
+		setRestitution(1);
 	}
 
-	public Color getColor() {
-		return Color.ORANGE;
+	public Body getRemnant() {
+		return new LaserExplosion(2);
 	}
 
-	public int getLevel() {
-		return level;
+	public List<Body> getFragments() {
+		return null;
 	}
 
-	public Ship getOrigin() {
-		return ship;
+	public float getDamage() {
+		return 1.5f;
 	}
 
-	public void setOrigin(Ship s) {
-		ship = s;
+	public Vector2f getTextureCenter() {
+		return v(21,20);
 	}
 
-	public void setLevel(int l) {
-		level = l;
+	public void collided(CollisionEvent event) {
+		if (!(event.getBodyA() instanceof Weapon) || !(event.getBodyB() instanceof Weapon))
+			explode = true;
 	}
 
-	public void incrementLevel() {
-		level++;
+	public boolean canExplode() {
+		return explode;
 	}
 
-	public abstract float getSpeed();
-	public abstract float getDamage();
-	public abstract float getReloadTime();
+	public float getTextureScaleFactor() {
+		return 1f;
+	}
 
 	public int getBurstLength() {
-		return 0;
+		return Math.min(4, level);
+	}
+
+	public String getTexturePath() {
+		return "pixmaps/exp2/1.png";
+	}
+
+	public float getSpeed() {
+		return 75;
+	}
+
+	public float getRadius() {
+		return myRadius;
 	}
 
 	public int getNum() {
-		return 1;
-	}
-	
-	public void collided(CollisionEvent event) {}
-	
-	public boolean canExplode() {
-		return true;
-	}
-	
-	public List<Body> explode() {
-		List<Body> f = new LinkedList<Body>();
-		exploded = true;
-		return f;
+		return 1 + Math.min(2, level) / 2;
 	}
 
-	protected long getLifetime() {
-		return 10;
-	}
-
-	public boolean exploded() {
-		if (Timer.gameTime() - startTime > getLifetime()*1000)
-			return true;
-		return exploded;
+	public float getReloadTime() {
+		return 1200;
 	}
 }

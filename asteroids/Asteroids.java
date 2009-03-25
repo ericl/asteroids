@@ -62,10 +62,10 @@ public class Asteroids extends AbstractGame {
 
 	public Asteroids() {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship = new Ship(world));
+		frame.addKeyListener(ship = new ComputerShip(world));
 		ship.addStatsListener(stats);
-		Ship.setMax(2);
-		Ship.setSpeed(.75f);
+		Ship.setMax(4);
+		Ship.setSpeed(.50f);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newGame();
@@ -137,8 +137,10 @@ public class Asteroids extends AbstractGame {
 		scoresBuilt = false;
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, id, ship);
-		stats.reset(scenario);		
-		scenario.setDensity(.5f);
+		scenario.setAIFrequency(20);
+		stats.reset(scenario);
+		scenario.setDensity(.4f);
+		scenario.setScalingRatio(.33f);
 		scenario.start();
 	}
 

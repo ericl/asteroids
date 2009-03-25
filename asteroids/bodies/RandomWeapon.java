@@ -28,93 +28,58 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package asteroids.weapons;
-
-import java.awt.Color;
-
-import java.util.*;
-
-import asteroids.bodies.*;
-
-import asteroids.display.*;
-
-import asteroids.handlers.Timer;
-
-import net.phys2d.raw.*;
-
+package asteroids.bodies;
+import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
+import asteroids.display.*;
+import static asteroids.Util.*;
+import static asteroids.bodies.PolyAsteroid.*;
 
 /**
- * Weapons are emitted from the ship by a weapon system.
- * Weapons are handled as a special case by Exploder.
+ * Powerup that interacts with the weapon systems of the ship.
  */
-public abstract class Weapon extends Body implements Textured, Explodable {
-	private boolean exploded;
-	private long startTime = Timer.gameTime();
-	protected float lastFire = 0;
-	protected boolean canFire = false;
-	protected int level = 0;
-	protected Ship ship;
+public class RandomWeapon extends PowerUp implements Textured {
+	protected static ROVector2f[] raw = {v(11,1),v(20,10),v(11,20),v(1,11)};
+	protected static float RATIO = 1f;
+	protected float radius;
+	protected Vector2f centroid;
 
-	public Weapon(DynamicShape weap, float mass) {
-		super(weap, mass);
+	public RandomWeapon() {
+		super(new Polygon(centralized(scaled(raw, RATIO))));
+		AABox a = getShape().getBounds();
+		radius = Math.max(a.getWidth(), a.getHeight()) / 2;
+		centroid = new Polygon(raw).getCentroid();
 	}
 
-	public Color getColor() {
-		return Color.ORANGE;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public Ship getOrigin() {
-		return ship;
-	}
-
-	public void setOrigin(Ship s) {
-		ship = s;
-	}
-
-	public void setLevel(int l) {
-		level = l;
-	}
-
-	public void incrementLevel() {
-		level++;
-	}
-
-	public abstract float getSpeed();
-	public abstract float getDamage();
-	public abstract float getReloadTime();
-
-	public int getBurstLength() {
+	/**
+	 * The rotation of the object is 0 because it does not spin.
+	 * @return	The rotation number.
+	 */
+	public float getRotation() {
 		return 0;
 	}
 
-	public int getNum() {
-		return 1;
-	}
-	
-	public void collided(CollisionEvent event) {}
-	
-	public boolean canExplode() {
-		return true;
-	}
-	
-	public List<Body> explode() {
-		List<Body> f = new LinkedList<Body>();
-		exploded = true;
-		return f;
+	public float getRadius() {
+		return radius;
 	}
 
-	protected long getLifetime() {
-		return 10;
+	/**
+	 * Upgrades the weapon of the ship.
+	 * @param	ship	The Ship to receive the upgrade.
+	 */
+	protected void up(Ship ship) {
+		ship.weapons.setRandomWeaponType();
 	}
 
-	public boolean exploded() {
-		if (Timer.gameTime() - startTime > getLifetime()*1000)
-			return true;
-		return exploded;
+	public String getTexturePath() {
+		return "pixmaps/dialog-question.png";
+	}
+
+	public Vector2f getTextureCenter() {
+		return centroid;
+	}
+
+	public float getTextureScaleFactor() {
+		return RATIO;
 	}
 }

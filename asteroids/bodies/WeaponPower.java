@@ -72,7 +72,7 @@ public class WeaponPower extends PowerUp implements Textured {
 	}
 
 	public String getTexturePath() {
-		return "pixmaps/dialog-question.png";
+		return "pixmaps/weather-storm.png";
 	}
 
 	public Vector2f getTextureCenter() {

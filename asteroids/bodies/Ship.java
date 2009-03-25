@@ -58,6 +58,8 @@ public class Ship extends Body
 	protected float accel, torque;
 	protected boolean fire, explode;
 	protected World world;
+	protected static final int ACTIVE_DEFAULT = 500;
+	protected int activeTime = ACTIVE_DEFAULT;
 	protected int textStatus = Integer.MAX_VALUE; // for blinking only
 	protected long warningStart; // end of warning -> not invincible
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
@@ -75,9 +77,14 @@ public class Ship extends Body
 		accel = torque = 0;
 		fire = explode = false;
 		warningStart = invincibleEnd = 0;
-		weapons.setWeaponType(new Laser());
 		hull = MAX;
 		thrust = 0;
+		weapons.setRandomWeaponType();
+		weapons.incrRandomWeaponLevel();
+	}
+
+	public void notifyInput() {
+		activeTime = ACTIVE_DEFAULT;
 	}
 
 	public void addStatsListener(Stats s) {
@@ -95,8 +102,9 @@ public class Ship extends Body
 	public Ship(World w) {
 		super("Your ship", shape, 1000f);
 		world = w;
-		weapons = new WeaponSys(this, world, new Laser());
+		weapons = new WeaponSys(this, world, null);
 		setRotDamping(4000);
+		reset();
 	}
 
 	public void gainInvincibility(int time, int warn) {
@@ -193,23 +201,24 @@ public class Ship extends Body
 	
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
-			case KeyEvent.VK_LEFT: torque = -8e-5f; break;
-			case KeyEvent.VK_RIGHT: torque = 8e-5f; break;
-			case KeyEvent.VK_UP: accel = 30*A; break;
-			case KeyEvent.VK_DOWN: accel = -15*A; break;
-			case KeyEvent.VK_SPACE: fire = true; break;
+			case KeyEvent.VK_LEFT: torque = -8e-5f; notifyInput(); break;
+			case KeyEvent.VK_RIGHT: torque = 8e-5f; notifyInput(); break;
+			case KeyEvent.VK_UP: accel = 30*A; notifyInput(); break;
+			case KeyEvent.VK_DOWN: accel = -15*A; notifyInput(); break;
+			case KeyEvent.VK_SPACE: fire = true; notifyInput(); break;
 		}
 		if (e.getKeyChar() == '\'')
 			fire = true;
 	}
 
 	public void keyReleased(KeyEvent e) {
+		notifyInput();
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-			case KeyEvent.VK_RIGHT: torque = 0; break;
+			case KeyEvent.VK_RIGHT: torque = 0; notifyInput(); break;
 			case KeyEvent.VK_UP:
-			case KeyEvent.VK_DOWN: accel = 0; break;
-			case KeyEvent.VK_SPACE: fire = false; break;
+			case KeyEvent.VK_DOWN: accel = 0; notifyInput(); break;
+			case KeyEvent.VK_SPACE: fire = false; notifyInput(); break;
 		}
 		if (e.getKeyChar() == '\'')
 			fire = false;

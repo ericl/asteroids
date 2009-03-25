@@ -42,7 +42,7 @@ public class Laser2 extends Weapon {
 	private static float myRadius = 2;
 
 	public Laser2() {
-		super(new Circle(myRadius), 200);
+		super(new Circle(myRadius), 1);
 		setRestitution(1);
 	}
 
@@ -63,7 +63,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public float getTextureScaleFactor() {
-		return .9f;
+		return .75f;
 	}
 
 	public int getBurstLength() {
@@ -75,7 +75,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public float getSpeed() {
-		return 50;
+		return 30 - 5 * Math.min(2, level);
 	}
 
 	public float getRadius() {
@@ -83,7 +83,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public int getNum() {
-		return 1+level;
+		return 1 + Math.min(2, level/2);
 	}
 
 	public float getReloadTime() {
