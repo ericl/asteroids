@@ -62,7 +62,7 @@ public class Asteroids extends AbstractGame {
 
 	public Asteroids() {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship = new ComputerShip(world));
+		frame.addKeyListener(ship = new Ship(world));
 		ship.addStatsListener(stats);
 		Ship.setMax(4);
 		Ship.setSpeed(.50f);
@@ -86,6 +86,7 @@ public class Asteroids extends AbstractGame {
 		g2d.setFont(FONT_BOLD);
 		g2d.drawString("\"" + scenario.toString() + "\"", 10, 20);
 		if (scenario.done()) {
+			stats.freezeScores();
 			g2d.setColor(COLOR);
 			g2d.setFont(FONT_NORMAL);
 			g2d.drawString("N - Change Name", display.w(-115),display.h(-30));
@@ -151,10 +152,11 @@ public class Asteroids extends AbstractGame {
 			hull = (int)(ship.getDamage()*1000)/10+"%";
 		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
-			display.w(-110),display.h(-35));
+			display.w(-110),display.h(-55));
 		g2d.setColor(COLOR);
 		g2d.drawString("Asteroids: " +
-			scenario.asteroids(),display.w(-110),display.h(-15));
+			scenario.asteroids(),display.w(-110),display.h(-35));
+		g2d.drawString("Drones: " + ship.numMissiles(),display.w(-110),display.h(-15));
 	}
 
 	public void changeName() {

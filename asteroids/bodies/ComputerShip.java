@@ -54,7 +54,7 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 	}
 
 	public void randomAcceleration() {
-		accel = A*range(0,20);
+		accel = A*range(-5,20);
 	}
 
 	private void selectTarget() {
@@ -82,9 +82,7 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 		if (target == null)
 			return false;
 		Vector2f ds = sub(getPosition(), target.getPosition());
-		float x = ds.getX();
-		float y = ds.getY();
-		double tFinal = Math.atan2(y, x) - Math.PI/2;
+		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
 		double tInit1 = (getRotation() % (2*Math.PI));
 		double tInit2 = tInit1 - sign((float)tInit1)*2*Math.PI;
 		double delta1 = tFinal - tInit1;
@@ -117,8 +115,10 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 		if (steps % 300 == 0)
 			selectTarget();
 		if (steps % 10 == 0)
-			if (trackTarget())
-				weapons.fire();
+			if (trackTarget()) {
+				if (!weapons.fire() && oneIn(10))
+					launchMissile();
+			}
 	}
 
 	public void endFrame() {

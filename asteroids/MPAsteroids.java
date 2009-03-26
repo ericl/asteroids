@@ -74,8 +74,8 @@ public class MPAsteroids extends AbstractGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship2 = new ComputerShip(world));
-		frame.addKeyListener(ship1 = new ComputerShip(world) {
+		frame.addKeyListener(ship2 = new Ship(world));
+		frame.addKeyListener(ship1 = new Ship(world) {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
 					case 'a': torque = -8e-5f; notifyInput(); break;
@@ -83,6 +83,7 @@ public class MPAsteroids extends AbstractGame {
 					case 'w': accel = 30*A; notifyInput(); break;
 					case 's': accel = -15*A; notifyInput(); break;
 					case '`': fire = true; notifyInput(); break;
+					case KeyEvent.VK_1: launch = true; notifyInput(); break;
 				}
 			}
 
@@ -152,7 +153,7 @@ public class MPAsteroids extends AbstractGame {
 		k.init();
 		int id = Field.ids[(int)range(0, Field.ids.length)];
 		scenario = new Field(world, display, id, ships);
-		scenario.setAIFrequency(10);
+		scenario.setAIFrequency(10000);
 		scenario.setSpeedRatio(.25f);
 		scenario.setScalingRatio(.25f);
 		scenario.setDensity(.25f);

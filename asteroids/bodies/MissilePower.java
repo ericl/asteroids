@@ -29,80 +29,57 @@
  */
 
 package asteroids.bodies;
-
-import java.awt.Color;
-
-import java.util.*;
-
-import asteroids.weapons.*;
-
-import net.phys2d.raw.*;
-
+import net.phys2d.math.*;
 import net.phys2d.raw.shapes.*;
+import asteroids.display.*;
+import static asteroids.Util.*;
+import static asteroids.bodies.PolyAsteroid.*;
 
 /**
- * Body that adjust ship attributes on collision.
+ * 10 extra missiles.
  */
-public abstract class PowerUp extends Body implements Explodable {
-	protected boolean explode;
+public class MissilePower extends PowerUp implements Textured {
+	protected static ROVector2f[] raw = {v(2,4),v(10,1),v(19,19),v(12,21),v(3,19),v(2,5),v(11,1)};
+	protected static float RATIO = 1f;
+	protected float radius;
+	protected Vector2f centroid;
 
-	public static PowerUp random() {
-		switch ((int)(20*Math.random())) {
-			case 0:
-			case 1: return new RandomWeapon();
-			case 2: return new Invincibility();
-			case 3:
-			case 4:
-			case 5:
-			case 6: return new WeaponPower();
-			case 7:
-			case 8:
-			case 9:
-			case 10:
-			case 11:
-			case 12: return new MissilePower();
-			default: return new ArmorRecovery();
-		}
-	}
-
-	public PowerUp(Polygon shape) {
-		super(shape, shape.getArea());
-		setDamping(1);
-		setMaxVelocity(20, 20);
-	}
-
-	public Color getColor() {
-		return Color.GREEN;
-	}
-
-	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		if (other instanceof Ship) {
-			up((Ship)other);
-			explode = true;
-		}
-	}
-
-	public PowerUp(DynamicShape shape) {
-		super(shape, 1e-10f);
+	public MissilePower() {
+		super(new Polygon(centralized(scaled(raw, RATIO))));
+		AABox a = getShape().getBounds();
+		radius = Math.max(a.getWidth(), a.getHeight()) / 2;
+		centroid = new Polygon(raw).getCentroid();
 	}
 
 	/**
-	 * @param	ship	The ship to be powered up.
+	 * The rotation of the object is 0 because it does not spin.
+	 * @return	The rotation number.
 	 */
-	protected abstract void up(Ship ship);
-
-	public abstract float getRadius();
-
-	public Body getRemnant() {
-		return new PowerUpExplosion();
+	public float getRotation() {
+		return 0;
 	}
 
-	public List<Body> getFragments() {
-		return null;
+	public float getRadius() {
+		return radius;
 	}
-	
-	public boolean canExplode() {
-		return explode;
+
+	/**
+	 * Upgrades the weapon of the ship.
+	 * @param	ship	The Ship to receive the upgrade.
+	 */
+	protected void up(Ship ship) {
+		ship.addMissiles(10);
+	}
+
+	public String getTexturePath() {
+		return "pixmaps/edit-delete.png";
+	}
+
+	public Vector2f getTextureCenter() {
+		return centroid;
+	}
+
+	public float getTextureScaleFactor() {
+		return RATIO;
 	}
 }

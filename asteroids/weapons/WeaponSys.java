@@ -95,7 +95,7 @@ public class WeaponSys {
 		}
 	}
 
-	public boolean canFire() {
+	private boolean canFire() {
 		long current = Timer.gameTime();
 		long disp = current - lastFired;
 		float test = Math.min(disp / weapon.getReloadTime(), weapon.getBurstLength());
@@ -110,15 +110,16 @@ public class WeaponSys {
 		return false;
 	}
 	
-	public void fire() {
+	public boolean fire() {
 		if (!canFire())
-			return;
+			return false;
 		float initialAngle = (weapon.getNum()-1)*ANGULAR_DISTRIBUTION/2;
 		for (int i=0; i < weapon.getNum(); i++) {
 			Weapon weap = makeWeapon(i*ANGULAR_DISTRIBUTION - initialAngle);
 			world.add(weap);
 			fired.add(weap);
 		}
+		return true;
 	}
 
 	public void addStatsListener(Stats s) {

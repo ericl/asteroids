@@ -52,18 +52,21 @@ public class Ship extends Body
 	protected static Shape shape = new Polygon(poly);
 	protected static double MAX = 1;
 	protected static float A = 1;
+	protected static int NUM_MISSILES = 10;
 	protected Explosion explosion;
 	protected double hull = MAX;
 	protected int thrust;
 	protected float accel, torque;
-	protected boolean fire, explode;
+	protected boolean fire, explode, launch;
 	protected World world;
 	protected static final int ACTIVE_DEFAULT = 500;
 	protected int activeTime = ACTIVE_DEFAULT;
 	protected int textStatus = Integer.MAX_VALUE; // for blinking only
 	protected long warningStart; // end of warning -> not invincible
+	protected int missiles = NUM_MISSILES;
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
 	protected WeaponSys weapons;
+	protected WeaponSys missileSys;
 	public int deaths;
 
 	public void reset() {
@@ -74,6 +77,7 @@ public class Ship extends Body
 		setPosition(0,0);
 		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
 		adjustAngularVelocity(-getAngularVelocity());
+		missiles = NUM_MISSILES;
 		accel = torque = 0;
 		fire = explode = false;
 		warningStart = invincibleEnd = 0;
@@ -87,8 +91,24 @@ public class Ship extends Body
 		activeTime = ACTIVE_DEFAULT;
 	}
 
+	public int numMissiles() {
+		return missiles;
+	}
+
+	public void addMissiles(int num) {
+		missiles += num;
+	}
+
+	public void launchMissile() {
+		if (missiles > 0) {
+			if (missileSys.fire())
+				missiles--;
+		}
+	}
+
 	public void addStatsListener(Stats s) {
 		weapons.addStatsListener(s);	
+		missileSys.addStatsListener(s);
 	}
 
 	public static void setMax(double damage) {
@@ -103,6 +123,8 @@ public class Ship extends Body
 		super("Your ship", shape, 1000f);
 		world = w;
 		weapons = new WeaponSys(this, world, null);
+		Missile.setWorld(w);
+		missileSys = new WeaponSys(this, world, new Missile());
 		setRotDamping(4000);
 		reset();
 	}
@@ -206,6 +228,7 @@ public class Ship extends Body
 			case KeyEvent.VK_UP: accel = 30*A; notifyInput(); break;
 			case KeyEvent.VK_DOWN: accel = -15*A; notifyInput(); break;
 			case KeyEvent.VK_SPACE: fire = true; notifyInput(); break;
+			case KeyEvent.VK_F: launch = true; notifyInput(); break;
 		}
 		if (e.getKeyChar() == '\'')
 			fire = true;
@@ -233,7 +256,12 @@ public class Ship extends Body
 		torque();
 		if (fire)
 			weapons.fire();
+		if (launch) {
+			launchMissile();
+			launch = false;
+		}
 		weapons.update();
+		missileSys.update();
 	}
 
 	protected void accel() {

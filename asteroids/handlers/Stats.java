@@ -110,7 +110,7 @@ public class Stats {
 	 * Stops the scores from getting any higher.
 	 * Prevents score inconsistencies / race conditions.
 	 */
-	private void freezeScores() {
+	public void freezeScores() {
 		if (finalized)
 			return;
 		finalScore = score();

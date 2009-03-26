@@ -39,7 +39,7 @@ import static asteroids.bodies.PolyAsteroid.*;
  * Powerup that interacts with the weapon systems of the ship.
  */
 public class WeaponPower extends PowerUp implements Textured {
-	protected static ROVector2f[] raw = {v(11,1),v(20,10),v(11,20),v(1,11)};
+	protected static ROVector2f[] raw = {v(3,3),v(12,2),v(21,8),v(18,12),v(19,19),v(3,21),v(6,14),v(0,9)};
 	protected static float RATIO = 1f;
 	protected float radius;
 	protected Vector2f centroid;

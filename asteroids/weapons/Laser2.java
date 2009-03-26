@@ -43,11 +43,12 @@ public class Laser2 extends Weapon {
 
 	public Laser2() {
 		super(new Circle(myRadius), 1);
+		setMaxVelocity(60, 60);
 		setRestitution(1);
 	}
 
 	public Body getRemnant() {
-		return new LargeExplosion();
+		return new LargeExplosion(.75f);
 	}
 
 	public List<Body> getFragments() {
@@ -58,8 +59,15 @@ public class Laser2 extends Weapon {
 		return .6f;
 	}
 
+	public void endFrame() {
+		super.endFrame();
+		Vector2f dir = direction(getRotation());
+		float accel = 20;
+		addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
+	}
+
 	public Vector2f getTextureCenter() {
-		return v(3,3);
+		return v(8,8);
 	}
 
 	public float getTextureScaleFactor() {
@@ -71,11 +79,11 @@ public class Laser2 extends Weapon {
 	}
 
 	public String getTexturePath() {
-		return "pixmaps/blast.png";
+		return "pixmaps/sf-b-hm.png";
 	}
 
 	public float getSpeed() {
-		return 30 - 5 * Math.min(2, level);
+		return 5;
 	}
 
 	public float getRadius() {
