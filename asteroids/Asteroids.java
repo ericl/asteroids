@@ -65,7 +65,7 @@ public class Asteroids extends AbstractGame {
 		frame.addKeyListener(ship = new Ship(world));
 		ship.addStatsListener(stats);
 		Ship.setMax(4);
-		Ship.setSpeed(.50f);
+		Ship.setSpeed(.25f);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newGame();

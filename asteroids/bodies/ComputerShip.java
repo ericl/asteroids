@@ -116,7 +116,7 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 			selectTarget();
 		if (steps % 10 == 0)
 			if (trackTarget()) {
-				if (!weapons.fire() && oneIn(10))
+				if (!weapons.fire() && oneIn(30))
 					launchMissile();
 			}
 	}

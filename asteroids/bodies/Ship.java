@@ -154,7 +154,7 @@ public class Ship extends Body
 	}
 
 	public float getTextureScaleFactor() {
-		return 1.0f;
+		return .7f;
 	}
 
 	public Body getRemnant() {
