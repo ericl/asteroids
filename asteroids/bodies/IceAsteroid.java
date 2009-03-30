@@ -44,7 +44,7 @@ import static asteroids.Util.*;
 public class IceAsteroid extends CircleAsteroid implements Textured {
 	private double melting;
 	private int count = 0;
-	private boolean rocky = oneIn(4);
+	private boolean rocky = oneIn(2);
 	private static int ICE_TO_ROCK_RADIUS = 12;
 
 	public IceAsteroid(float radius) {
@@ -61,7 +61,7 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 	}
 
 	public String getTexturePath() {
-		return rocky && getRadius() < 20 ? "pixmaps/1.png" : "pixmaps/fog.png";
+		return "pixmaps/fog.png";
 	}
 
 	public void endFrame() {

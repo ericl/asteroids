@@ -51,7 +51,7 @@ public class Field {
 	protected Ship[] ships;
 	protected World world;
 	protected Display2 display;
-	protected int ai_frequency = 50;
+	protected double ai_frequency = .01;
 	protected Dimension dim;
 	protected int count, score = -1;
 	protected final static int BORDER = 300, BUF = 500;
@@ -60,8 +60,8 @@ public class Field {
 	protected static final float INIT_I = 40, INIT_S = 1;
 	protected float I = INIT_I, S = INIT_S; // speed of asteroids; scaling constant
 	protected float rI = 1, rS = 1; // scalers for above
-	public final static int HEX = 1, LARGE = 2, ROCKY = 3, ICEY = 4;
-	public final static int[] ids = {HEX, LARGE, ROCKY, ICEY};
+	public final static int HEX = 1, ROCKY = 3, ICEY = 4;
+	public final static int[] ids = {HEX, ICEY, ROCKY};
 	private int id;
 
 	/**
@@ -102,7 +102,7 @@ public class Field {
 	/**
 	 * oneIn(chance)
 	 */
-	public void setAIFrequency(int chance) {
+	public void setAIFrequency(double chance) {
 		ai_frequency = chance;
 	}
 
@@ -165,6 +165,9 @@ public class Field {
 	 */
 	public void update() {
 		Visible[] targets = getTargets();
+		for (int i=0; i < targets.length; i++)
+			if (Math.random() < ai_frequency)
+				world.add(newAI(targets[i].getPosition()));
 		int[] density = new int[targets.length];
 		BodyList bodies = world.getBodies();
 		for (int i=0; i < bodies.size(); i++) {
@@ -183,12 +186,8 @@ public class Field {
 			}
 		}
 		for (int i=0; i < density.length; i++)
-			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D) {
-				if (oneIn(ai_frequency))
-					world.add(newAI(targets[i].getPosition()));
-				else
-					world.add(newAsteroid(targets[i].getPosition()));
-			}
+			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D)
+				world.add(newAsteroid(targets[i].getPosition()));
 
 		if (done() && score < 0)
 			score = count;
@@ -209,22 +208,6 @@ public class Field {
 		// difficulty increases with count
 		Asteroid rock = null;
 		switch (id) {
-			case LARGE:
-				int max = 175;
-				if (oneIn(2))
-					max	= 50;
-				switch ((int)(random()*3)) {
-					case 0:
-						rock = new BigAsteroid(range(10,max));
-						break;
-					case 1:
-						rock = new HexAsteroid(range(10,max));
-						break;
-					default:
-						rock = new IceAsteroid(range(10,max));
-						break;
-				}
-				break;
 			case HEX:
 				rock = new HexAsteroid(oneIn(100) ? range(100,200) : range(30,50));
 				break;
@@ -232,7 +215,7 @@ public class Field {
 				rock = new BigAsteroid(range(30,50));
 				break;
 			case ICEY:
-				rock = new IceAsteroid(range(10,90));
+				rock = new IceAsteroid(range(10,40));
 				break;
 		}
 		adjustForDifficulty(rock);
@@ -258,9 +241,8 @@ public class Field {
 	public String toString() {
 		switch (id) {
 			case HEX: return "Hexagons";
-			case LARGE: return "Large";
 			case ROCKY: return "Rocky";
-			case ICEY: return "Icey";
+			case ICEY: return "Ice";
 		}
 		return "Unknown";
 	}

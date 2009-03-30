@@ -56,7 +56,7 @@ public class Laser3 extends Weapon {
 	}
 
 	public float getDamage() {
-		return 1.5f;
+		return 1.3f;
 	}
 
 	public Vector2f getTextureCenter() {
@@ -85,7 +85,7 @@ public class Laser3 extends Weapon {
 	}
 
 	public float getSpeed() {
-		return 75;
+		return 60;
 	}
 
 	public float getRadius() {

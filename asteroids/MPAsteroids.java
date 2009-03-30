@@ -74,8 +74,16 @@ public class MPAsteroids extends AbstractGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship2 = new ComputerShip(world));
+		frame.addKeyListener(ship2 = new ComputerShip(world) {
+			public boolean isCloaked() {
+				return false;
+			}
+		});
 		frame.addKeyListener(ship1 = new ComputerShip(world) {
+			public boolean isCloaked() {
+				return false;
+			}
+
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
 					case 'a': torque = -8e-5f; notifyInput(); break;
@@ -94,12 +102,13 @@ public class MPAsteroids extends AbstractGame {
 					case 'w':
 					case 's': accel = 0; notifyInput(); break;
 					case '`': fire = false; notifyInput(); break;
+					case KeyEvent.VK_1: launch = false; notifyInput(); break;
 				}
 			}
 
 			public void reset() {
 				super.reset();
-				setPosition(-150,0);
+				setPosition(-400,0);
 			}	
 		});
 		ships[0] = ship1;
@@ -153,10 +162,10 @@ public class MPAsteroids extends AbstractGame {
 		k.init();
 		int id = Field.ids[(int)range(0, Field.ids.length)];
 		scenario = new Field(world, display, id, ships);
-		scenario.setAIFrequency(10000);
+		scenario.setAIFrequency(0);
 		scenario.setSpeedRatio(.25f);
 		scenario.setScalingRatio(.25f);
-		scenario.setDensity(.25f);
+		scenario.setDensity(.40f);
 		scenario.start();
 	}
 
@@ -167,8 +176,10 @@ public class MPAsteroids extends AbstractGame {
 			hull = (int)(ship.getDamage()*1000)/10+"%";
 		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
-			display.w(-110), display.h(-39));
+			display.w(-110), display.h(-59));
 		g2d.setColor(COLOR);
+		g2d.drawString("Missiles: " + ship.numMissiles(),
+			display.w(-110), display.h(-39));
 		g2d.drawString("Deaths: " + ship.deaths,
 			display.w(-110), display.h(-19));
 	}

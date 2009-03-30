@@ -62,11 +62,19 @@ public class Laser extends Weapon {
 	}
 
 	public float getReloadTime() {
-		return 125;
+		return 225;
 	}
 
 	public float getSpeed() {
-		return 100 - 5 * Math.min(3, level);
+		return 40 - 5 * Math.min(3, level);
+	}
+
+	public int getNum() {
+		return 1 + Math.min(1, level);
+	}
+
+	public int getBurstLength() {
+		return 15;
 	}
 
 	public Body getRemnant() {
@@ -82,10 +90,10 @@ public class Laser extends Weapon {
 	}
 
 	public float getTextureScaleFactor() {
-		return 1 + Math.min(2, level) * .3f;
+		return .4f + Math.min(2, level) * .1f;
 	}
 	
 	public float getRadius() {
-		return myRadius + Math.min(2, level) * .5f;
+		return myRadius;
 	}
 }

@@ -99,7 +99,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 				return false;
 			}
 		});
-		stats = new Stats();
+		stats = new LocalStats();
 		frame.addWindowFocusListener(this);
 		exploder = new Exploder(world, display);
 		world.addListener(exploder);

@@ -135,9 +135,9 @@ public class Exploder implements CollisionListener {
 			return;
 		}
 		world.remove(body);
-		if (other instanceof Weapon || other instanceof Ship)
+		if (other instanceof Weapon)
 			for (Stats stat : stats)
-				stat.kill(body, event);
+				stat.kill(((Weapon)other).getOrigin(), body, event);
 		Body rem = e.getRemnant();
 		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
 			return;
@@ -199,8 +199,11 @@ public class Exploder implements CollisionListener {
 	 */
 	public static double getDamage(CollisionEvent e, Body victim) {
 		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
+		float multiplier = 1;
+		if (victim instanceof Ship && ((Ship)victim).isCloaked())
+			multiplier = 2;
 		if (other instanceof Weapon)
-			return ((Weapon)other).getDamage();
+			return multiplier * ((Weapon)other).getDamage();
 		else if (other instanceof PowerUp) // got killed this way before :(
 			return 0;
 		double vmod = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();

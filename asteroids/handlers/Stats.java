@@ -34,17 +34,19 @@ import java.net.*;
 import java.util.*;
 import java.security.*;
 import net.phys2d.raw.*;
+import asteroids.bodies.*;
 
 /**
  * Listens to game operations and prepares high scores for submission.
  */
 public class Stats {
-	private Vector<String> list = new Vector<String>();
-	private String lastChk;
-	private Field scenario;
-	private int hit = 0, att = 0, kills = 0, finalScore = -1;
-	private boolean finalized;
-	private double dmg = 0;
+	protected Vector<String> list = new Vector<String>();
+	protected String lastChk;
+	protected Field scenario;
+	protected int hit = 0, att = 0, kills = 0, myKills = 0, finalScore = -1;
+	protected boolean finalized;
+	protected Ship myShip;
+	protected double dmg = 0;
 
 	/**
 	 * Resets the game and the scores.
@@ -52,11 +54,16 @@ public class Stats {
 	public void reset(Field field) {
 		scenario = field;
 		lastChk = null;
+		myShip = null;
 		list = new Vector<String>();
-		hit = att = kills = 0;
+		hit = att = kills = myKills = 0;
 		finalized = false;
 		finalScore = -1;
 		dmg = 0;
+	}
+
+	public void setShip(Ship ship) {
+		myShip = ship;
 	}
 
 	/**
@@ -81,10 +88,16 @@ public class Stats {
 	/**
 	 * How many times someone has killed.
 	 */
-	public void kill(Body body, CollisionEvent event) {
+	public void kill(Body killer, Body victim, CollisionEvent event) {
 		if (finalized)
 			return;
-		kills++;
+		if (victim instanceof Ship && ((Explodable)victim).canExplode()) {
+			if (killer == myShip) {
+				myKills++;
+			} else {
+				kills++;
+			}
+		}
 	}
 
 	public String get(int i) {
@@ -102,8 +115,7 @@ public class Stats {
 		if (finalized)
 			return finalScore;
 		else
-			return scenario.asteroids() +
-				(att > 0 ? (int)(5*kills*(hit/(double)att)) : (int)(.5*scenario.asteroids()));
+			return kills * 10 + myKills * 100 + scenario.asteroids() / 10;
 	}
 
 	/**
@@ -146,7 +158,7 @@ public class Stats {
 	/**
 	 * Loads the latest list of high scores for get().
 	 */
-	public void readScores() {
+	protected void readScores() {
 		List<String> output = list;
 		output.clear();
 		try {

@@ -34,7 +34,7 @@ import java.awt.event.*;
 
 import asteroids.display.*;
 
-import net.phys2d.math.Vector2f;
+import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
 
@@ -48,6 +48,7 @@ import static net.phys2d.math.MathUtil.*;
 public class ComputerShip extends Ship implements Drawable, Textured, Explodable, KeyListener {
 	private int steps;
 	private Body target;
+	private ROVector2f targetPos;
 
 	public ComputerShip(World w) {
 		super(w);
@@ -64,7 +65,7 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 		float d = 0;
 		for (int i=0; i < bodies.size(); i++) {
 			Body b = bodies.get(i);
-			if (b == this || !(b instanceof Ship))
+			if (b == this || !(b instanceof Ship) || ((Ship)b).isCloaked())
 				continue;
 			if (target == null)
 				target = b;
@@ -81,7 +82,15 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 	private boolean trackTarget() {
 		if (target == null)
 			return false;
-		Vector2f ds = sub(getPosition(), target.getPosition());
+		if (target instanceof Ship) {
+			if (!((Ship)target).isCloaked())
+				targetPos = new Vector2f(target.getPosition());
+		} else {
+			targetPos = target.getPosition();
+		}
+		if (targetPos == null)
+			return false;
+		Vector2f ds = sub(getPosition(), targetPos);
 		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
 		double tInit1 = (getRotation() % (2*Math.PI));
 		double tInit2 = tInit1 - sign((float)tInit1)*2*Math.PI;
@@ -106,7 +115,6 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 	}
 
 	private void aiUpdate() {
-		steps++;
 		float v = getVelocity().length();
 		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
 		thrust--;
@@ -116,9 +124,10 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 			selectTarget();
 		if (steps % 10 == 0)
 			if (trackTarget()) {
-				if (!weapons.fire() && oneIn(30))
+				if (!weapons.fire() && oneIn(100))
 					launchMissile();
 			}
+		steps++;
 	}
 
 	public void endFrame() {

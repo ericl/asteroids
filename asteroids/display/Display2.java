@@ -128,6 +128,7 @@ public class Display2 {
 		}
 		frame.setVisible(true);
 		frame.setIgnoreRepaint(true);
+		dim.setSize(screens[0].getSize()); // sometimes componentResized() is skipped?
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
 				dim.setSize(screens[0].getSize()); // assume all are the same size

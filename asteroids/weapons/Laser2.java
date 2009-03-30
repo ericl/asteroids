@@ -35,16 +35,15 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 import static asteroids.Util.*;
 
-/**
- * More powerful, slow-moving laser.
- */
 public class Laser2 extends Weapon {
 	private static float myRadius = 2;
+	private boolean thrust;
+	private int steps;
 
 	public Laser2() {
 		super(new Circle(myRadius), 1);
-		setMaxVelocity(60, 60);
 		setRestitution(1);
+		setMaxVelocity(40,40);
 	}
 
 	public Body getRemnant() {
@@ -61,9 +60,18 @@ public class Laser2 extends Weapon {
 
 	public void endFrame() {
 		super.endFrame();
+		if (steps++ > 75) {
+			thrust = true;
+			if (steps > 1000)
+				thrust = false;
+		}
 		Vector2f dir = direction(getRotation());
 		float accel = 20;
-		addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
+		if (thrust) {
+			addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
+			if (steps < 200)
+				setRotation(ship.getRotation());
+		}
 	}
 
 	public Vector2f getTextureCenter() {
@@ -79,11 +87,11 @@ public class Laser2 extends Weapon {
 	}
 
 	public String getTexturePath() {
-		return "pixmaps/sf-b-hm.png";
+		return thrust ?  "pixmaps/rocket-t.png" : "pixmaps/rocket.png";
 	}
 
 	public float getSpeed() {
-		return 5;
+		return 30;
 	}
 
 	public float getRadius() {
@@ -91,7 +99,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public int getNum() {
-		return 1 + Math.min(2, level/2);
+		return 1 + Math.min(2, level);
 	}
 
 	public float getReloadTime() {

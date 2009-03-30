@@ -44,7 +44,7 @@ import net.phys2d.raw.shapes.*;
  * Weapons should leave explosion remnants.
  * Explosions are processed as a special case by Exploder.
  */
-public abstract class Explosion extends Body implements Textured {
+public abstract class Explosion extends Body implements Drawable, Textured {
 
 	public Explosion() {
 		super(new Circle(1), 1);

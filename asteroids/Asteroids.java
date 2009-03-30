@@ -29,11 +29,21 @@
  */
 
 package asteroids;
+
 import java.awt.*;
+
 import java.awt.event.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import javax.swing.*;
+
 import asteroids.bodies.*;
+
 import asteroids.handlers.*;
+
 import static asteroids.Util.*;
 
 /**
@@ -62,6 +72,15 @@ public class Asteroids extends AbstractGame {
 
 	public Asteroids() {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
+		try {
+			File file = new File(System.getProperty("user.home") + "/.asteroids-name");
+			FileInputStream stream = new FileInputStream(file);
+			byte[] bytes = new byte[stream.available()];
+			stream.read(bytes);
+			name = new String(bytes);
+		} catch (Exception e) {
+			System.err.println(e);
+		}
 		frame.addKeyListener(ship = new Ship(world));
 		ship.addStatsListener(stats);
 		Ship.setMax(4);
@@ -138,8 +157,9 @@ public class Asteroids extends AbstractGame {
 		scoresBuilt = false;
 		int id = Field.ids[(int)range(0,Field.ids.length)];
 		scenario = new Field(world, display, id, ship);
-		scenario.setAIFrequency(20);
+		scenario.setAIFrequency(.01);
 		stats.reset(scenario);
+		stats.setShip(ship);
 		scenario.setDensity(.4f);
 		scenario.setScalingRatio(.33f);
 		scenario.start();
@@ -154,9 +174,9 @@ public class Asteroids extends AbstractGame {
 		g2d.drawString("Armor: " + hull,
 			display.w(-110),display.h(-55));
 		g2d.setColor(COLOR);
-		g2d.drawString("Asteroids: " +
-			scenario.asteroids(),display.w(-110),display.h(-35));
-		g2d.drawString("Drones: " + ship.numMissiles(),display.w(-110),display.h(-15));
+		g2d.drawString("Score: " +
+			stats.score(),display.w(-110),display.h(-35));
+		g2d.drawString("Missiles: " + ship.numMissiles(),display.w(-110),display.h(-15));
 	}
 
 	public void changeName() {
@@ -167,8 +187,16 @@ public class Asteroids extends AbstractGame {
 			"Asteroids",
 			JOptionPane.PLAIN_MESSAGE,
 			null, null, name);
-		if (s != null && !s.equals(""))
+		if (s != null && !s.equals("")) {
+			try {
+				File file = new File(System.getProperty("user.home") + "/.asteroids-name");
+				FileOutputStream stream = new FileOutputStream(file);
+				stream.write(s.getBytes());
+			} catch (Exception e) {
+				System.err.println(e);
+			}
 			stats.edit(name = s);
+		}
 		unpause();
 	}
 }

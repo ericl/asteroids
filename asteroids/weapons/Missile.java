@@ -40,14 +40,14 @@ import static asteroids.Util.*;
 import static net.phys2d.math.MathUtil.*;
 
 public class Missile extends Weapon {
-	private static float myRadius = 8;
+	private static float myRadius = 2;
 	private Set<Body> whitelist = new HashSet<Body>();
 	private int steps;
-	private int delay;
 	private float torque;
 	private static World world;
 	private boolean explode;
 	private Body target;
+	private ROVector2f targetPos;
 
 	public Missile() {
 		super(new Circle(myRadius), 1000);
@@ -65,11 +65,10 @@ public class Missile extends Weapon {
 	}
 
 	private void aiUpdate() {
-		if (steps % 50 == 0 && delay-- < 0) {
-			delay = 150;
+		if (steps % 100 == 0) {
 			selectTarget();
 		}
-		if (steps % 10 == 0)
+		if (steps % 30 == 0)
 			trackTarget();
 		steps++;
 	}
@@ -77,7 +76,15 @@ public class Missile extends Weapon {
 	private void trackTarget() {
 		if (target == null)
 			return;
-		Vector2f ds = sub(getPosition(), target.getPosition());
+		if (target instanceof Ship) {
+			if (!((Ship)target).isCloaked())
+				targetPos = new Vector2f(target.getPosition());
+		} else {
+			targetPos = target.getPosition();
+		}
+		if (targetPos == null)
+			return;
+		Vector2f ds = sub(getPosition(), targetPos);
 		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
 		double tInit1 = (getRotation() % (2*Math.PI));
 		double tInit2 = tInit1 - sign((float)tInit1)*2*Math.PI;
@@ -98,10 +105,11 @@ public class Missile extends Weapon {
 		float d = 0;
 		for (int i=0; i < bodies.size(); i++) {
 			Body b = bodies.get(i);
-			if (b instanceof Missile && b != this) {
-				if (((Missile)b).whitelist.equals(whitelist))
-					continue; // we're on the same side here
-			} else if (b == this || !(b instanceof Ship) || whitelist.contains(b))
+//			if (b instanceof Missile && b != this) {
+//				if (((Missile)b).whitelist.equals(whitelist))
+//					continue; // we're on the same side here
+//			} else
+			if (b == this || !(b instanceof Ship) || whitelist.contains(b))
 				continue;
 			if (target == null)
 				target = b;
@@ -174,7 +182,7 @@ public class Missile extends Weapon {
 	}
 
 	public float getSpeed() {
-		return 75;
+		return 55;
 	}
 
 	public float getRadius() {
