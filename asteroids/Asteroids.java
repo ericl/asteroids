@@ -50,6 +50,7 @@ import static asteroids.Util.*;
  * Single-player asteroid game.
  */
 public class Asteroids extends AbstractGame {
+	private static File nameFile = new File(System.getProperty("user.home") + "/.asteroids-name");
 	private Ship ship;
 	private Field scenario;
 	private StarField k;
@@ -73,8 +74,7 @@ public class Asteroids extends AbstractGame {
 	public Asteroids() {
 		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		try {
-			File file = new File(System.getProperty("user.home") + "/.asteroids-name");
-			FileInputStream stream = new FileInputStream(file);
+			FileInputStream stream = new FileInputStream(nameFile);
 			byte[] bytes = new byte[stream.available()];
 			stream.read(bytes);
 			name = new String(bytes);
@@ -189,9 +189,10 @@ public class Asteroids extends AbstractGame {
 			null, null, name);
 		if (s != null && !s.equals("")) {
 			try {
-				File file = new File(System.getProperty("user.home") + "/.asteroids-name");
-				FileOutputStream stream = new FileOutputStream(file);
+				File swp = new File(nameFile.getPath() + ".swp");
+				FileOutputStream stream = new FileOutputStream(swp);
 				stream.write(s.getBytes());
+				swp.renameTo(nameFile);
 			} catch (Exception e) {
 				System.err.println(e);
 			}

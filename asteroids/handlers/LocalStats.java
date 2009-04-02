@@ -45,12 +45,12 @@ import java.util.Collections;
  */
 public class LocalStats extends Stats {
 	private static HighScore record;
+	private static File hsFile = new File(System.getProperty("user.home") + "/.asteroids-hs");
 	static {
-		File file = new File(System.getProperty("user.home") + "/.asteroids-hs");
-		if (file.exists()) {
+		if (hsFile.exists()) {
 			try {
 				record = (HighScore)(new ObjectInputStream(
-					new FileInputStream(file)
+					new FileInputStream(hsFile)
 				).readObject());
 			} catch (Exception e) {
 				System.err.println(e);
@@ -62,11 +62,9 @@ public class LocalStats extends Stats {
 
 	private static void commit() {
 		try {
-			new ObjectOutputStream(
-				new FileOutputStream(
-					new File(System.getProperty("user.home") + "/.asteroids-hs")
-				)
-			).writeObject(record);
+			File swp = new File(hsFile.getPath() + ".swp");
+			new ObjectOutputStream(new FileOutputStream(swp)).writeObject(record);
+			swp.renameTo(hsFile);
 		} catch (IOException e) {
 			System.err.println(e);
 		}
@@ -96,13 +94,22 @@ public class LocalStats extends Stats {
 		private Map<String,Score> scores = new HashMap<String,Score>();
 		private List<Score> ranks = new ArrayList<Score>();
 
+		private void gc() {
+			if (ranks.size() > 10)
+				ranks.remove(ranks.size() - 1);
+			Map<String,Score> tmp = new HashMap<String,Score>();
+			for (String key : scores.keySet())
+				if (ranks.contains(scores.get(key)))
+					tmp.put(key, scores.get(key));
+			scores = tmp;
+		}
+
 		public void submit(String id, String name, int score) {
 			Score obj = new Score(name, score);
 			scores.put(id, obj);
 			ranks.add(obj);
 			Collections.sort(ranks);
-			if (ranks.size() > 10)
-				ranks.remove(ranks.size() - 1);
+			gc();
 			commit();
 		}
 

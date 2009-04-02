@@ -54,7 +54,7 @@ public class Laser extends Weapon {
 	}
 
 	protected long getLifetime() {
-		return 2;
+		return 2000;
 	}
 
 	public float getDamage() {

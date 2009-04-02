@@ -272,11 +272,11 @@ public class Ship extends Body
 		torque();
 		if (fire) {
 			if (weapons.fire() && isCloaked())
-				cloak = CLOAK_DELAY;
+				cloak = Integer.MAX_VALUE;
 		}
 		if (launch) {
 			if (launchMissile() && isCloaked())
-				cloak = CLOAK_DELAY;
+				cloak = Integer.MAX_VALUE;
 		}
 		cloaked = cloak-- < 0;
 		weapons.update();

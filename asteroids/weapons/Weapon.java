@@ -109,11 +109,11 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 	}
 
 	protected long getLifetime() {
-		return 10;
+		return 10000;
 	}
 
 	public boolean exploded() {
-		if (Timer.gameTime() - startTime > getLifetime()*1000)
+		if (Timer.gameTime() - startTime > getLifetime())
 			return true;
 		return exploded;
 	}
