@@ -61,7 +61,7 @@ public class Ship extends Body
 	protected double hull = MAX;
 	protected int thrust, cloak = Integer.MAX_VALUE;
 	protected float accel, torque;
-	protected boolean fire, explode, launch, cloaked;
+	protected boolean fire, explode, launch, cloaked, destruct;
 	protected World world;
 	protected static final int ACTIVE_DEFAULT = 500;
 	protected int activeTime = ACTIVE_DEFAULT;
@@ -83,7 +83,7 @@ public class Ship extends Body
 		adjustAngularVelocity(-getAngularVelocity());
 		missiles = NUM_MISSILES;
 		accel = torque = 0;
-		fire = explode = launch = false;
+		fire = explode = launch = destruct = false;
 		warningStart = invincibleEnd = 0;
 		cloak = Integer.MAX_VALUE;
 		hull = MAX;
@@ -158,7 +158,7 @@ public class Ship extends Body
 	
 	// canExplode but also tracking explosions
 	public boolean dead() {
-		return canExplode() && explosion != null && explosion.dead();
+		return destruct || (canExplode() && explosion != null && explosion.dead());
 	}
 
 	public int getTrust() {
@@ -243,6 +243,7 @@ public class Ship extends Body
 			case KeyEvent.VK_DOWN: accel = -15*A; notifyInput(); break;
 			case KeyEvent.VK_SPACE: fire = true; notifyInput(); break;
 			case KeyEvent.VK_F: launch = true; notifyInput(); break;
+			case KeyEvent.VK_X: hull = -1; explode = true; destruct = true; break;
 			case KeyEvent.VK_C: cloak = cloaked ? Integer.MAX_VALUE : CLOAK_DELAY; notifyInput(); break;
 		}
 		if (e.getKeyChar() == '\'')
@@ -265,6 +266,8 @@ public class Ship extends Body
 
 	public void endFrame() {
 		super.endFrame();
+		if (destruct)
+			world.remove(this);
 		float v = getVelocity().length();
 		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
 		thrust--;

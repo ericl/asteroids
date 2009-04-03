@@ -65,7 +65,7 @@ public class Protect extends AbstractGame {
 		frame.addKeyListener(ship = new Ship(world));
 		display.setBackground("pixmaps/background2.jpg");
 		ship.addStatsListener(stats);
-		Ship.setSpeed(.75f);
+		Ship.setSpeed(.25f);
 		Ship.setMax(20);
 		k = new StarField(display);
 		newGame();

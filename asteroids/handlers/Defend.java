@@ -79,7 +79,6 @@ public class Defend extends Field {
 			world.add(ships[i]);
 		}
 		count = 0;
-		score = -1;
 	}
 
 	/**

@@ -53,7 +53,7 @@ public class Field {
 	protected Display2 display;
 	protected double ai_frequency = .01;
 	protected Dimension dim;
-	protected int count, score = -1;
+	protected int count;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
 	protected static double D = 1;
@@ -132,7 +132,6 @@ public class Field {
 			world.add(ship);
 		}
 		count = 0;
-		score = -1;
 	}
 
 	/**
@@ -150,7 +149,7 @@ public class Field {
 	 * @return	Score.
 	 */
 	public int asteroids() {
-		return done() ? score : count;
+		return count;
 	}
 
 	/**
@@ -188,9 +187,6 @@ public class Field {
 		for (int i=0; i < density.length; i++)
 			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D)
 				world.add(newAsteroid(targets[i].getPosition()));
-
-		if (done() && score < 0)
-			score = count;
 	}
 
 	public Body newAI(ROVector2f origin) {
