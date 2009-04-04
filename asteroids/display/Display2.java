@@ -262,8 +262,18 @@ public class Display2 {
 	 * @param	r	The radius of the object.
 	 */
 	public boolean inView(ROVector2f test, float r) {
-		for (int i=0; i < n; i++)
-			if (inViewFrom(centers[i], test, r))
+		return inView(test, r, centers);
+	}
+
+	/**
+	 * @return	True if the object is visible from the last set center(s).
+	 * @param	test	The coordinate of the object.
+	 * @param	r	The radius of the object.
+	 * @param	origins	The origins to be considered.
+	 */
+	public boolean inView(ROVector2f test, float r, ROVector2f ... origins) {
+		for (int i=0; i < origins.length; i++)
+			if (inViewFrom(origins[i], test, r))
 				return true;
 		return false;
 	}

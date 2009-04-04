@@ -56,7 +56,7 @@ public class Asteroids extends AbstractGame {
 	private StarField k;
 	private Thread scoreBuilder;
 	private String name = System.getProperty("user.name");
-	private boolean restart, scoresBuilt;
+	private boolean restart, scoresBuilt, multi;
 	private static final int BASE_WIDTH = 700, BASE_HEIGHT = 700;
 	
 	protected class ScoreBuilder extends Thread {
@@ -67,8 +67,7 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public static void main(String[] args) {
-		AbstractGame game = new Asteroids();
-		game.mainLoop();
+		new Asteroids().mainLoop();
 	}
 
 	public Asteroids() {
@@ -87,7 +86,7 @@ public class Asteroids extends AbstractGame {
 		Ship.setSpeed(.25f);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
-		newGame();
+		newWelcome();
 	}
 
 	protected void update() {
@@ -95,15 +94,24 @@ public class Asteroids extends AbstractGame {
 			newGame();
 			restart = false;
 		}
+		if (multi) {
+			new MPAsteroids().mainLoop();
+			frame.dispose();
+			running = false;
+		}
 		scenario.update();
-		display.setCenter(ship.getPosition());
+		display.setCenter(scenario.getCenter());
 	}
 
 	protected void postWorld() {
 		Graphics2D g2d = display.getGraphics()[0];
 		g2d.setColor(COLOR);
 		g2d.setFont(FONT_BOLD);
-		g2d.drawString("\"" + scenario.toString() + "\"", 10, 20);
+		int vpos = 20;
+		for (String string : scenario.toString().split("\n")) {
+			g2d.drawString(string, 10, vpos);
+			vpos += 20;
+		}
 		if (scenario.done()) {
 			stats.freezeScores();
 			g2d.setColor(COLOR);
@@ -111,18 +119,36 @@ public class Asteroids extends AbstractGame {
 			g2d.drawString("N - Change Name", display.w(-115),display.h(-30));
 			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
 			g2d.setColor(COLOR_BOLD);
-			g2d.setFont(FONT_BOLD);
 			String score = name + "'s Score: " + stats.score();
-			g2d.drawString(score, centerX(FONT_BOLD, score, g2d), display.h(0)/2-20);
+			renderCenter(g2d, FONT_BOLD, score, 20);
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
 			else if (scenario instanceof Field)
 				drawHighScores(g2d);
 			else
 				System.err.println("Can't get to high scores.");
+		} else if (scenario instanceof WelcomeScreen) {
+			g2d.setColor(COLOR_BOLD);
+			renderCenter(g2d, FONT_VERY_BOLD, "Asteroids", 80);
+			renderCenter(g2d, FONT_NORMAL, "This package is provided under the terms of the BSD License*", 55);
+			renderCenter(g2d, FONT_NORMAL, "Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster.", 35);
+			g2d.setColor(COLOR);
+			renderCenter(g2d, FONT_NORMAL, "Use arrow keys to navigate; space to fire.", 11);
+			renderCenter(g2d, FONT_NORMAL, "X - cancel game", -10);
+			renderCenter(g2d, FONT_NORMAL, "C - cloak ship", -30);
+			renderCenter(g2d, FONT_NORMAL, "F - launch missile", -50);
+			renderCenter(g2d, FONT_BOLD, "Press SPACE to continue.", -90);
+			g2d.setFont(FONT_NORMAL);
+			g2d.drawString("M - multiplayer mode", display.w(-140),display.h(-10));
+			g2d.drawString("* see README inside jar file", 10, display.h(-10));
 		} else {
 			shipStatus(g2d);
 		}
+	}
+
+	private void renderCenter(Graphics2D g2d, Font font, String string, float ydelta) {
+		g2d.setFont(font);
+		g2d.drawString(string, centerX(font, string, g2d), display.h(0)/2-ydelta);
 	}
 
 	public void drawHighScores(Graphics2D g2d) {
@@ -147,7 +173,14 @@ public class Asteroids extends AbstractGame {
 		switch (event.getKeyChar()) {
 			case 'r': restart = true; break;
 			case 'n': changeName(); break;
-			case 'q': System.exit(0); break;
+			case 'm':
+				if (scenario instanceof WelcomeScreen)
+					multi = true;
+				break;
+			case ' ':
+				if (scenario instanceof WelcomeScreen)
+					restart = true;
+				break;
 		}
 	}
 
@@ -162,6 +195,16 @@ public class Asteroids extends AbstractGame {
 		stats.setShip(ship);
 		scenario.setDensity(.4f);
 		scenario.setScalingRatio(.33f);
+		scenario.start();
+	}
+
+	public void newWelcome() {
+		k.init();
+		scoreBuilder = new ScoreBuilder();
+		scoresBuilt = false;
+		int id = Field.ids[(int)range(0,Field.ids.length)];
+		scenario = new WelcomeScreen(world, display, id);
+		stats.reset(scenario);
 		scenario.start();
 	}
 

@@ -217,8 +217,7 @@ public class Exploder implements CollisionListener {
 	 * @return	True if both bodies are stuck to each other.
 	 */
 	public boolean isStuck(Body body, Body other) {
-		if (!(body instanceof Asteroid && other instanceof Asteroid)
-				|| body instanceof Europa)
+		if (!(body instanceof Asteroid && other instanceof Asteroid))
 			return false; // too risky to evaluate
 		Visible e = (Visible)body;
 		float diff = sub(body.getPosition(),other.getPosition()).length();

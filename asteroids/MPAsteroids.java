@@ -84,6 +84,10 @@ public class MPAsteroids extends AbstractGame {
 				return false;
 			}
 
+			public String toString() {
+				return "Controls: wasd, `, 1";
+			}
+
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
 					case 'a': torque = -8e-5f; notifyInput(); break;
@@ -182,5 +186,6 @@ public class MPAsteroids extends AbstractGame {
 			display.w(-110), display.h(-39));
 		g2d.drawString("Deaths: " + ship.deaths,
 			display.w(-110), display.h(-19));
+		g2d.drawString(ship.toString(), 10, 20);
 	}
 }

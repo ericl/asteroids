@@ -298,6 +298,10 @@ public class Ship extends Body
 		adjustAngularVelocity(getMass()*torque);
 	}
 
+	public String toString() {
+		return "Controls: arrow keys, space, f";
+	}
+
 	public void keyTyped(KeyEvent e) {
 		// don't care
 	}

@@ -18,9 +18,11 @@
 	<target name="jar" depends="compile">
 		<jar jarfile="Asteroids.jar" update="true">
 			<manifest>
-				<attribute name="Main-Class" value="asteroids.Chooser"/>
+				<attribute name="Main-Class" value="asteroids.Asteroids"/>
 			</manifest>
 			<fileset dir=".">
+				<include name="build.xml"/>
+				<include name="README"/>
 				<include name="license.txt"/>
 				<include name="phys2d-license.txt"/>
 				<include name="asteroids/**/*.class"/>

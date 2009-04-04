@@ -1,1 +1,5 @@
-To build the jar file and javadoc run 'ant all'. This requires ant to be installed.
+The source code for this project is copied into its jar file on build.
+To compile, simply extract the jar file and run 'ant all' in the new directory.
+
+Revision history can also be found at:
+http://github.com/ericl/asteroids

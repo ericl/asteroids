@@ -197,6 +197,10 @@ public class Field {
 		return ai;
 	}
 
+	public ROVector2f getCenter() {
+		return ships.length > 0 ? ships[0].getPosition() : v(0,0);
+	}
+
 	/**
 	 * @return	A new asteroid at some point.
 	 */
@@ -236,10 +240,10 @@ public class Field {
 	 */
 	public String toString() {
 		switch (id) {
-			case HEX: return "Hexagons";
-			case ROCKY: return "Rocky";
-			case ICEY: return "Ice";
+			case HEX: return "\"Hexagons\"";
+			case ROCKY: return "\"Rocky\"";
+			case ICEY: return "\"Ice\"";
+			default: return "Unknown";
 		}
-		return "Unknown";
 	}
 }

@@ -47,10 +47,11 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	protected World world;
 	protected Stats stats;
 	protected final Dimension dim;
-	protected volatile boolean pause;
+	protected volatile boolean pause, running = true;
 	private MainLoop mainLoop;
 	private Exploder exploder;
 	public final static Font FONT_BOLD = new Font("Serif", Font.BOLD, 15);
+	public final static Font FONT_VERY_BOLD = new Font("Serif", Font.BOLD, 30);
 	public final static Font FONT_NORMAL = new Font("SansSerif", Font.PLAIN, 12);
 	public final static String RESTART_MSG = "R - Restart Game";
 	public final static Color COLOR_BOLD = Color.ORANGE, COLOR = Color.lightGray;
@@ -59,16 +60,16 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		public void run() {
 			Timer timer = new Timer(60f);
 			float dt;
-			while (true) {
+			while (running) {
 				dt = timer.tick();
 				while (pause) try {
 					Thread.sleep(Long.MAX_VALUE);
 				} catch (InterruptedException e) {
 					timer.reset();
 				}
-				update();
 				doGraphics();
 				doPhysics(dt);
+				update();
 			}
 		}
 	}
@@ -119,19 +120,8 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	}
 
 	public void pause() {
-		if (!pause) {
+		if (!pause)
 			pause = true;
-			synchronized (display) {
-				for (Graphics2D g2d : display.getGraphics()) {
-					g2d.setColor(new Color(100,100,100,100));
-					g2d.fillRect(0,0,display.w(0),display.h(0));
-					g2d.setFont(new Font("SanSerif", Font.BOLD, 15));
-					g2d.setColor(Color.RED);
-					g2d.drawString("PAUSED",20,display.h(-20));
-				}
-				display.show();
-			}
-		}
 	}
 
 	public void unpause() {
@@ -159,11 +149,9 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	}
 
 	private void doGraphics() {
-		synchronized (display) {
-			display.show();
-			preWorld();
-			display.drawWorld(world);
-			postWorld();
-		}
+		display.show();
+		preWorld();
+		display.drawWorld(world);
+		postWorld();
 	}
 }

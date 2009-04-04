@@ -39,6 +39,8 @@ import asteroids.display.*;
 
 import net.phys2d.math.*;
 
+import static net.phys2d.math.MathUtil.*;
+
 import static asteroids.Util.*;
 
 /**
@@ -69,7 +71,7 @@ public class StarField {
 		int numstars = (int)(DIMENSION*DIMENSION*DENSITY);
 		stars.clear();
 		for (int i=0; i < numstars; i++)
-			stars.add(new Star(v(range(0,DIMENSION), range(0,DIMENSION))));
+			stars.add(new Star((float)Math.random(), v(range(0,DIMENSION), range(0,DIMENSION))));
 	}
 	
 	/**
@@ -97,24 +99,27 @@ public class StarField {
 	private class Star implements Drawable {
 		public final static int MIN_SIZE = 1;
 		public final static int MAX_SIZE = 4;
-		private Vector2f loc;
-		private int radius = (int)range(MIN_SIZE,MAX_SIZE);
-		private Color color = starColor();
+		protected Vector2f loc;
+		protected float scaler;
+		protected int radius = (int)range(MIN_SIZE,MAX_SIZE);
+		protected Color color = starColor();
 
 		public Color getColor() {
 			return color;
 		}
 
-		public Star(Vector2f v) {
+		public Star(float s, Vector2f v) {
 			loc = v;
+			scaler = s;
 		}
 
 		public float getRadius() {
-			// XXX trick the display into letting us handle clipping
+			// trick the display into letting us handle clipping
 			return Float.POSITIVE_INFINITY;
 		}
 
 		public void drawTo(Graphics2D g2d, ROVector2f origin) {
+			origin = scale(origin, scaler);
 			// wrap around the display
 			while (loc.getX() - origin.getX() > DIMENSION)
 				loc = MathUtil.sub(loc, v(DIMENSION,0));
@@ -124,7 +129,7 @@ public class StarField {
 				loc = MathUtil.sub(loc, v(0,DIMENSION));
 			while (loc.getY() - origin.getY() < 0)
 				loc = MathUtil.sub(loc, v(0,-DIMENSION));
-			if (display.inView(loc,radius)) {
+			if (display.inView(loc, radius, origin)) {
 				Vector2f tmp = MathUtil.sub(loc, origin);
 				g2d.setColor(color);
 				g2d.fillOval((int)tmp.getX(), (int)tmp.getY(), radius, radius);
