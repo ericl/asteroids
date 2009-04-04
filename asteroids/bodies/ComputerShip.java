@@ -48,10 +48,23 @@ import static net.phys2d.math.MathUtil.*;
 public class ComputerShip extends Ship implements Drawable, Textured, Explodable, KeyListener {
 	private int steps;
 	private Body target;
+	private boolean delay;
 	private ROVector2f targetPos;
 
 	public ComputerShip(World w) {
 		super(w);
+	}
+
+	public ComputerShip(World w, boolean delay) {
+		super(w);
+		this.delay = delay;
+		if (delay)
+			activeTime = ACTIVE_DEFAULT;
+	}
+
+	public void reset() {
+		super.reset();
+		activeTime = delay ? ACTIVE_DEFAULT : 0;
 	}
 
 	public void randomAcceleration() {
@@ -109,11 +122,6 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 		return false;
 	}
 
-	public void reset() {
-		super.reset();
-		notifyInput();
-	}
-
 	private void aiUpdate() {
 		float v = getVelocity().length();
 		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
@@ -132,8 +140,7 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 
 	public void endFrame() {
 		super.endFrame();
-		if (activeTime < 1)
+		if (activeTime-- < 1)
 			aiUpdate();
-		activeTime--;
 	}
 }

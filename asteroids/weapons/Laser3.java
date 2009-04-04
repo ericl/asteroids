@@ -63,9 +63,9 @@ public class Laser3 extends Weapon {
 		return v(21,20);
 	}
 
-	public void collided(CollisionEvent event) {
-		if (!(event.getBodyA() instanceof Weapon) || !(event.getBodyB() instanceof Weapon))
-			explode = true;
+	public void collided(CollisionEvent e) {
+		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		explode = !(other instanceof Weapon) || other instanceof Laser3;
 	}
 
 	public boolean canExplode() {

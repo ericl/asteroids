@@ -59,9 +59,9 @@ public class Pointer {
 		for (Explodable target : targets) {
 			g2d.setColor(target.getColor());
 			if (ship.canExplode() || target.canExplode())
-				return;
+				break;
 			if (display.inViewFrom(o, target.getPosition(), target.getRadius()))
-				return;
+				break;
 			Vector2f delta = sub(target.getPosition(), ship.getPosition());
 			double xo = display.w(0)/2;
 			double yo = display.h(0)/2;

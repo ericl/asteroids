@@ -49,9 +49,9 @@ import static asteroids.Util.*;
  */
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
-	private static final int NUM_PLAYERS = 2;
+	private static final int NUM_PLAYERS = 3;
 	protected Field scenario;
-	protected Pointer[] p = new Pointer[NUM_PLAYERS];
+	protected Pointer[] pointer = new Pointer[NUM_PLAYERS];
 	protected Ship[] ships = new Ship[NUM_PLAYERS];
 	protected StarField k;
 	protected boolean restart;
@@ -77,20 +77,38 @@ public class MPAsteroids extends AbstractGame {
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		for (int i=1; i < NUM_PLAYERS; i++) {
+		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
 			frame.addKeyListener(ships[i] = new ComputerShip(world) {
 				public boolean isCloaked() {
 					return false;
 				}
 
+				public String toString() {
+					return "COMPUTER";
+				}
+
+				public void keyPressed(KeyEvent e) {}
+				public void keyReleased(KeyEvent e) {}
+
 				public void reset() {
 					super.reset();
-					setPosition(400*foo,0);
+					setPosition(400*foo, 200*(foo % 2));
 				}	
 			});
 		}
-		frame.addKeyListener(ships[0] = new ComputerShip(world) {
+		if (NUM_PLAYERS > 1)
+			frame.addKeyListener(ships[1] = new ComputerShip(world, true) {
+				public boolean isCloaked() {
+					return false;
+				}
+
+				public void reset() {
+					super.reset();
+					setPosition(400, 200);
+				}
+			});
+		frame.addKeyListener(ships[0] = new ComputerShip(world, true) {
 			public boolean isCloaked() {
 				return false;
 			}
@@ -128,9 +146,9 @@ public class MPAsteroids extends AbstractGame {
 			int x = 0;
 			for (int j=0; j < NUM_PLAYERS; j++) {
 				if (j != i)
-					targets[x++] = ships[i];
+					targets[x++] = ships[j];
 			}
-			p[i] = new Pointer(ships[i], display, targets);
+			pointer[i] = new Pointer(ships[i], display, targets);
 		}
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
@@ -153,7 +171,7 @@ public class MPAsteroids extends AbstractGame {
 		k.starField();
 		Graphics2D[] g2ds = display.getGraphics();
 		for (int i=0; i < NUM_PLAYERS; i++)
-			p[i].drawTo(g2ds[i]);
+			pointer[i].drawTo(g2ds[i]);
 	}
 
 	protected void postWorld() {

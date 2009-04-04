@@ -88,6 +88,7 @@ public class WeaponSys {
 	public void setWeaponType(Weapon w) {
 		weapon = w;
 		lastFired = 0;
+		burst = 0;
 		try {
 			cons = (Constructor<Weapon>)weapon.getClass().getConstructor();
 		} catch (NoSuchMethodException e) {

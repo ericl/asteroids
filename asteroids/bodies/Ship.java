@@ -64,8 +64,7 @@ public class Ship extends Body
 	protected boolean fire, explode, launch, cloaked, destruct;
 	protected World world;
 	protected static final int ACTIVE_DEFAULT = 500;
-	protected int activeTime = ACTIVE_DEFAULT;
-	protected int textStatus = Integer.MAX_VALUE; // for blinking only
+	protected int activeTime, textStatus = Integer.MAX_VALUE; // for blinking only
 	protected long warningStart; // end of warning -> not invincible
 	protected int missiles = NUM_MISSILES;
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
@@ -86,6 +85,7 @@ public class Ship extends Body
 		fire = explode = launch = destruct = false;
 		warningStart = invincibleEnd = 0;
 		cloak = Integer.MAX_VALUE;
+		activeTime = 0;
 		hull = MAX;
 		thrust = 0;
 		weapons.setRandomWeaponType();
@@ -159,10 +159,6 @@ public class Ship extends Body
 	// canExplode but also tracking explosions
 	public boolean dead() {
 		return destruct || (canExplode() && explosion != null && explosion.dead());
-	}
-
-	public int getTrust() {
-		return thrust;
 	}
 
 	public float getTextureScaleFactor() {
@@ -251,7 +247,6 @@ public class Ship extends Body
 	}
 
 	public void keyReleased(KeyEvent e) {
-		notifyInput();
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_RIGHT: torque = 0; notifyInput(); break;
