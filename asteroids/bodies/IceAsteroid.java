@@ -45,7 +45,8 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 	private double melting;
 	private int count = 0;
 	private boolean rocky = oneIn(2);
-	private static int ICE_TO_ROCK_RADIUS = 12;
+	private static final int ICE_BOUND_MIN = 13;
+	private int ICE_TO_ROCK_RADIUS = (int)range(20,100);
 
 	public IceAsteroid(float radius) {
 		super(radius);
@@ -53,11 +54,11 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 	}
 
 	public Vector2f getTextureCenter() {
-		return v(100,100);
+		return v(51,51);
 	}
 
 	public float getTextureScaleFactor() {
-		return getRadius()/66.66f;
+		return getRadius()/72f;
 	}
 
 	public String getTexturePath() {
@@ -71,7 +72,7 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 			melting--;
 			if (rocky && getRadius() > ICE_TO_ROCK_RADIUS)
 				setShape(new Circle(getRadius()*2/3 - 1));
-			else if (!rocky && getRadius() > 7)
+			else if (!rocky && getRadius() > ICE_BOUND_MIN)
 				setShape(new Circle(getRadius()*2/3 - 1));
 		}
 	}
@@ -85,7 +86,7 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 	}
 
 	public boolean canExplode() {
-		return getRadius() < 7 || (rocky && getRadius() <= ICE_TO_ROCK_RADIUS);
+		return getRadius() < ICE_BOUND_MIN || (rocky && getRadius() <= ICE_TO_ROCK_RADIUS);
 	}
 
 	public Body getRemnant() {
@@ -93,16 +94,16 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 	}
 
 	public List<Body> getFragments() {
-		if (!rocky || getRadius() < 7)
+		if (!rocky || getRadius() < ICE_BOUND_MIN)
 			return null;
 		List<Body> f = new ArrayList<Body>(6);
 		damage = Float.POSITIVE_INFINITY;
 		Asteroid tmp;
-		for (int i=0; i < 5; i++) {
+		for (int i=0; i < 4; i++) {
 			tmp = new SmallAsteroid(getRadius() / 3);
 			f.add(tmp);
 		}
-		for (int i=0; i < 5; i++) {
+		for (int i=0; i < 4; i++) {
 			tmp = new IceAsteroid(getRadius() / 6);
 			f.add(tmp);
 		}

@@ -33,17 +33,19 @@ import java.util.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
+import static net.phys2d.math.MathUtil.*;
 import static asteroids.Util.*;
 
 public class Laser2 extends Weapon {
 	private static float myRadius = 2;
 	private boolean thrust;
+	private float myError = range(-3e-1, 3e-1);
 	private int steps;
 
 	public Laser2() {
 		super(new Circle(myRadius), 1);
 		setRestitution(1);
-		setMaxVelocity(40,40);
+		setRotDamping(5);
 	}
 
 	public Body getRemnant() {
@@ -62,15 +64,22 @@ public class Laser2 extends Weapon {
 		super.endFrame();
 		if (steps++ > 75) {
 			thrust = true;
-			if (steps > 1000)
+			if (steps > 500)
 				thrust = false;
 		}
 		Vector2f dir = direction(getRotation());
 		float accel = 20;
+		float v = getVelocity().length();
+		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
 		if (thrust) {
 			addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
-			if (steps < 200)
-				setRotation(ship.getRotation());
+			if (steps < 200) {
+				float delta = ship.getRotation() - getRotation();
+				float sign = sign(delta);
+				delta = sign*(float)Math.min(.05, Math.abs(delta));
+				setRotation(getRotation() + delta);
+			} else
+				adjustAngularVelocity(myError);
 		}
 	}
 

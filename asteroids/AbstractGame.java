@@ -42,7 +42,7 @@ import static asteroids.Util.*;
  * Common game GUI and main loop.
  */
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
-	protected Display2 display;
+	protected Display display;
 	protected JFrame frame;
 	protected World world;
 	protected Stats stats;
@@ -131,11 +131,11 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		}
 	}
 
-	protected Display2 makeDisplay() {
+	protected Display makeDisplay() {
 		frame.setLocationByPlatform(true);
 		Canvas a = new Canvas();
 		frame.add(a);
-		return new Display2(frame, dim, a);
+		return new Display(frame, dim, a);
 	}
 
 	protected void preWorld() {}

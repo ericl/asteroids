@@ -50,7 +50,7 @@ import static java.lang.Math.*;
 public class Field {
 	protected Ship[] ships;
 	protected World world;
-	protected Display2 display;
+	protected Display display;
 	protected double ai_frequency = .01;
 	protected Dimension dim;
 	protected int count;
@@ -77,7 +77,7 @@ public class Field {
 	 * @param	id	What type of field to be created.
 	 * @param	ships Ships inside the world.
 	 */
-	public Field(World w, Display2 d, int id, Ship ... ships) {
+	public Field(World w, Display d, int id, Ship ... ships) {
 		this.display = d;
 		this.id = id;
 		this.ships = ships;

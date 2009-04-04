@@ -49,7 +49,7 @@ public class Exploder implements CollisionListener {
 	// statistics listeners
 	private List<Stats> stats = new LinkedList<Stats>();
 	private World world;
-	private Display2 display;
+	private Display display;
 	private CollisionGrouper grouper;
 	private final static int MAX_BODIES = 300;
 	private final static float MAX_RADIAL_DEVIATION = 10, COLLIDE_BOUNDS = 150, MAX_J = 2;
@@ -75,7 +75,7 @@ public class Exploder implements CollisionListener {
 		}
 	}
 
-	public Exploder(World w, Display2 d) {
+	public Exploder(World w, Display d) {
 		world = w;
 		display = d;
 		grouper = new CollisionGrouper();

@@ -31,15 +31,16 @@
 package asteroids;
 
 import java.awt.*;
-import java.awt.GridLayout;
 
 import java.awt.event.*;
 
 import asteroids.bodies.*;
 
-import asteroids.display.Display2;
+import asteroids.display.Display;
 
 import asteroids.handlers.*;
+
+import net.phys2d.math.ROVector2f;
 
 import static asteroids.Util.*;
 
@@ -48,38 +49,48 @@ import static asteroids.Util.*;
  */
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
+	private static final int NUM_PLAYERS = 2;
 	protected Field scenario;
-	protected Pointer pLeft, pRight;
-	protected Ship[] ships = new Ship[2];
+	protected Pointer[] p = new Pointer[NUM_PLAYERS];
+	protected Ship[] ships = new Ship[NUM_PLAYERS];
 	protected StarField k;
 	protected boolean restart;
-	protected final Ship ship1, ship2;
 
 	public static void main(String[] args) {
 		AbstractGame game = new MPAsteroids();
 		game.mainLoop();
 	}
 
-	protected Display2 makeDisplay() {
+	protected Display makeDisplay() {
 		frame.setLocationByPlatform(true);
-		GridLayout layout = new GridLayout();
-		layout.setHgap(2);
+		GridLayout layout = new GridLayout(NUM_PLAYERS/2, NUM_PLAYERS, 2, 2);
 		frame.setLayout(layout);
-		Canvas a = new Canvas(), b = new Canvas();
-		frame.setSize(new Dimension((int)dim.getWidth()*2,(int)dim.getHeight()));
-		frame.add(a);
-		frame.add(b);
-		return new Display2(frame, dim, a, b);
+		Canvas[] canvases = new Canvas[NUM_PLAYERS];
+		for (int i=0; i < NUM_PLAYERS; i++) {
+			canvases[i] = new Canvas();
+			frame.add(canvases[i]);
+			canvases[i].setPreferredSize(new Dimension(BASE_WIDTH, BASE_HEIGHT));
+		}
+		frame.setSize(layout.preferredLayoutSize(frame));
+		return new Display(frame, dim, canvases);
 	}
 
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
-		frame.addKeyListener(ship2 = new ComputerShip(world) {
-			public boolean isCloaked() {
-				return false;
-			}
-		});
-		frame.addKeyListener(ship1 = new ComputerShip(world) {
+		for (int i=1; i < NUM_PLAYERS; i++) {
+			final int foo = i;
+			frame.addKeyListener(ships[i] = new ComputerShip(world) {
+				public boolean isCloaked() {
+					return false;
+				}
+
+				public void reset() {
+					super.reset();
+					setPosition(400*foo,0);
+				}	
+			});
+		}
+		frame.addKeyListener(ships[0] = new ComputerShip(world) {
 			public boolean isCloaked() {
 				return false;
 			}
@@ -109,18 +120,18 @@ public class MPAsteroids extends AbstractGame {
 					case KeyEvent.VK_1: launch = false; notifyInput(); break;
 				}
 			}
-
-			public void reset() {
-				super.reset();
-				setPosition(-400,0);
-			}	
 		});
-		ships[0] = ship1;
-		ships[1] = ship2;
 		Ship.setMax(4);
 		Ship.setSpeed(.25f);
-		pLeft = new Pointer(ship1, display, ship2);
-		pRight = new Pointer(ship2, display, ship1);
+		for (int i=0; i < NUM_PLAYERS; i++) {
+			Explodable[] targets = new Explodable[NUM_PLAYERS-1];
+			int x = 0;
+			for (int j=0; j < NUM_PLAYERS; j++) {
+				if (j != i)
+					targets[x++] = ships[i];
+			}
+			p[i] = new Pointer(ships[i], display, targets);
+		}
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newGame();
@@ -132,28 +143,30 @@ public class MPAsteroids extends AbstractGame {
 			restart = false;
 		}
 		scenario.update();
-		display.setCenter(ship1.getPosition(), ship2.getPosition());
+		ROVector2f[] centers = new ROVector2f[NUM_PLAYERS];
+		for (int i=0; i < NUM_PLAYERS; i++)
+			centers[i] = ships[i].getPosition();
+		display.setCenter(centers);
 	}
 
 	protected void preWorld() {
 		k.starField();
 		Graphics2D[] g2ds = display.getGraphics();
-		pLeft.drawTo(g2ds[0]);
-		pRight.drawTo(g2ds[1]);
+		for (int i=0; i < NUM_PLAYERS; i++)
+			p[i].drawTo(g2ds[i]);
 	}
 
 	protected void postWorld() {
 		Graphics2D[] g2ds = display.getGraphics();
-		for (int i=0; i < g2ds.length; i++) {
+		for (int i=0; i < NUM_PLAYERS; i++) {
 			if (ships[i].dead()) {
 				g2ds[i].setColor(COLOR);
 				g2ds[i].setFont(FONT_NORMAL);
 				g2ds[i].drawString(RESTART_MSG,
 					centerX(FONT_NORMAL, RESTART_MSG, g2ds[i]), display.h(0)/2-5);
 			}
+			shipStatus(g2ds[i], ships[i]);
 		}
-		shipStatus(g2ds[0], ship1);
-		shipStatus(g2ds[1], ship2);
 	}
 
 	public void keyTyped(KeyEvent event) {

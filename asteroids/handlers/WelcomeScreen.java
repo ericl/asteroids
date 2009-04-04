@@ -40,7 +40,7 @@ import net.phys2d.math.*;
 public class WelcomeScreen extends Field {
 	private int x;
 
-	public WelcomeScreen(World w, Display2 d, int id, Ship ... ships) {
+	public WelcomeScreen(World w, Display d, int id, Ship ... ships) {
 		super(w, d, id, ships);
 	}
 

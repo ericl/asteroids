@@ -56,7 +56,7 @@ public class Ship extends Body
 	protected static Shape shape = new Polygon(poly);
 	protected static double MAX = 1;
 	protected static float A = 1;
-	protected static int NUM_MISSILES = 10, CLOAK_DELAY = 75;
+	protected static int NUM_MISSILES = 5, CLOAK_DELAY = 75;
 	protected Explosion explosion;
 	protected double hull = MAX;
 	protected int thrust, cloak = Integer.MAX_VALUE;

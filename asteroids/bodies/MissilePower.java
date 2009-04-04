@@ -36,7 +36,7 @@ import static asteroids.Util.*;
 import static asteroids.bodies.PolyAsteroid.*;
 
 /**
- * 10 extra missiles.
+ * 5 extra missiles.
  */
 public class MissilePower extends PowerUp implements Textured {
 	protected static ROVector2f[] raw = {v(2,4),v(10,1),v(19,19),v(12,21),v(3,19),v(2,5),v(11,1)};
@@ -68,7 +68,7 @@ public class MissilePower extends PowerUp implements Textured {
 	 * @param	ship	The Ship to receive the upgrade.
 	 */
 	protected void up(Ship ship) {
-		ship.addMissiles(10);
+		ship.addMissiles(5);
 	}
 
 	public String getTexturePath() {

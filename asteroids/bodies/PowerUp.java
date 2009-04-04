@@ -50,12 +50,12 @@ public abstract class PowerUp extends Body implements Explodable {
 		switch ((int)(20*Math.random())) {
 			case 0:
 			case 1: return new RandomWeapon();
-			case 2: return new Invincibility();
-			case 3:
+			case 2:
+			case 3: return new Invincibility();
 			case 4:
 			case 5:
-			case 6: return new WeaponPower();
-			case 7:
+			case 6:
+			case 7: return new WeaponPower();
 			case 8:
 			case 9:
 			case 10:

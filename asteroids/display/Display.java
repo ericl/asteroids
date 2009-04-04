@@ -65,7 +65,7 @@ import static net.phys2d.math.MathUtil.*;
  * Draws onto component(s) that support createBufferStrategy().
  * All components should be the same size.
  */
-public class Display2 {
+public class Display {
 	protected BufferStrategy[] strategies;
 	protected Component[] screens;
 	protected Frame frame;
@@ -86,7 +86,7 @@ public class Display2 {
 	 * Instantiate a display that draws onto a frame.
 	 * Recommended for full-screen games only.
 	 */
-	public Display2(Frame f, Dimension d) {
+	public Display(Frame f, Dimension d) {
 		init(f, d, new Component[]{f});
 		f.createBufferStrategy(2);
 		strategies[0] = f.getBufferStrategy();
@@ -96,7 +96,7 @@ public class Display2 {
 	/**
 	 * Instantiate a display that draws onto canvases.
 	 */
-	public Display2(Frame f, Dimension d, Canvas ... canvases) {
+	public Display(Frame f, Dimension d, Canvas ... canvases) {
 		init(f, d, canvases);
 		for (int i=0; i < n; i++) {
 			canvases[i].createBufferStrategy(2);

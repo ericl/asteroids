@@ -52,7 +52,7 @@ public class Missile extends Weapon {
 	public Missile() {
 		super(new Circle(myRadius), 1000);
 		setMaxVelocity(40, 40);
-		setRotDamping(200);
+		setRotDamping(100);
 	}
 
 	public static void setWorld(World w) {
@@ -91,11 +91,12 @@ public class Missile extends Weapon {
 		double delta1 = tFinal - tInit1;
 		double delta2 = tFinal - tInit2;
 		double delta = Math.abs(delta1) > Math.abs(delta2) ? delta2 : delta1;
-		torque = (float)(delta * 1e-5f);
-		if (torque > 0 && torque < 1e-5f)
-			torque = 1e-5f;
-		if (torque < 0 && torque > -1e-5f)
-			torque = -1e-5f;
+		float x = 3e-5f;
+		torque = (float)(delta * x);
+		if (torque > 0 && torque < x)
+			torque = x;
+		if (torque < 0 && torque > -x)
+			torque = -x;
 	}
 
 	private void selectTarget() {

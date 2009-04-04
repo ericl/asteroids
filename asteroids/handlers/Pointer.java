@@ -40,11 +40,11 @@ import static asteroids.Util.*;
  * Draws a small line that points towards another targets.
  */
 public class Pointer {
-	private Display2 display;
+	private Display display;
 	private Ship ship;
 	private Explodable[] targets;
 
-	public Pointer(Ship ship, Display2 display, Explodable ... targets) {
+	public Pointer(Ship ship, Display display, Explodable ... targets) {
 		this.ship = ship;
 		this.targets = targets;
 		this.display = display;
