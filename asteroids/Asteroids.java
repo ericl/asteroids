@@ -217,9 +217,9 @@ public class Asteroids extends AbstractGame {
 		g2d.drawString("Armor: " + hull,
 			display.w(-110),display.h(-55));
 		g2d.setColor(COLOR);
+		g2d.drawString("Missiles: " + ship.numMissiles(),display.w(-110),display.h(-35));
 		g2d.drawString("Score: " +
-			stats.score(),display.w(-110),display.h(-35));
-		g2d.drawString("Missiles: " + ship.numMissiles(),display.w(-110),display.h(-15));
+			stats.score(),display.w(-110),display.h(-15));
 	}
 
 	public void changeName() {
