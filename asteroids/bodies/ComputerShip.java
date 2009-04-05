@@ -92,17 +92,18 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 		}
 	}
 
+	public static ROVector2f predictTargetPosition(Body origin, Body target, float time, boolean movingOrigin) {
+		float timeElapsed = sub(origin.getPosition(), target.getPosition()).length() / time;
+		ROVector2f pos = target.getPosition();
+		Vector2f v = scale(target.getVelocity(), timeElapsed);
+		Vector2f o = movingOrigin ? scale(origin.getVelocity(), timeElapsed) : v(0,0);
+		return v(pos.getX() + v.getX() - o.getX(), pos.getY() + v.getY() - o.getY());
+	}
+
 	private boolean trackTarget() {
-		if (target == null)
+		if (target == null || target instanceof Ship && ((Ship)target).isCloaked())
 			return false;
-		if (target instanceof Ship) {
-			if (!((Ship)target).isCloaked())
-				targetPos = new Vector2f(target.getPosition());
-		} else {
-			targetPos = target.getPosition();
-		}
-		if (targetPos == null)
-			return false;
+		targetPos = predictTargetPosition(this, target, weapons.getWeaponSpeed(), true);
 		Vector2f ds = sub(getPosition(), targetPos);
 		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
 		double tInit1 = (getRotation() % (2*Math.PI));

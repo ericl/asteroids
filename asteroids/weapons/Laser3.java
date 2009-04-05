@@ -88,6 +88,10 @@ public class Laser3 extends Weapon {
 		return 60;
 	}
 
+	public float getAverageSpeed() {
+		return 60;
+	}
+
 	public float getRadius() {
 		return myRadius;
 	}

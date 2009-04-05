@@ -36,6 +36,7 @@ import net.phys2d.math.*;
 
 import asteroids.bodies.*;
 import static asteroids.Util.*;
+import static asteroids.bodies.ComputerShip.*;
 
 import static net.phys2d.math.MathUtil.*;
 
@@ -52,7 +53,7 @@ public class Missile extends Weapon {
 	public Missile() {
 		super(new Circle(myRadius), 1000);
 		setMaxVelocity(40, 40);
-		setRotDamping(100);
+		setRotDamping(150);
 	}
 
 	public static void setWorld(World w) {
@@ -74,16 +75,9 @@ public class Missile extends Weapon {
 	}
 
 	private void trackTarget() {
-		if (target == null)
+		if (target == null || target instanceof Ship && ((Ship)target).isCloaked())
 			return;
-		if (target instanceof Ship) {
-			if (!((Ship)target).isCloaked())
-				targetPos = new Vector2f(target.getPosition());
-		} else {
-			targetPos = target.getPosition();
-		}
-		if (targetPos == null)
-			return;
+		targetPos = predictTargetPosition(this, target, getVelocity().length(), true);
 		Vector2f ds = sub(getPosition(), targetPos);
 		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
 		double tInit1 = (getRotation() % (2*Math.PI));
@@ -106,10 +100,6 @@ public class Missile extends Weapon {
 		float d = 0;
 		for (int i=0; i < bodies.size(); i++) {
 			Body b = bodies.get(i);
-//			if (b instanceof Missile && b != this) {
-//				if (((Missile)b).whitelist.equals(whitelist))
-//					continue; // we're on the same side here
-//			} else
 			if (b == this || !(b instanceof Ship) || whitelist.contains(b))
 				continue;
 			if (target == null)
@@ -183,6 +173,10 @@ public class Missile extends Weapon {
 	}
 
 	public float getSpeed() {
+		return 55;
+	}
+
+	public float getAverageSpeed() {
 		return 55;
 	}
 

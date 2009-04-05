@@ -154,6 +154,10 @@ public class WeaponSys {
 			stat.fired(c);
 		return c;
 	}
+
+	public float getWeaponSpeed() {
+		return weapon.getAverageSpeed();
+	}
 	
 	public void update() {
 		while (!fired.isEmpty() && fired.peek().exploded()) {

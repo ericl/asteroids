@@ -49,7 +49,7 @@ import static asteroids.Util.*;
  */
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
-	private static final int NUM_PLAYERS = 3;
+	private static final int NUM_PLAYERS = 2;
 	protected Field scenario;
 	protected Pointer[] pointer = new Pointer[NUM_PLAYERS];
 	protected Ship[] ships = new Ship[NUM_PLAYERS];
