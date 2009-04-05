@@ -84,8 +84,8 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 		level++;
 	}
 
-	public abstract float getSpeed();
-	public abstract float getAverageSpeed();
+	public abstract float getLaunchSpeed();
+	public abstract float getWeaponSpeed();
 	public abstract float getDamage();
 	public abstract float getReloadTime();
 

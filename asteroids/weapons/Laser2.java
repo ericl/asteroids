@@ -99,11 +99,11 @@ public class Laser2 extends Weapon {
 		return thrust ?  "pixmaps/rocket-t.png" : "pixmaps/rocket.png";
 	}
 
-	public float getSpeed() {
+	public float getLaunchSpeed() {
 		return 30;
 	}
 
-	public float getAverageSpeed() {
+	public float getWeaponSpeed() {
 		return 50;
 	}
 
@@ -116,6 +116,6 @@ public class Laser2 extends Weapon {
 	}
 
 	public float getReloadTime() {
-		return 700;
+		return 1100;
 	}
 }

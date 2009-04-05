@@ -30,36 +30,35 @@
 
 package asteroids.bodies;
 
-import java.awt.event.*;
-
-import asteroids.display.*;
-
-import net.phys2d.math.*;
+import asteroids.ai.AI;
+import asteroids.ai.Automated;
+import asteroids.ai.ShipAI;
 
 import net.phys2d.raw.*;
 
-import static asteroids.Util.*;
-
-import static net.phys2d.math.MathUtil.*;
 
 /**
  * User-controlled ship in the world.
  */
-public class ComputerShip extends Ship implements Drawable, Textured, Explodable, KeyListener {
-	private int steps;
-	private Body target;
+public class ComputerShip extends Ship implements Automated {
+	private AI ai;
 	private boolean delay;
-	private ROVector2f targetPos;
 
 	public ComputerShip(World w) {
 		super(w);
+		ai = new ShipAI(w, this);
 	}
 
 	public ComputerShip(World w, boolean delay) {
 		super(w);
+		ai = new ShipAI(w, this);
 		this.delay = delay;
 		if (delay)
 			activeTime = ACTIVE_DEFAULT;
+	}
+
+	public void modifyTorque(float t) {
+		torque = t;
 	}
 
 	public void reset() {
@@ -67,81 +66,31 @@ public class ComputerShip extends Ship implements Drawable, Textured, Explodable
 		activeTime = delay ? ACTIVE_DEFAULT : 0;
 	}
 
-	public void randomAcceleration() {
-		accel = A*range(-5,20);
+	public boolean fire() {
+		return weapons.fire();
 	}
 
-	private void selectTarget() {
-		float min_dist = -1;
-		target = null;
-		BodyList bodies = world.getBodies();
-		float d = 0;
-		for (int i=0; i < bodies.size(); i++) {
-			Body b = bodies.get(i);
-			if (b == this || !(b instanceof Ship) || ((Ship)b).isCloaked())
-				continue;
-			if (target == null)
-				target = b;
-			d = Math.abs(getPosition().distance(b.getPosition()));
-			if (min_dist < 0)
-				min_dist = d;
-			else if (d < min_dist) {
-				target = b;
-				min_dist = d;
-			}
-		}
+	protected void torque() {
+		// setTorque() is unpredictable with varied dt
+		adjustAngularVelocity(getMass()*torque);
 	}
 
-	public static ROVector2f predictTargetPosition(Body origin, Body target, float time, boolean movingOrigin) {
-		float timeElapsed = sub(origin.getPosition(), target.getPosition()).length() / time;
-		ROVector2f pos = target.getPosition();
-		Vector2f v = scale(target.getVelocity(), timeElapsed);
-		Vector2f o = movingOrigin ? scale(origin.getVelocity(), timeElapsed) : v(0,0);
-		return v(pos.getX() + v.getX() - o.getX(), pos.getY() + v.getY() - o.getY());
+
+	public float getWeaponSpeed() {
+		return weapons.getWeaponSpeed();
 	}
 
-	private boolean trackTarget() {
-		if (target == null || target instanceof Ship && ((Ship)target).isCloaked())
-			return false;
-		targetPos = predictTargetPosition(this, target, weapons.getWeaponSpeed(), true);
-		Vector2f ds = sub(getPosition(), targetPos);
-		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
-		double tInit1 = (getRotation() % (2*Math.PI));
-		double tInit2 = tInit1 - sign((float)tInit1)*2*Math.PI;
-		double delta1 = tFinal - tInit1;
-		double delta2 = tFinal - tInit2;
-		double delta = Math.abs(delta1) > Math.abs(delta2) ? delta2 : delta1;
-		torque = (float)(delta * 8e-5f);
-		if (torque > 0 && torque < 1e-5f) {
-			torque = 1e-5f;
-			return true;
-		}
-		if (torque < 0 && torque > -1e-5f) {
-			torque = -1e-5f;
-			return true;
-		}
-		return false;
+	public void setAccel(float a) {
+		accel = A*a;
 	}
 
-	private void aiUpdate() {
-		float v = getVelocity().length();
-		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
-		thrust--;
-		if (steps % 100 == 66)
-			randomAcceleration();
-		if (steps % 300 == 0)
-			selectTarget();
-		if (steps % 10 == 0)
-			if (trackTarget()) {
-				if (!weapons.fire() && oneIn(100))
-					launchMissile();
-			}
-		steps++;
+	public double health() {
+		return hull / MAX;
 	}
 
 	public void endFrame() {
 		super.endFrame();
 		if (activeTime-- < 1)
-			aiUpdate();
+			ai.update();
 	}
 }

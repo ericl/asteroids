@@ -80,8 +80,8 @@ public class MPAsteroids extends AbstractGame {
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
 			frame.addKeyListener(ships[i] = new ComputerShip(world) {
-				public boolean isCloaked() {
-					return false;
+				public boolean canTarget() {
+					return true;
 				}
 
 				public String toString() {
@@ -99,8 +99,16 @@ public class MPAsteroids extends AbstractGame {
 		}
 		if (NUM_PLAYERS > 1)
 			frame.addKeyListener(ships[1] = new ComputerShip(world, true) {
-				public boolean isCloaked() {
-					return false;
+				public boolean canTarget() {
+					return true;
+				}
+
+				public void keyPressed(KeyEvent e) {
+					switch (e.getKeyCode()) {
+						case KeyEvent.VK_Q:
+							return;
+					}
+					super.keyPressed(e);
 				}
 
 				public void reset() {
@@ -109,8 +117,8 @@ public class MPAsteroids extends AbstractGame {
 				}
 			});
 		frame.addKeyListener(ships[0] = new ComputerShip(world, true) {
-			public boolean isCloaked() {
-				return false;
+			public boolean canTarget() {
+				return true;
 			}
 
 			public String toString() {

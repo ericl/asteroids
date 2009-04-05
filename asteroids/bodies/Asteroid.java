@@ -85,6 +85,8 @@ public abstract class Asteroid extends Body implements Explodable {
 	}
 
 	public boolean canExplode() {
+		if (getRadius() >= 100)
+			return damage > getRadius() / 7; // these are not your normal asteroids!
 		return damage > Math.log10(getRadius()) / 5;
 	}
 }

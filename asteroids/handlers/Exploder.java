@@ -34,6 +34,7 @@ import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import static net.phys2d.math.MathUtil.*;
 import asteroids.bodies.*;
+import asteroids.ai.*;
 import asteroids.weapons.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
@@ -200,7 +201,7 @@ public class Exploder implements CollisionListener {
 	public static double getDamage(CollisionEvent e, Body victim) {
 		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
 		float multiplier = 1;
-		if (victim instanceof Ship && ((Ship)victim).isCloaked())
+		if (victim instanceof Targetable && !((Targetable)victim).canTarget())
 			multiplier = 2;
 		if (other instanceof Weapon)
 			return multiplier * ((Weapon)other).getDamage();

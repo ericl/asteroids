@@ -134,7 +134,7 @@ public class Asteroids extends AbstractGame {
 			renderCenter(g2d, FONT_NORMAL, "Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster.", 35);
 			g2d.setColor(COLOR);
 			renderCenter(g2d, FONT_NORMAL, "Use arrow keys to navigate; space to fire.", 11);
-			renderCenter(g2d, FONT_NORMAL, "X - cancel game", -10);
+			renderCenter(g2d, FONT_NORMAL, "Q - cancel game", -10);
 			renderCenter(g2d, FONT_NORMAL, "C - cloak ship", -30);
 			renderCenter(g2d, FONT_NORMAL, "F - launch missile", -50);
 			renderCenter(g2d, FONT_BOLD, "Press SPACE to continue.", -90);
@@ -212,7 +212,7 @@ public class Asteroids extends AbstractGame {
 		g2d.setFont(FONT_NORMAL);
 		String hull = "Infinity";
 		if (!ship.isInvincible())
-			hull = (int)(ship.getDamage()*1000)/10+"%";
+			hull = (int)(ship.getDamage()*1000)/10 + (!ship.canTarget() ? "/2%" : "%");
 		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
 			display.w(-110),display.h(-55));

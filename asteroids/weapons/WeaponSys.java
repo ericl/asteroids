@@ -92,7 +92,7 @@ public class WeaponSys {
 		try {
 			cons = (Constructor<Weapon>)weapon.getClass().getConstructor();
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -133,7 +133,7 @@ public class WeaponSys {
 		try {
 			c = cons.newInstance();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		c.setOrigin(s);
 		c.setLevel(weapon.getLevel());
@@ -142,7 +142,7 @@ public class WeaponSys {
 		float yc = (float)Math.cos(s.getRotation()+angle);
 		float sr = s.getRadius() * 2 / 3; // estimated length
 		c.setPosition(s.getPosition().getX()+xc*sr,s.getPosition().getY()-yc*sr);
-		c.adjustVelocity(v(weapon.getSpeed()*xc,weapon.getSpeed()*-yc));
+		c.adjustVelocity(v(weapon.getLaunchSpeed()*xc,weapon.getLaunchSpeed()*-yc));
 		c.adjustVelocity((Vector2f)s.getVelocity());
 		c.addExcludedBody(s);
 		BodyList el = s.getExcludedList();
@@ -156,7 +156,7 @@ public class WeaponSys {
 	}
 
 	public float getWeaponSpeed() {
-		return weapon.getAverageSpeed();
+		return weapon.getWeaponSpeed();
 	}
 	
 	public void update() {

@@ -29,25 +29,38 @@
  */
 
 package asteroids.bodies;
-import java.util.*;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
+
 import java.awt.event.*;
-import net.phys2d.math.*;
-import net.phys2d.raw.*;
-import net.phys2d.raw.shapes.*;
+
+import java.util.*;
+
 import asteroids.*;
+
+import asteroids.ai.Targetable;
+
 import asteroids.display.*;
-import asteroids.weapons.*;
+
 import asteroids.handlers.*;
 import asteroids.handlers.Timer;
+
+import asteroids.weapons.*;
+
+import net.phys2d.math.*;
+
+import net.phys2d.raw.*;
+
+import net.phys2d.raw.shapes.*;
+
 import static asteroids.Util.*;
 
 /**
  * User-controlled ship in the world.
  */
 public class Ship extends Body
-		implements Drawable, Textured, Explodable, KeyListener {
+		implements Drawable, Textured, Explodable, KeyListener, Targetable {
 	private final static float scaler = .7f;
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
 	static {
@@ -92,8 +105,8 @@ public class Ship extends Body
 		weapons.incrRandomWeaponLevel();
 	}
 
-	public boolean isCloaked() {
-		return cloaked;
+	public boolean canTarget() {
+		return !cloaked;
 	}
 
 	public void notifyInput() {
@@ -106,6 +119,10 @@ public class Ship extends Body
 
 	public void addMissiles(int num) {
 		missiles += num;
+	}
+
+	public int getPointValue() {
+		return 100;
 	}
 
 	public boolean launchMissile() {
@@ -195,7 +212,7 @@ public class Ship extends Body
 	}
 
 	public String getTexturePath() {
-		if (isCloaked())
+		if (!canTarget())
 			return "pixmaps/ship-c.png";
 		return thrust > 0 ? "pixmaps/ship-t.png" : "pixmaps/ship.png";
 	}
@@ -239,7 +256,7 @@ public class Ship extends Body
 			case KeyEvent.VK_DOWN: accel = -15*A; notifyInput(); break;
 			case KeyEvent.VK_SPACE: fire = true; notifyInput(); break;
 			case KeyEvent.VK_F: launch = true; notifyInput(); break;
-			case KeyEvent.VK_X: hull = -1; explode = true; destruct = true; break;
+			case KeyEvent.VK_Q: hull = -1; explode = true; destruct = true; break;
 			case KeyEvent.VK_C: cloak = cloaked ? Integer.MAX_VALUE : CLOAK_DELAY; notifyInput(); break;
 		}
 		if (e.getKeyChar() == '\'')
@@ -268,14 +285,12 @@ public class Ship extends Body
 		thrust--;
 		accel();
 		torque();
-		if (fire) {
-			if (weapons.fire() && isCloaked())
+		if (fire)
+			if (weapons.fire() && !canTarget())
 				cloak = Integer.MAX_VALUE;
-		}
-		if (launch) {
-			if (launchMissile() && isCloaked())
+		if (launch)
+			if (launchMissile() && !canTarget())
 				cloak = Integer.MAX_VALUE;
-		}
 		cloaked = cloak-- < 0;
 		weapons.update();
 		missileSys.update();

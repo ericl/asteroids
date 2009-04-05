@@ -65,7 +65,7 @@ public class Laser3 extends Weapon {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		explode = !(other instanceof Weapon) || other instanceof Laser3;
+		explode = !(other instanceof Weapon) || other instanceof Laser3 || other instanceof Missile;
 	}
 
 	public boolean canExplode() {
@@ -84,11 +84,11 @@ public class Laser3 extends Weapon {
 		return "pixmaps/exp2/1.png";
 	}
 
-	public float getSpeed() {
+	public float getLaunchSpeed() {
 		return 60;
 	}
 
-	public float getAverageSpeed() {
+	public float getWeaponSpeed() {
 		return 60;
 	}
 

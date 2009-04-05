@@ -65,11 +65,11 @@ public class Laser extends Weapon {
 		return 200;
 	}
 
-	public float getSpeed() {
+	public float getLaunchSpeed() {
 		return 40 - 5 * Math.min(3, level);
 	}
 
-	public float getAverageSpeed() {
+	public float getWeaponSpeed() {
 		return 40 - 5 * Math.min(3, level);
 	}
 

@@ -34,26 +34,51 @@ import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 
+import asteroids.ai.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
-import static asteroids.bodies.ComputerShip.*;
 
-import static net.phys2d.math.MathUtil.*;
-
-public class Missile extends Weapon {
+public class Missile extends Weapon implements Automated {
 	private static float myRadius = 2;
-	private Set<Body> whitelist = new HashSet<Body>();
-	private int steps;
+	private HomingAI ai;
 	private float torque;
 	private static World world;
 	private boolean explode;
-	private Body target;
-	private ROVector2f targetPos;
 
 	public Missile() {
 		super(new Circle(myRadius), 1000);
+		ai = new HomingAI(world, this);
 		setMaxVelocity(40, 40);
-		setRotDamping(150);
+		setRotDamping(100);
+	}
+
+	public void setAccel(float a) {}
+	public void modifyTorque(float t) {
+		torque = t;
+	}
+
+	public float getWeaponSpeed() {
+		return 55;
+	}
+
+	public boolean canTarget() {
+		return false;
+	}
+
+	public int getPointValue() {
+		return 0;
+	}
+
+	public boolean launchMissile() {
+		return false;
+	}
+
+	public boolean fire() {
+		return false;
+	}
+
+	public double health() {
+		return 1;
 	}
 
 	public static void setWorld(World w) {
@@ -61,75 +86,16 @@ public class Missile extends Weapon {
 	}
 
 	public void addExcludedBody(Body b) {
-		whitelist.add(b);
+		ai.addExcluded(b);
 		super.addExcludedBody(b);
-	}
-
-	private void aiUpdate() {
-		if (steps % 100 == 0) {
-			selectTarget();
-		}
-		if (steps % 30 == 0)
-			trackTarget();
-		steps++;
-	}
-
-	private void trackTarget() {
-		if (target == null || target instanceof Ship && ((Ship)target).isCloaked())
-			return;
-		targetPos = predictTargetPosition(this, target, getVelocity().length(), true);
-		Vector2f ds = sub(getPosition(), targetPos);
-		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
-		double tInit1 = (getRotation() % (2*Math.PI));
-		double tInit2 = tInit1 - sign((float)tInit1)*2*Math.PI;
-		double delta1 = tFinal - tInit1;
-		double delta2 = tFinal - tInit2;
-		double delta = Math.abs(delta1) > Math.abs(delta2) ? delta2 : delta1;
-		float x = 3e-5f;
-		torque = (float)(delta * x);
-		if (torque > 0 && torque < x)
-			torque = x;
-		if (torque < 0 && torque > -x)
-			torque = -x;
-	}
-
-	private void selectTarget() {
-		float min_dist = -1;
-		target = null;
-		BodyList bodies = world.getBodies();
-		float d = 0;
-		for (int i=0; i < bodies.size(); i++) {
-			Body b = bodies.get(i);
-			if (b == this || !(b instanceof Ship) || whitelist.contains(b))
-				continue;
-			if (target == null)
-				target = b;
-			d = Math.abs(getPosition().distance(b.getPosition()));
-			if (min_dist < 0)
-				min_dist = d;
-			else if (d < min_dist) {
-				target = b;
-				min_dist = d;
-			}
-		}
-	}
-
-	protected void accel() {
-		Vector2f dir = direction(getRotation());
-		float accel = 20;
-		addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
-	}
-
-	protected void torque() {
-		// setTorque() is unpredictable with varied dt
-		adjustAngularVelocity(getMass()*torque);
 	}
 
 	public void endFrame() {
 		super.endFrame();
-		accel();
-		torque();
-		aiUpdate();
+		Vector2f dir = direction(getRotation());
+		addForce(v(20*getMass()*dir.getX(),20*getMass()*dir.getY()));
+		adjustAngularVelocity(getMass()*torque);
+		ai.update();
 	}
 
 	public Body getRemnant() {
@@ -152,7 +118,7 @@ public class Missile extends Weapon {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Ship)
 			explode = true;
-		if (other instanceof Missile && !((Missile)other).whitelist.equals(whitelist))
+		if (other instanceof Missile && ((Missile)other).getOrigin() != ship)
 			explode = true;
 	}
 
@@ -172,11 +138,7 @@ public class Missile extends Weapon {
 		return "pixmaps/blast.png";
 	}
 
-	public float getSpeed() {
-		return 55;
-	}
-
-	public float getAverageSpeed() {
+	public float getLaunchSpeed() {
 		return 55;
 	}
 

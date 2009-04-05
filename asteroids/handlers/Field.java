@@ -208,14 +208,14 @@ public class Field {
 		// difficulty increases with count
 		Asteroid rock = null;
 		switch (id) {
-			case HEX:
-				rock = new HexAsteroid(oneIn(100) ? range(100,200) : range(30,50));
-				break;
 			case ROCKY:
-				rock = new BigAsteroid(range(30,50));
+				rock = new BigAsteroid(oneIn(25) ? range(100,150) : range(30,50));
 				break;
 			case ICEY:
-				rock = new IceAsteroid(range(10,40));
+				rock = new IceAsteroid(oneIn(20) ? range(100,175) : range(30,50));
+				break;
+			case HEX:
+				rock = new HexAsteroid(oneIn(15) ? range(100,200) : range(30,50));
 				break;
 		}
 		adjustForDifficulty(rock);
