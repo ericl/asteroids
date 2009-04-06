@@ -19,6 +19,12 @@ public class Laser2 extends Weapon {
 		setRotDamping(5);
 	}
 
+	public Laser2 duplicate() {
+		Laser2 l = new Laser2();
+		l.setLevel(getLevel());
+		return l;
+	}
+
 	public Body getRemnant() {
 		return new LargeExplosion(.75f);
 	}

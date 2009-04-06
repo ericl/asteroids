@@ -31,6 +31,8 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 		super(weap, mass);
 	}
 
+	public abstract Weapon duplicate();
+
 	public Color getColor() {
 		return Color.ORANGE;
 	}

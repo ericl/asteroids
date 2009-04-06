@@ -18,6 +18,12 @@ public class Laser3 extends Weapon {
 		setRestitution(1);
 	}
 
+	public Laser3 duplicate() {
+		Laser3 l = new Laser3();
+		l.setLevel(getLevel());
+		return l;
+	}
+
 	public Body getRemnant() {
 		return new LaserExplosion(2);
 	}

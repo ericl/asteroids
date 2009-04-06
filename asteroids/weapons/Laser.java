@@ -16,6 +16,12 @@ public class Laser extends Weapon {
 		super(new Circle(myRadius), 1);
 	}
 
+	public Laser duplicate() {
+		Laser l = new Laser();
+		l.setLevel(getLevel());
+		return l;
+	}
+
 	public Vector2f getTextureCenter() {
 		return v(7,3);
 	}

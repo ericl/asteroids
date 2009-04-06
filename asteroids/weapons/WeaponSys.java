@@ -4,7 +4,6 @@
 
 package asteroids.weapons;
 import java.util.*;
-import java.lang.reflect.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
 import asteroids.handlers.*;
@@ -18,7 +17,6 @@ public class WeaponSys {
 	protected Body origin;
 	protected World world;
 	protected Weapon weapon;
-	protected Constructor<Weapon> cons;
 	protected long lastFired;
 	protected Queue<Weapon> fired = new LinkedList<Weapon>();
 	protected float burst;
@@ -55,16 +53,10 @@ public class WeaponSys {
 		weapon.incrementLevel();
 	}
 
-	@SuppressWarnings(value = "unchecked")
 	public void setWeaponType(Weapon w) {
 		weapon = w;
 		lastFired = 0;
 		burst = 0;
-		try {
-			cons = (Constructor<Weapon>)weapon.getClass().getConstructor();
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private boolean canFire() {
@@ -100,14 +92,8 @@ public class WeaponSys {
 
 	// postcondition: nothing is modified
 	private Weapon makeWeapon(float angle) {
-		Weapon c = null;
-		try {
-			c = cons.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		Weapon c = weapon.duplicate();
 		c.setOrigin(origin);
-		c.setLevel(weapon.getLevel());
 		c.setRotation(origin.getRotation()+angle);
 		float xc = (float)Math.sin(origin.getRotation()+angle);
 		float yc = (float)Math.cos(origin.getRotation()+angle);

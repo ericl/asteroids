@@ -12,14 +12,19 @@ public class Missile extends Weapon implements Automated {
 	private static float myRadius = 2;
 	private HomingAI ai;
 	private float torque;
-	private static World world;
+	private World world;
 	private boolean explode;
 
-	public Missile() {
+	public Missile(World w) {
 		super(new Circle(myRadius), 1000);
+		world = w;
 		ai = new HomingAI(world, this);
 		setMaxVelocity(40, 40);
 		setRotDamping(100);
+	}
+
+	public Missile duplicate() {
+		return new Missile(world);
 	}
 
 	public void setAccel(float a) {}
@@ -49,10 +54,6 @@ public class Missile extends Weapon implements Automated {
 
 	public double health() {
 		return 1;
-	}
-
-	public static void setWorld(World w) {
-		world = w;
 	}
 
 	public void addExcludedBody(Body b) {

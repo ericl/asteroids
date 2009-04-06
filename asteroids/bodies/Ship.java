@@ -54,8 +54,7 @@ public class Ship extends TexturedPolyBody implements Explodable, KeyListener, T
 		super(poly, "pixmaps/ship.png", 64, 44, 1500f);
 		world = w;
 		weapons = new WeaponSys(this, world, null);
-		Missile.setWorld(w);
-		missileSys = new WeaponSys(this, world, new Missile());
+		missileSys = new WeaponSys(this, world, new Missile(world));
 		setRotDamping(4000);
 		reset();
 	}
