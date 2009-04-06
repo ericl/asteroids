@@ -80,6 +80,7 @@ public class Ship extends TexturedPolyBody implements Explodable, KeyListener, T
 		activeTime = 0;
 		hull = MAX;
 		thrust = 0;
+		explosion = null;
 		weapons.setRandomWeaponType();
 		weapons.incrRandomWeaponLevel();
 	}

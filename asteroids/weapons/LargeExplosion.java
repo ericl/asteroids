@@ -14,10 +14,6 @@ public class LargeExplosion extends Explosion {
 	private int frame = 1;
 	private float scale = 1;
 
-	public LargeExplosion() {
-		// noop
-	}
-
 	public LargeExplosion(float scaler) {
 		scale = scaler;
 	}

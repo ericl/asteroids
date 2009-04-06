@@ -163,7 +163,7 @@ public class Field {
 	}
 
 	public Body newAI(ROVector2f origin) {
-		Body ai = oneIn(3) ? new ComputerShip(world) : new Satellite(world);
+		Body ai = new ComputerShip(world);
 		ROVector2f vo = display.getOffscreenCoords(((Visible)ai).getRadius(), BORDER, origin);
 		ai.setPosition(vo.getX(), vo.getY());
 		return ai;

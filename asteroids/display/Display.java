@@ -185,8 +185,7 @@ public class Display {
 	protected void getNewBufs() {
 		for (int i=0; i < n; i++) {
 			bufs[i] = (Graphics2D)strategies[i].getDrawGraphics();
-			bufs[i].setRenderingHint(RenderingHints.KEY_RENDERING,
-			        RenderingHints.VALUE_RENDER_QUALITY);
+			bufs[i].setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 		}
 	}
 
