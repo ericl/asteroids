@@ -17,10 +17,6 @@ public class PowerUpExplosion extends Explosion {
 	private double inittime = Timer.gameTime();
 	private int frame = 1;
 
-	public PowerUpExplosion() {
-		setEnabled(true);
-	}
-
 	public float getRadius() {
 		return 12*SCALE;
 	}
