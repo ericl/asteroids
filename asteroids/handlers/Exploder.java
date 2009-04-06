@@ -1,31 +1,5 @@
-/*
- * Asteroids - APCS Final Project
- *
- * This source is provided under the terms of the BSD License.
- *
- * Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * The authors' names may not be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/**
+ * Listens for collision events and processes them accordingly.
  */
 
 package asteroids.handlers;
@@ -39,9 +13,6 @@ import asteroids.weapons.*;
 import asteroids.display.*;
 import static asteroids.Util.*;
 
-/**
- * Listens for collision events and processes them accordingly.
- */
 public class Exploder implements CollisionListener {
 	// queue of explosions that will likey be removed soon
 	private Queue<Explosion> explosionQueue = new LinkedList<Explosion>();
@@ -148,10 +119,10 @@ public class Exploder implements CollisionListener {
 			explosionQueue.add((Explosion)rem);
 		if (rem != null)
 			rem.addBit(group);
-		if (!(other instanceof Ship || body instanceof Weapon))
+		if (!(other instanceof Targetable || body instanceof Weapon))
 			other.addBit(group);
 		// user-related stuff automatically passes the group limit
-		if (!(body instanceof Ship || other instanceof Ship
+		if (!(body instanceof Targetable || other instanceof Targetable
 				|| other instanceof Weapon || rem instanceof Explosion)) {
 			body.addBit(group);
 		}
@@ -175,14 +146,14 @@ public class Exploder implements CollisionListener {
 				   -body.getAngularVelocity(), body.getAngularVelocity()));
 				b.adjustVelocity(scale(direction(theta),
 					(float)Math.sqrt(Math.random()*2*v.length())));
-				if (!(body instanceof Ship)) // looks bad onscreen
+				if (!(body instanceof Targetable)) // looks bad onscreen
 					b.adjustVelocity(v);
 				b.setPosition(sx, sy);
 				world.add(b);
 			}
 		}
 		if (rem != null) {
-			if (rem instanceof Explosion && !(body instanceof Ship))
+			if (rem instanceof Explosion && !(body instanceof Targetable))
 				rem.setPosition(event.getPoint().getX(),
 					event.getPoint().getY());
 			else
@@ -219,7 +190,7 @@ public class Exploder implements CollisionListener {
 	 */
 	public boolean isStuck(Body body, Body other) {
 		if (!(body instanceof Asteroid && other instanceof Asteroid))
-			return false; // too risky to evaluate
+			return false; // too risky to evaluate - might kill self
 		Visible e = (Visible)body;
 		float diff = sub(body.getPosition(),other.getPosition()).length();
 		if (diff < e.getRadius() / 2)

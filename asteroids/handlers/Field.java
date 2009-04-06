@@ -1,31 +1,5 @@
-/*
- * Asteroids - APCS Final Project
- *
- * This source is provided under the terms of the BSD License.
- *
- * Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * The authors' names may not be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/**
+ * Responsible for asteroid field creation; closely coupled with ship handling.
  */
 
 package asteroids.handlers;
@@ -36,6 +10,8 @@ import asteroids.bodies.*;
 
 import asteroids.display.*;
 
+import asteroids.ai.*;
+
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
@@ -44,11 +20,8 @@ import static asteroids.Util.*;
 
 import static java.lang.Math.*;
 
-/**
- * Responsible for asteroid field creation; closely coupled with ship handling.
- */
 public class Field {
-	protected Ship[] ships;
+	protected Entity[] ships;
 	protected World world;
 	protected Display display;
 	protected double ai_frequency = .01;
@@ -75,9 +48,9 @@ public class Field {
 	 * @param	w	The world.
 	 * @param	d	The display.
 	 * @param	id	What type of field to be created.
-	 * @param	ships Ships inside the world.
+	 * @param	ships Entitys inside the world.
 	 */
-	public Field(World w, Display d, int id, Ship ... ships) {
+	public Field(World w, Display d, int id, Entity ... ships) {
 		this.display = d;
 		this.id = id;
 		this.ships = ships;
@@ -127,9 +100,9 @@ public class Field {
 	 */
 	public void start() {
 		world.clear();
-		for (Ship ship : ships) {
+		for (Entity ship : ships) {
 			ship.reset();
-			world.add(ship);
+			world.add((Body)ship);
 		}
 		count = 0;
 	}
@@ -139,7 +112,7 @@ public class Field {
 	 * @return	True if the scenario should be restarted, false otherwise.
 	 */
 	public boolean done() {
-		for (Ship ship : ships)
+		for (Entity ship : ships)
 			if (ship.dead())
 				return true;
 		return false;
@@ -190,9 +163,8 @@ public class Field {
 	}
 
 	public Body newAI(ROVector2f origin) {
-		ComputerShip ai = new ComputerShip(world);
-		ROVector2f vo = display.getOffscreenCoords(
-			ai.getRadius(), BORDER, origin);
+		Body ai = oneIn(3) ? new ComputerShip(world) : new Satellite(world);
+		ROVector2f vo = display.getOffscreenCoords(((Visible)ai).getRadius(), BORDER, origin);
 		ai.setPosition(vo.getX(), vo.getY());
 		return ai;
 	}
@@ -206,7 +178,7 @@ public class Field {
 	 */
 	protected Body newAsteroid(ROVector2f origin) {
 		// difficulty increases with count
-		Asteroid rock = null;
+		Body rock = null;
 		switch (id) {
 			case ROCKY:
 				rock = new BigAsteroid(oneIn(25) ? range(100,150) : range(30,50));
@@ -221,7 +193,7 @@ public class Field {
 		adjustForDifficulty(rock);
 		rock.adjustAngularVelocity((float)(1.5*random()-.75));
 		ROVector2f vo = display.getOffscreenCoords(
-			rock.getRadius(), BORDER, origin);
+			((Visible)rock).getRadius(), BORDER, origin);
 		rock.setPosition(vo.getX(), vo.getY());
 		return rock;
 	}
@@ -229,7 +201,7 @@ public class Field {
 	/**
 	 * Adjust asteroid attributes to make the game more difficult as time goes on.
 	 */
-	private void adjustForDifficulty(Asteroid rock) {
+	private void adjustForDifficulty(Body rock) {
 		float max = I + (float)Math.max(S*log10(count)*cbrt(count), 0);
 		rock.setMaxVelocity(max,max);
 		rock.adjustVelocity(v(range(-max,max), range(-max,max)));

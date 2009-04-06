@@ -1,31 +1,5 @@
-/*
- * Asteroids - APCS Final Project
- *
- * This source is provided under the terms of the BSD License.
- *
- * Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * The authors' names may not be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/**
+ * Two-player, unscored game where the players compete against each other.
  */
 
 package asteroids;
@@ -33,6 +7,8 @@ package asteroids;
 import java.awt.*;
 
 import java.awt.event.*;
+
+import asteroids.ai.*;
 
 import asteroids.bodies.*;
 
@@ -44,15 +20,12 @@ import net.phys2d.math.ROVector2f;
 
 import static asteroids.Util.*;
 
-/**
- * Two-player, unscored game where the players compete against each other.
- */
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
-	private static final int NUM_PLAYERS = 2;
+	private static final int NUM_PLAYERS = 3;
 	protected Field scenario;
 	protected Pointer[] pointer = new Pointer[NUM_PLAYERS];
-	protected Ship[] ships = new Ship[NUM_PLAYERS];
+	protected Entity[] ships = new Entity[NUM_PLAYERS];
 	protected StarField k;
 	protected boolean restart;
 
@@ -79,26 +52,16 @@ public class MPAsteroids extends AbstractGame {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
-			frame.addKeyListener(ships[i] = new ComputerShip(world) {
-				public boolean canTarget() {
-					return true;
-				}
-
-				public String toString() {
-					return "COMPUTER";
-				}
-
-				public void keyPressed(KeyEvent e) {}
-				public void keyReleased(KeyEvent e) {}
-
+			Entity ship = new Satellite(world) {
 				public void reset() {
 					super.reset();
-					setPosition(400*foo, 200*(foo % 2));
+					setPosition(350*foo, 200*(foo % 2));
 				}	
-			});
+			};
+			ships[i] = ship;
 		}
-		if (NUM_PLAYERS > 1)
-			frame.addKeyListener(ships[1] = new ComputerShip(world, true) {
+		if (NUM_PLAYERS > 1) {
+			ComputerShip ship = new ComputerShip(world, true) {
 				public boolean canTarget() {
 					return true;
 				}
@@ -115,8 +78,11 @@ public class MPAsteroids extends AbstractGame {
 					super.reset();
 					setPosition(400, 200);
 				}
-			});
-		frame.addKeyListener(ships[0] = new ComputerShip(world, true) {
+			};
+			frame.addKeyListener(ship);
+			ships[1] = ship;
+		}
+		ComputerShip ship = new ComputerShip(world, true) {
 			public boolean canTarget() {
 				return true;
 			}
@@ -146,7 +112,9 @@ public class MPAsteroids extends AbstractGame {
 					case KeyEvent.VK_1: launch = false; notifyInput(); break;
 				}
 			}
-		});
+		};
+		frame.addKeyListener(ship);
+		ships[0] = ship;
 		Ship.setMax(4);
 		Ship.setSpeed(.25f);
 		for (int i=0; i < NUM_PLAYERS; i++) {
@@ -212,18 +180,18 @@ public class MPAsteroids extends AbstractGame {
 		scenario.start();
 	}
 
-	private void shipStatus(Graphics2D g2d, Ship ship) {
+	private void shipStatus(Graphics2D g2d, Entity ship) {
 		g2d.setFont(FONT_NORMAL);
 		String hull = "Infinity";
 		if (!ship.isInvincible())
-			hull = (int)(ship.getDamage()*1000)/10+"%";
+			hull = (int)(ship.health()*1000)/10+"%";
 		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
 			display.w(-110), display.h(-59));
 		g2d.setColor(COLOR);
 		g2d.drawString("Missiles: " + ship.numMissiles(),
 			display.w(-110), display.h(-39));
-		g2d.drawString("Deaths: " + ship.deaths,
+		g2d.drawString("Deaths: " + ship.numDeaths(),
 			display.w(-110), display.h(-19));
 		g2d.drawString(ship.toString(), 10, 20);
 	}

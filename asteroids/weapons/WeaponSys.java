@@ -1,31 +1,5 @@
-/*
- * Asteroids - APCS Final Project
- *
- * This source is provided under the terms of the BSD License.
- *
- * Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * The authors' names may not be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/**
+ * Handles mechanics of weapons fire from ships.
  */
 
 package asteroids.weapons;
@@ -33,18 +7,15 @@ import java.util.*;
 import java.lang.reflect.*;
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
-import asteroids.bodies.Ship;
 import asteroids.handlers.*;
+import asteroids.display.*;
 import asteroids.handlers.Timer;
 import static asteroids.Util.*;
 
-/**
- * Handles mechanics of weapons fire from ships.
- */
 public class WeaponSys {
 	protected static float ANGULAR_DISTRIBUTION = (float)Math.PI/48;
 	protected List<Stats> stats = new LinkedList<Stats>();
-	protected Ship s;
+	protected Body origin;
 	protected World world;
 	protected Weapon weapon;
 	protected Constructor<Weapon> cons;
@@ -52,12 +23,12 @@ public class WeaponSys {
 	protected Queue<Weapon> fired = new LinkedList<Weapon>();
 	protected float burst;
 
-	public WeaponSys(Ship ship, World wo, Weapon w) {
+	public WeaponSys(Body origin, World wo, Weapon w) {
 		if (w != null)
 			setWeaponType(w);
 		else
 			setRandomWeaponType();
-		s = ship;
+		this.origin = origin;
 		world = wo;
 	}
 
@@ -70,7 +41,7 @@ public class WeaponSys {
 	}
 
 	public void incrRandomWeaponLevel() {
-		if (weapon instanceof Laser && (oneIn(2) || oneIn(2)))
+		if (weapon instanceof Laser && (oneIn(3) || oneIn(3)))
 			weapon.incrementLevel();
 		else if (weapon instanceof Laser2 && oneIn(2))
 			weapon.incrementLevel();
@@ -135,17 +106,17 @@ public class WeaponSys {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		c.setOrigin(s);
+		c.setOrigin(origin);
 		c.setLevel(weapon.getLevel());
-		c.setRotation(s.getRotation()+angle);
-		float xc = (float)Math.sin(s.getRotation()+angle);
-		float yc = (float)Math.cos(s.getRotation()+angle);
-		float sr = s.getRadius() * 2 / 3; // estimated length
-		c.setPosition(s.getPosition().getX()+xc*sr,s.getPosition().getY()-yc*sr);
-		c.adjustVelocity(v(weapon.getLaunchSpeed()*xc,weapon.getLaunchSpeed()*-yc));
-		c.adjustVelocity((Vector2f)s.getVelocity());
-		c.addExcludedBody(s);
-		BodyList el = s.getExcludedList();
+		c.setRotation(origin.getRotation()+angle);
+		float xc = (float)Math.sin(origin.getRotation()+angle);
+		float yc = (float)Math.cos(origin.getRotation()+angle);
+		float sr = ((Visible)origin).getRadius() * 2 / 3; // estimated length
+		c.setPosition(origin.getPosition().getX()+xc*sr, origin.getPosition().getY()-yc*sr);
+		c.adjustVelocity(v(weapon.getLaunchSpeed()*xc, weapon.getLaunchSpeed()*-yc));
+		c.adjustVelocity((Vector2f)origin.getVelocity());
+		c.addExcludedBody(origin);
+		BodyList el = origin.getExcludedList();
 		for (int i=0; i < el.size(); i++)
 			c.addExcludedBody(el.get(i));
 		for (Weapon f : fired)
@@ -163,7 +134,7 @@ public class WeaponSys {
 		while (!fired.isEmpty() && fired.peek().exploded()) {
 			Weapon w = fired.remove();
 			world.remove(w);
-			s.removeExcludedBody(w);
+			origin.removeExcludedBody(w);
 		}
 	}
 }

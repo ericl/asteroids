@@ -1,6 +1,11 @@
 package asteroids.ai;
 
-public interface Automated extends Targetable {
+import net.phys2d.math.ROVector2f;
+
+public interface Automated {
+	public float getRotation();
+	public ROVector2f getPosition();
+	public ROVector2f getVelocity();
 	public void setDamping(float damping);
 	public void modifyTorque(float torque);
 	public void setAccel(float accel);

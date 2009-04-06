@@ -1,31 +1,5 @@
-/*
- * Asteroids - APCS Final Project
- *
- * This source is provided under the terms of the BSD License.
- *
- * Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * The authors' names may not be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/**
+ * User-controlled ship in the world.
  */
 
 package asteroids.bodies;
@@ -39,9 +13,7 @@ import java.util.*;
 
 import asteroids.*;
 
-import asteroids.ai.Targetable;
-
-import asteroids.display.*;
+import asteroids.ai.*;
 
 import asteroids.handlers.*;
 import asteroids.handlers.Timer;
@@ -56,16 +28,9 @@ import net.phys2d.raw.shapes.*;
 
 import static asteroids.Util.*;
 
-/**
- * User-controlled ship in the world.
- */
-public class Ship extends Body
-		implements Drawable, Textured, Explodable, KeyListener, Targetable {
+public class Ship extends TexturedPolyBody implements Explodable, KeyListener, Targetable, Automated, Entity {
 	private final static float scaler = .7f;
 	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
-	static {
-		poly = PolyAsteroid.scaled(poly, scaler);
-	}
 	protected static Shape shape = new Polygon(poly);
 	protected static double MAX = 1;
 	protected static float A = 1;
@@ -83,7 +48,21 @@ public class Ship extends Body
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
 	protected WeaponSys weapons;
 	protected WeaponSys missileSys;
-	public int deaths;
+	protected int deaths;
+
+	public Ship(World w) {
+		super(poly, "pixmaps/ship.png", 64, 44, 1500f);
+		world = w;
+		weapons = new WeaponSys(this, world, null);
+		Missile.setWorld(w);
+		missileSys = new WeaponSys(this, world, new Missile());
+		setRotDamping(4000);
+		reset();
+	}
+
+	public float getWeaponSpeed() {
+		return weapons.getWeaponSpeed();
+	}
 
 	public void reset() {
 		BodyList excluded = getExcludedList();
@@ -109,6 +88,14 @@ public class Ship extends Body
 		return !cloaked;
 	}
 
+	public void setAccel(float a) {
+		accel = A*a;
+	}
+
+	public int numDeaths() {
+		return deaths;
+	}
+
 	public void notifyInput() {
 		activeTime = ACTIVE_DEFAULT;
 	}
@@ -119,6 +106,10 @@ public class Ship extends Body
 
 	public void addMissiles(int num) {
 		missiles += num;
+	}
+
+	public void modifyTorque(float t) {
+		torque = t;
 	}
 
 	public int getPointValue() {
@@ -146,16 +137,6 @@ public class Ship extends Body
 
 	public static void setSpeed(float speed) {
 		A = speed;
-	}
-
-	public Ship(World w) {
-		super("Your ship", shape, 1500f);
-		world = w;
-		weapons = new WeaponSys(this, world, null);
-		Missile.setWorld(w);
-		missileSys = new WeaponSys(this, world, new Missile());
-		setRotDamping(4000);
-		reset();
 	}
 
 	public void gainInvincibility(int time, int warn) {
@@ -204,9 +185,9 @@ public class Ship extends Body
 			if (time < warningStart || textStatus-- % 10 > 5)
 				return Color.GREEN;
 		}
-		if (getDamage() < .2)
+		if (health() < .2)
 			return Color.RED;
-		else if (getDamage() < .6)
+		else if (health() < .6)
 			return Color.YELLOW;
 		return AbstractGame.COLOR;
 	}
@@ -221,11 +202,8 @@ public class Ship extends Body
 		return v(32,32);
 	}
 
-	/**
-	 * @return	Percent damage from max.
-	 */
-	public double getDamage() {
-		return hull < 0 ? 0 : hull/MAX;
+	public double health() {
+		return Math.max(0, hull/MAX);
 	}
 
 	public boolean isInvincible() {
@@ -286,7 +264,7 @@ public class Ship extends Body
 		accel();
 		torque();
 		if (fire)
-			if (weapons.fire() && !canTarget())
+			if (fire() && !canTarget())
 				cloak = Integer.MAX_VALUE;
 		if (launch)
 			if (launchMissile() && !canTarget())
@@ -294,6 +272,10 @@ public class Ship extends Body
 		cloaked = cloak-- < 0;
 		weapons.update();
 		missileSys.update();
+	}
+
+	public boolean fire() {
+		return weapons.fire();
 	}
 
 	protected void accel() {

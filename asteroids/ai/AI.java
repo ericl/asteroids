@@ -49,7 +49,7 @@ public abstract class AI {
 	protected abstract float getMaxTorque();
 	protected abstract float minTorqueThreshold();
 
-	public static ROVector2f predictTargetPosition(Targetable origin, Targetable target, float speed, boolean movingOrigin) {
+	public static ROVector2f predictTargetPosition(Automated origin, Targetable target, float speed, boolean movingOrigin) {
 		float timeElapsed = sub(origin.getPosition(), target.getPosition()).length() / speed;
 		ROVector2f pos = target.getPosition();
 		Vector2f v = scale(target.getVelocity(), timeElapsed);
