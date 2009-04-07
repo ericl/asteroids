@@ -4,192 +4,37 @@
 
 package asteroids.bodies;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
-import java.awt.event.*;
-
-import java.util.*;
-
-import asteroids.*;
-
-import asteroids.ai.*;
-
-import asteroids.handlers.*;
-import asteroids.handlers.Timer;
-
-import asteroids.weapons.*;
-
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
 
-import net.phys2d.raw.shapes.*;
-
 import static asteroids.Util.*;
 
-public class Ship extends TexturedPolyBody implements Explodable, KeyListener, Targetable, Automated, Entity {
-	private final static float scaler = .7f;
-	protected static ROVector2f[] poly = {v(-1,-28), v(3,-24), v(5,-16), v(6,-9), v(5,-3), v(8,-4), v(23,-4), v(23,0), v(9,8), v(5,4), v(6,13), v(-8,13), v(-8,4), v(-10,8), v(-24,1), v(-24,-4), v(-9,-4), v(-5,-2), v(-6,-8), v(-6,-16), v(-4,-25)};
-	protected static Shape shape = new Polygon(poly);
-	protected static double MAX = 1;
-	protected static float A = 1;
-	protected static int NUM_MISSILES = 5, CLOAK_DELAY = 75;
-	protected Explosion explosion;
-	protected double hull = MAX;
-	protected int thrust, cloak = Integer.MAX_VALUE;
-	protected float accel, torque;
-	protected boolean fire, explode, launch, cloaked, destruct;
-	protected World world;
-	protected static final int ACTIVE_DEFAULT = 500;
-	protected int activeTime, textStatus = Integer.MAX_VALUE; // for blinking only
-	protected long warningStart; // end of warning -> not invincible
-	protected int missiles = NUM_MISSILES;
-	protected long invincibleEnd; // end of invincibility -> warning(warntime)
-	protected WeaponSys weapons;
-	protected WeaponSys missileSys;
-	protected int deaths;
+public class Ship extends ModelEntity {
+	protected static ROVector2f[] raw = {v(31,4), v(35,8), v(37,16), v(38,23), v(37,29), v(40,28), v(55,28), v(55,32), v(41,40), v(37,36), v(38,45), v(24,45), v(24,36), v(22,40), v(8,33), v(8,28), v(23,28), v(27,30), v(26,24), v(26,16), v(28,7)};
+	protected int thrust;
 
-	public Ship(World w) {
-		super(poly, "pixmaps/ship.png", 64, 44, 1500f);
-		world = w;
-		weapons = new WeaponSys(this, world, null);
-		missileSys = new WeaponSys(this, world, new Missile(world));
-		setRotDamping(4000);
-		reset();
+	public Ship(World world) {
+		super(raw, "pixmaps/ship.png", 64, 44, 1500, world, null);
 	}
 
-	public float getWeaponSpeed() {
-		return weapons.getWeaponSpeed();
-	}
-
-	public void reset() {
-		BodyList excluded = getExcludedList();
-		while (excluded.size() > 0)
-			removeExcludedBody(excluded.get(0));
-		setRotation(0);
-		setPosition(0,0);
-		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
-		adjustAngularVelocity(-getAngularVelocity());
-		missiles = NUM_MISSILES;
-		accel = torque = 0;
-		fire = explode = launch = destruct = false;
-		warningStart = invincibleEnd = 0;
-		cloak = Integer.MAX_VALUE;
-		activeTime = 0;
-		hull = MAX;
-		thrust = 0;
-		explosion = null;
-		weapons.setRandomWeaponType();
-		weapons.incrRandomWeaponLevel();
-	}
-
-	public boolean canTarget() {
-		return !cloaked;
-	}
-
-	public void setAccel(float a) {
-		accel = A*a;
-	}
-
-	public int numDeaths() {
-		return deaths;
-	}
-
-	public void notifyInput() {
-		activeTime = ACTIVE_DEFAULT;
-	}
-
-	public int numMissiles() {
-		return missiles;
-	}
-
-	public void addMissiles(int num) {
-		missiles += num;
-	}
-
-	public void modifyTorque(float t) {
-		torque = t;
+	protected float getMaxArmor() {
+		return 6;
 	}
 
 	public int getPointValue() {
 		return 100;
 	}
 
-	public boolean launchMissile() {
-		if (missiles > 0) {
-			if (missileSys.fire()) {
-				missiles--;
-				return true;
-			}
-		}
-		return false;
+	public void reset() {
+		super.reset();
+		weapons.setRandomWeaponType();
+		weapons.incrRandomWeaponLevel();
+		numMissiles = 5;
 	}
 
-	public void addStatsListener(Stats s) {
-		weapons.addStatsListener(s);	
-		missileSys.addStatsListener(s);
-	}
-
-	public static void setMax(double damage) {
-		MAX = damage;
-	}
-
-	public static void setSpeed(float speed) {
-		A = speed;
-	}
-
-	public void gainInvincibility(int time, int warn) {
-		invincibleEnd = Timer.gameTime() + time;
-		warningStart = invincibleEnd - warn;
-	}
-
-	public void collided(CollisionEvent event) {
-		if (!isInvincible())
-			hull -= Exploder.getDamage(event, this);
-		explode = hull < 0;
-	}
-
-	public boolean canExplode() {
-		return explode && !isInvincible();
-	}
-	
-	// canExplode but also tracking explosions
-	public boolean dead() {
-		return destruct || (canExplode() && explosion != null && explosion.dead());
-	}
-
-	public float getTextureScaleFactor() {
-		return scaler;
-	}
-
-	public Body getRemnant() {
-		// assume 1 death if explode
-		deaths++;
-		return explosion = new LargeExplosion(1.5f);
-	}
-
-	public List<Body> getFragments() {
-		List<Body> f = new ArrayList<Body>(11);
-		for (int i=0; i < 11; i++) {
-			HexAsteroid tmp = new HexAsteroid(range(4,9));
-			tmp.setColor(Color.GRAY);
-			f.add(tmp);
-		}
-		return f;
-	}
-
-	public Color getColor() {
-		long time = Timer.gameTime();
-		if (isInvincible()) {
-			if (time < warningStart || textStatus-- % 10 > 5)
-				return Color.GREEN;
-		}
-		if (health() < .2)
-			return Color.RED;
-		else if (health() < .6)
-			return Color.YELLOW;
-		return AbstractGame.COLOR;
+	public boolean canTarget() {
+		return cloak > 0;
 	}
 
 	public String getTexturePath() {
@@ -198,107 +43,18 @@ public class Ship extends TexturedPolyBody implements Explodable, KeyListener, T
 		return thrust > 0 ? "pixmaps/ship-t.png" : "pixmaps/ship.png";
 	}
 
-	public Vector2f getTextureCenter() {
-		return v(32,32);
-	}
-
-	public double health() {
-		return Math.max(0, hull/MAX);
-	}
-
-	public boolean isInvincible() {
-		return invincibleEnd > Timer.gameTime();
-	}
-
-	public void drawTo(Graphics2D g2d, ROVector2f o) {
-		Polygon poly = (Polygon)getShape();
-		ROVector2f[] verts = poly.getVertices(getPosition(), getRotation());
-		int[] xcoords = new int[verts.length];
-		int[] ycoords = new int[verts.length];
-		for (int i=0; i < verts.length; i++) {
-			xcoords[i] = (int)(verts[i].getX() - o.getX());
-			ycoords[i] = (int)(verts[i].getY() - o.getY());
-		}
-		g2d.fillPolygon(xcoords, ycoords, verts.length);
-	}
-
-	public float getRadius() {
-		return 45;
-	}
-	
-	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
-			case KeyEvent.VK_LEFT: torque = -8e-5f; notifyInput(); break;
-			case KeyEvent.VK_RIGHT: torque = 8e-5f; notifyInput(); break;
-			case KeyEvent.VK_UP: accel = 30*A; notifyInput(); break;
-			case KeyEvent.VK_DOWN: accel = -15*A; notifyInput(); break;
-			case KeyEvent.VK_SPACE: fire = true; notifyInput(); break;
-			case KeyEvent.VK_F: launch = true; notifyInput(); break;
-			case KeyEvent.VK_Q: hull = -1; explode = true; destruct = true; break;
-			case KeyEvent.VK_C: cloak = cloaked ? Integer.MAX_VALUE : CLOAK_DELAY; notifyInput(); break;
-		}
-		if (e.getKeyChar() == '\'')
-			fire = true;
-	}
-
-	public void keyReleased(KeyEvent e) {
-		switch (e.getKeyCode()) {
-			case KeyEvent.VK_LEFT:
-			case KeyEvent.VK_RIGHT: torque = 0; notifyInput(); break;
-			case KeyEvent.VK_UP:
-			case KeyEvent.VK_DOWN: accel = 0; notifyInput(); break;
-			case KeyEvent.VK_SPACE: fire = false; notifyInput(); break;
-			case KeyEvent.VK_F: launch = false; notifyInput(); break;
-		}
-		if (e.getKeyChar() == '\'')
-			fire = false;
-	}
-
 	public void endFrame() {
 		super.endFrame();
-		if (destruct)
-			world.remove(this);
-		float v = getVelocity().length();
-		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
 		thrust--;
-		accel();
-		torque();
-		if (fire)
-			if (fire() && !canTarget())
-				cloak = Integer.MAX_VALUE;
-		if (launch)
-			if (launchMissile() && !canTarget())
-				cloak = Integer.MAX_VALUE;
-		cloaked = cloak-- < 0;
-		weapons.update();
-		missileSys.update();
-	}
-
-	public boolean fire() {
-		return weapons.fire();
 	}
 
 	protected void accel() {
 		if (accel > 0)
 			thrust = 5;
-		Vector2f dir = direction(getRotation());
-		addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
-	}
-
-	protected void torque() {
-		// setTorque() is unpredictable with varied dt
-		adjustAngularVelocity(getMass()*torque);
+		super.accel();
 	}
 
 	public String toString() {
 		return "Controls: arrow keys, space, f";
-	}
-
-	public void keyTyped(KeyEvent e) {
-		// don't care
-	}
-	
-	public void setArmor(double num) {
-		hull = num;
 	}
 }

@@ -163,7 +163,21 @@ public class Field {
 	}
 
 	public Body newAI(ROVector2f origin) {
-		Body ai = new ComputerShip(world);
+		Body ai;
+		switch ((int)(20*Math.random())) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5: ai = new Ship(world); break;
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:
+			default: ai = new Frigate(world);
+		}
 		ROVector2f vo = display.getOffscreenCoords(((Visible)ai).getRadius(), BORDER, origin);
 		ai.setPosition(vo.getX(), vo.getY());
 		return ai;
@@ -181,10 +195,10 @@ public class Field {
 		Body rock = null;
 		switch (id) {
 			case ROCKY:
-				rock = new BigAsteroid(oneIn(25) ? range(100,150) : range(30,50));
+				rock = new BigAsteroid(range(20,50));
 				break;
 			case ICEY:
-				rock = new IceAsteroid(oneIn(20) ? range(100,175) : range(30,50));
+				rock = new IceAsteroid(oneIn(20) ? range(100,200) : range(30,50));
 				break;
 			case HEX:
 				rock = new HexAsteroid(oneIn(15) ? range(100,200) : range(30,50));

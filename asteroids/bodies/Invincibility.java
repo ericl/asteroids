@@ -20,8 +20,7 @@ public class Invincibility extends PowerUp {
 	/**
 	 * @param	ship	Ship that is to be made invincible.
 	 */
-	protected void up(Ship ship) {
-		if (!ship.isInvincible())
-			ship.gainInvincibility(INVINCIBLE_TIME, WARNING_TIME);
+	protected void up(Enhancable ship) {
+		ship.gainInvincibility(INVINCIBLE_TIME, WARNING_TIME);
 	}
 }

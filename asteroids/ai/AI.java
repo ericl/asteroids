@@ -24,6 +24,12 @@ public abstract class AI {
 		return object.canTarget();
 	}
 
+	public void reset() {
+		steps = 0;
+		targetPos = null;
+		target = null;
+	}
+
 	protected void selectTarget() {
 		float min_dist = -1;
 		target = null;
@@ -84,11 +90,8 @@ public abstract class AI {
 	public void update() {
 		if (steps % 300 == 0)
 			selectTarget();
-		if (steps % 5 == 0 && trackTarget()) {
+		if (steps % 5 == 0 && trackTarget())
 			ship.fire();
-			if (ship.health() < .2)
-				ship.launchMissile();
-		}
 		steps++;
 	}
 }

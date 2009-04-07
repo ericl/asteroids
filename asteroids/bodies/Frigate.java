@@ -1,0 +1,26 @@
+package asteroids.bodies;
+
+import net.phys2d.raw.*;
+import net.phys2d.math.*;
+
+import asteroids.weapons.*;
+
+import static asteroids.Util.*;
+
+public class Frigate extends ModelEntity {
+	protected static ROVector2f[] raw = {v(25,2),v(29,6),v(31,12),v(31,25),v(40,25),v(40,29),v(32,31),v(29,41),v(28,46),v(24,49),v(21,45),v(19,35),v(17,30),v(10,29),v(10,25),v(18,24),v(20,11),v(22,5)};
+
+	public Frigate(World world) {
+		super(raw, "pixmaps/foo.png", 50, 30, 1000, world, new Laser());
+		if (oneIn(2))
+			weapons.upgrade();
+	}
+
+	public int getPointValue() {
+		return 30;
+	}
+
+	protected float getMaxArmor() {
+		return 2;
+	}
+}

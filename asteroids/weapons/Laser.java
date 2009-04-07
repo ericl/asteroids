@@ -16,6 +16,11 @@ public class Laser extends Weapon {
 		super(new Circle(myRadius), 1);
 	}
 
+	public Laser(int level) {
+		super(new Circle(myRadius), 1);
+		setLevel(level);
+	}
+
 	public Laser duplicate() {
 		Laser l = new Laser();
 		l.setLevel(getLevel());

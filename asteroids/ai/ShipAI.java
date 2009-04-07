@@ -23,17 +23,17 @@ public class ShipAI extends AI {
 	public void adjustAccel() {
 		float accel = 0;
 		if (targetPos == null) {
-			accel = range(-5,10);
+			accel = range(-2,3);
 		} else {
 			float distance = sub(targetPos, ship.getPosition()).length();
 			if (distance < 300 && ship.health() < .2)
-				accel = range(-15,-10);
+				accel = range(-4,-2);
 			else if (distance > 350)
-				accel = range(10,20);
+				accel = range(2,5);
 			else if (distance > 150)
-				accel = range(0,10);
+				accel = range(0,2);
 			else
-				accel = range(-10,-5);
+				accel = range(-3,-1);
 		}
 		ship.setAccel(accel);
 	}

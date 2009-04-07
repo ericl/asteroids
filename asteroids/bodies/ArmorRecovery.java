@@ -30,8 +30,7 @@ public class ArmorRecovery extends PowerUp {
 	 * Changes the armor of the ship to 100.
 	 * @param	ship	The Ship being powered up.
 	 */
-	protected void up(Ship ship) {
-		if (ship.health() < Double.POSITIVE_INFINITY)
-			ship.setArmor(Ship.MAX);
+	protected void up(Enhancable ship) {
+		ship.setHealth(1);
 	}
 }

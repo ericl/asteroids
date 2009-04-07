@@ -27,7 +27,7 @@ public class WeaponPower extends PowerUp {
 	 * Upgrades the weapon of the ship.
 	 * @param	ship	The Ship to receive the upgrade.
 	 */
-	protected void up(Ship ship) {
-		ship.weapons.upgrade();
+	protected void up(Enhancable ship) {
+		ship.upgradeWeapons();
 	}
 }

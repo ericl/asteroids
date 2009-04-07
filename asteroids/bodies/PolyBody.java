@@ -30,14 +30,6 @@ public abstract class PolyBody extends PolyBodyProxy implements Drawable {
 		setRestitution(.5f);
 	}
 
-	public void setColor(Color c) {
-		color = c;
-	}
-	
-	public Color getColor() {
-		return color;
-	}
-
 	public PolyBody(ROVector2f[] raw, float scale, float mass) {
 		super(new Polygon(centralized(scaled(raw, scale))), mass);
 		AABox a = getShape().getBounds();
@@ -45,6 +37,14 @@ public abstract class PolyBody extends PolyBodyProxy implements Drawable {
 		radius = Math.max(a.getWidth(), a.getHeight()) / 2;
 		centroid = new Polygon(raw).getCentroid();
 		setRestitution(.5f);
+	}
+
+	public void setColor(Color c) {
+		color = c;
+	}
+	
+	public Color getColor() {
+		return color;
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {

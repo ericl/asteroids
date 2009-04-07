@@ -32,21 +32,16 @@ public class Laser3 extends Weapon {
 		return null;
 	}
 
+	public boolean canExplode() {
+		return explode;
+	}
+
 	public float getDamage() {
 		return 1.3f;
 	}
 
 	public Vector2f getTextureCenter() {
 		return v(21,20);
-	}
-
-	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		explode = !(other instanceof Weapon) || other instanceof Laser3 || other instanceof Missile;
-	}
-
-	public boolean canExplode() {
-		return explode;
 	}
 
 	public float getTextureScaleFactor() {
@@ -62,15 +57,20 @@ public class Laser3 extends Weapon {
 	}
 
 	public float getLaunchSpeed() {
-		return 60;
+		return 40;
 	}
 
 	public float getWeaponSpeed() {
-		return 60;
+		return 40;
 	}
 
 	public float getRadius() {
 		return myRadius;
+	}
+
+	public void collided(CollisionEvent e) {
+		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		explode = !(other instanceof Weapon) || other instanceof Laser3 || other instanceof Missile;
 	}
 
 	public int getNum() {

@@ -14,15 +14,15 @@ import java.io.FileOutputStream;
 
 import javax.swing.*;
 
+import asteroids.ai.*;
 import asteroids.bodies.*;
-
 import asteroids.handlers.*;
 
 import static asteroids.Util.*;
 
 public class Asteroids extends AbstractGame {
 	private static File nameFile = new File(System.getProperty("user.home") + "/.asteroids-name");
-	private Ship ship;
+	private Entity ship;
 	private Field scenario;
 	private StarField k;
 	private Thread scoreBuilder;
@@ -51,10 +51,10 @@ public class Asteroids extends AbstractGame {
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-		frame.addKeyListener(ship = new Ship(world));
+		ship = new Ship(world);
+		HumanShipAI human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true);
+		frame.addKeyListener(human);
 		ship.addStatsListener(stats);
-		Ship.setMax(4);
-		Ship.setSpeed(.25f);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newWelcome();

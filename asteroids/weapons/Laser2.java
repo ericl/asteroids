@@ -4,13 +4,15 @@ import java.util.*;
 import net.phys2d.raw.*;
 import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
-import static net.phys2d.math.MathUtil.*;
+import asteroids.handlers.*;
 import static asteroids.Util.*;
+import static net.phys2d.math.MathUtil.*;
 
 public class Laser2 extends Weapon {
 	private static float myRadius = 2;
-	private boolean thrust;
+	private boolean thrust, explode;
 	private float myError = range(-3e-1, 3e-1);
+	private float damage;
 	private int steps;
 
 	public Laser2() {
@@ -19,10 +21,27 @@ public class Laser2 extends Weapon {
 		setRotDamping(5);
 	}
 
+	public Laser2(int level) {
+		super(new Circle(myRadius), 1);
+		setRestitution(1);
+		setRotDamping(5);
+		setLevel(level);
+	}
+
 	public Laser2 duplicate() {
 		Laser2 l = new Laser2();
 		l.setLevel(getLevel());
 		return l;
+	}
+
+	public boolean canExplode() {
+		return explode || damage > .2;
+	}
+
+	public void collided(CollisionEvent e) {
+		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		explode = !(other instanceof Weapon) || other instanceof Laser3 || other instanceof Missile;
+		damage += Exploder.getDamage(e, this);
 	}
 
 	public Body getRemnant() {
@@ -57,6 +76,7 @@ public class Laser2 extends Weapon {
 				setRotation(getRotation() + delta);
 			} else
 				adjustAngularVelocity(myError);
+			adjustAngularVelocity(myError);
 		}
 	}
 

@@ -97,7 +97,7 @@ public class WeaponSys {
 		c.setRotation(origin.getRotation()+angle);
 		float xc = (float)Math.sin(origin.getRotation()+angle);
 		float yc = (float)Math.cos(origin.getRotation()+angle);
-		float sr = ((Visible)origin).getRadius() * 2 / 3; // estimated length
+		float sr = ((Visible)origin).getRadius(); // estimated length
 		c.setPosition(origin.getPosition().getX()+xc*sr, origin.getPosition().getY()-yc*sr);
 		c.adjustVelocity(v(weapon.getLaunchSpeed()*xc, weapon.getLaunchSpeed()*-yc));
 		c.adjustVelocity((Vector2f)origin.getVelocity());
@@ -107,6 +107,7 @@ public class WeaponSys {
 			c.addExcludedBody(el.get(i));
 		for (Weapon f : fired)
 			c.addExcludedBody(f);
+//		c.addBit(1l); // disable weapon collision
 		for (Stats stat : stats)
 			stat.fired(c);
 		return c;

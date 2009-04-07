@@ -22,7 +22,7 @@ import static asteroids.Util.*;
 
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
-	private static final int NUM_PLAYERS = 3;
+	private static final int NUM_PLAYERS = 2;
 	protected Field scenario;
 	protected Pointer[] pointer = new Pointer[NUM_PLAYERS];
 	protected Entity[] ships = new Entity[NUM_PLAYERS];
@@ -52,7 +52,7 @@ public class MPAsteroids extends AbstractGame {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
-			Entity ship = new Satellite(world) {
+			Entity ship = new Frigate(world) {
 				public void reset() {
 					super.reset();
 					setPosition(350*foo, 200*(foo % 2));
@@ -61,17 +61,9 @@ public class MPAsteroids extends AbstractGame {
 			ships[i] = ship;
 		}
 		if (NUM_PLAYERS > 1) {
-			ComputerShip ship = new ComputerShip(world, true) {
+			Entity ship = new Ship(world) {
 				public boolean canTarget() {
 					return true;
-				}
-
-				public void keyPressed(KeyEvent e) {
-					switch (e.getKeyCode()) {
-						case KeyEvent.VK_Q:
-							return;
-					}
-					super.keyPressed(e);
 				}
 
 				public void reset() {
@@ -79,10 +71,20 @@ public class MPAsteroids extends AbstractGame {
 					setPosition(400, 200);
 				}
 			};
-			frame.addKeyListener(ship);
+			HumanShipAI human = new HumanShipAI(world, ship, 500, true) {
+				public void keyPressed(KeyEvent e) {
+					switch (e.getKeyCode()) {
+						case KeyEvent.VK_Q:
+							return;
+					}
+					super.keyPressed(e);
+				}
+			};
+			frame.addKeyListener(human);
 			ships[1] = ship;
 		}
-		ComputerShip ship = new ComputerShip(world, true) {
+
+		Entity ship = new Ship(world) {
 			public boolean canTarget() {
 				return true;
 			}
@@ -90,33 +92,33 @@ public class MPAsteroids extends AbstractGame {
 			public String toString() {
 				return "Controls: wasd, `, 1";
 			}
+		};
 
+		HumanShipAI human = new HumanShipAI(world, ship, 500, true) {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
-					case 'a': torque = -8e-5f; notifyInput(); break;
-					case 'd': torque = 8e-5f; notifyInput(); break;
-					case 'w': accel = 30*A; notifyInput(); break;
-					case 's': accel = -15*A; notifyInput(); break;
-					case '`': fire = true; notifyInput(); break;
-					case KeyEvent.VK_1: launch = true; notifyInput(); break;
+					case 'a': ship.modifyTorque(-8e-5f); notifyInput(true); break;
+					case 'd': ship.modifyTorque(8e-5f); notifyInput(true); break;
+					case 'w': ship.setAccel(7.5f); notifyInput(true); break;
+					case 's': ship.setAccel(-3.75f); notifyInput(true); break;
+					case '`': ship.startFiring(); notifyInput(true); break;
+					case '1': ship.startLaunching(); notifyInput(true); break;
 				}
 			}
 
 			public void keyReleased(KeyEvent e) {
 				switch (e.getKeyChar()) {
 					case 'a':
-					case 'd': torque = 0; notifyInput(); break;
+					case 'd': ship.modifyTorque(0); notifyInput(false); break;
 					case 'w':
-					case 's': accel = 0; notifyInput(); break;
-					case '`': fire = false; notifyInput(); break;
-					case KeyEvent.VK_1: launch = false; notifyInput(); break;
+					case 's': ship.setAccel(0); notifyInput(false); break;
+					case '`': ship.stopFiring(); notifyInput(false); break;
+					case '1': ship.stopLaunching(); notifyInput(false); break;
 				}
 			}
 		};
-		frame.addKeyListener(ship);
+		frame.addKeyListener(human);
 		ships[0] = ship;
-		Ship.setMax(4);
-		Ship.setSpeed(.25f);
 		for (int i=0; i < NUM_PLAYERS; i++) {
 			Explodable[] targets = new Explodable[NUM_PLAYERS-1];
 			int x = 0;

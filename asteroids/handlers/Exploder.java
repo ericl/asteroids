@@ -32,7 +32,7 @@ public class Exploder implements CollisionListener {
 	 * there are 63 bits/groups available for use so they wrap around
 	 */
 	private class CollisionGrouper {
-		private long nextmask = 1l;
+		private long nextmask = 2l;
 
 		/**
 		 * @return	Bitmask of next available group.
@@ -42,7 +42,7 @@ public class Exploder implements CollisionListener {
 				return b.getBitmask();
 			nextmask = nextmask << 1;
 			if (nextmask == 0)
-				nextmask = 1l;
+				nextmask = 2l; // 1 reserved for weapons
 			return nextmask;
 		}
 	}

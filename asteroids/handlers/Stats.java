@@ -8,7 +8,6 @@ import java.net.*;
 import java.util.*;
 import java.security.*;
 import net.phys2d.raw.*;
-import asteroids.bodies.*;
 import asteroids.ai.*;
 
 public class Stats {
@@ -17,7 +16,7 @@ public class Stats {
 	protected Field scenario;
 	protected int hit = 0, att = 0, otherPoints = 0, myPoints = 0, finalScore = -1;
 	protected boolean finalized;
-	protected Ship myShip;
+	protected Entity myShip;
 	protected double dmg = 0;
 
 	/**
@@ -34,7 +33,7 @@ public class Stats {
 		dmg = 0;
 	}
 
-	public void setShip(Ship ship) {
+	public void setShip(Entity ship) {
 		myShip = ship;
 	}
 
@@ -65,11 +64,10 @@ public class Stats {
 			return;
 		if (victim instanceof Targetable) {
 			Targetable t = (Targetable)victim;
-			if (killer == myShip) {
+			if (killer == myShip)
 				myPoints += t.getPointValue();
-			} else {
+			else
 				otherPoints += t.getPointValue();
-			}
 		}
 	}
 
@@ -88,7 +86,7 @@ public class Stats {
 		if (finalized)
 			return finalScore;
 		else
-			return otherPoints / 10 + myPoints + scenario.asteroids() / 10;
+			return otherPoints / 5 + myPoints + scenario.asteroids() / 10;
 	}
 
 	/**

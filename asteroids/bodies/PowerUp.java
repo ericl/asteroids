@@ -19,6 +19,7 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 
 	public PowerUp(ROVector2f[] raw, String img, float nativesize, float size) {
 		super(raw, img, nativesize, size);
+		addBit(1l);
 		setDamping(1);
 		setMaxVelocity(20, 20);
 	}
@@ -26,18 +27,18 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 	public static PowerUp random() {
 		switch ((int)(20*Math.random())) {
 			case 0:
-			case 1: return new RandomWeapon();
-			case 2:
-			case 3: return new Invincibility();
+			case 1:
+			case 2: return new Invincibility();
+			case 3:
 			case 4:
 			case 5:
-			case 6:
-			case 7: return new WeaponPower();
+			case 6: return new WeaponPower();
+			case 7:
 			case 8:
 			case 9:
 			case 10:
-			case 11:
-			case 12: return new MissilePower();
+			case 11: return new MissilePower();
+			case 12:
 			default: return new ArmorRecovery();
 		}
 	}
@@ -48,8 +49,8 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		if (other instanceof Ship) {
-			up((Ship)other);
+		if (other instanceof Enhancable) {
+			up((Enhancable)other);
 			explode = true;
 		}
 	}
@@ -57,7 +58,7 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 	/**
 	 * @param	ship	The ship to be powered up.
 	 */
-	protected abstract void up(Ship ship);
+	protected abstract void up(Enhancable ship);
 
 	public Body getRemnant() {
 		return new PowerUpExplosion();

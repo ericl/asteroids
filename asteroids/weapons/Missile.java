@@ -27,7 +27,16 @@ public class Missile extends Weapon implements Automated {
 		return new Missile(world);
 	}
 
+	public void setAI(AI ai) {}
+	public void startFiring() {}
+	public void stopFiring() {}
+	public void startLaunching() {}
+	public void stopLaunching() {}
+	public void selfDestruct() {}
+	public void cloak() {}
+	public void uncloak() {}
 	public void setAccel(float a) {}
+
 	public void modifyTorque(float t) {
 		torque = t;
 	}
@@ -87,9 +96,7 @@ public class Missile extends Weapon implements Automated {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		if (other instanceof Entity)
-			explode = true;
-		if (other instanceof Missile && ((Missile)other).getOrigin() != origin)
+		if (other instanceof Entity || other instanceof Missile && ((Missile)other).getOrigin() != origin || other instanceof Laser3)
 			explode = true;
 	}
 
