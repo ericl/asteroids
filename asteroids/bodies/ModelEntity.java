@@ -175,8 +175,6 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 				cloak = Integer.MAX_VALUE;
 		if (destruct)
 			world.remove(this);
-		weapons.update();
-		missiles.update();
 	}
 
 	public void addStatsListener(Stats s) {

@@ -3,12 +3,19 @@
  */
 
 package asteroids.weapons;
+
 import java.util.*;
-import net.phys2d.raw.*;
-import net.phys2d.math.*;
-import asteroids.handlers.*;
+import java.util.Collections;
+
 import asteroids.display.*;
+
+import asteroids.handlers.*;
 import asteroids.handlers.Timer;
+
+import net.phys2d.math.*;
+
+import net.phys2d.raw.*;
+
 import static asteroids.Util.*;
 
 public class WeaponSys {
@@ -18,8 +25,43 @@ public class WeaponSys {
 	protected World world;
 	protected Weapon weapon;
 	protected long lastFired;
-	protected Queue<Weapon> fired = new LinkedList<Weapon>();
+	protected LifeQueue fired = new LifeQueue();
 	protected float burst;
+
+	private class LifeQueue {
+		Map<Long,Queue<Weapon>> types = new HashMap<Long,Queue<Weapon>>();	
+		Set<Weapon> all = new HashSet<Weapon>();
+
+		private void gc() {
+			for (Long type : types.keySet()) {
+				Queue<Weapon> fired = types.get(type);
+				while (!fired.isEmpty() && fired.peek().exploded()) {
+					Weapon w = fired.remove();
+					all.remove(w);
+					world.remove(w);
+					origin.removeExcludedBody(w);
+				}
+				if (fired.size() < 1)
+					types.remove(type);
+			}
+		}
+
+		public void add(Weapon w) {
+			Long type = w.getLifetime();
+			Queue<Weapon> fired = types.get(type);
+			if (fired == null) {
+				fired = new LinkedList<Weapon>();
+				types.put(type, fired);
+			}
+			fired.add(w);
+			all.add(w);
+			gc();
+		}
+
+		public Set<Weapon> getActive() {
+			return Collections.unmodifiableSet(all);
+		}
+	}
 
 	public WeaponSys(Body origin, World wo, Weapon w) {
 		if (w != null)
@@ -105,7 +147,7 @@ public class WeaponSys {
 		BodyList el = origin.getExcludedList();
 		for (int i=0; i < el.size(); i++)
 			c.addExcludedBody(el.get(i));
-		for (Weapon f : fired)
+		for (Weapon f : fired.getActive())
 			c.addExcludedBody(f);
 //		c.addBit(1l); // disable weapon collision
 		for (Stats stat : stats)
@@ -115,13 +157,5 @@ public class WeaponSys {
 
 	public float getWeaponSpeed() {
 		return weapon.getWeaponSpeed();
-	}
-	
-	public void update() {
-		while (!fired.isEmpty() && fired.peek().exploded()) {
-			Weapon w = fired.remove();
-			world.remove(w);
-			origin.removeExcludedBody(w);
-		}
 	}
 }
