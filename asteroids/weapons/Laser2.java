@@ -12,6 +12,7 @@ public class Laser2 extends Weapon {
 	private static float myRadius = 2;
 	private boolean thrust, explode;
 	private float myError = range(-3e-1, 3e-1);
+	private float xmax, ymax;
 	private float damage;
 	private int steps;
 
@@ -64,19 +65,19 @@ public class Laser2 extends Weapon {
 				thrust = false;
 		}
 		Vector2f dir = direction(getRotation());
-		float accel = 20;
-		float v = getVelocity().length();
-		setDamping(v < 50 ? 0 : v < 100 ? .1f : .5f);
+		float accel = 10;
 		if (thrust) {
 			addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
-			if (steps < 200) {
+			adjustAngularVelocity(myError);
+			if (steps < 150) {
+				xmax = Math.max(xmax, Math.abs(getVelocity().getX()));
+				ymax = Math.max(ymax, Math.abs(getVelocity().getY()));
 				float delta = origin.getRotation() - getRotation();
 				float sign = sign(delta);
 				delta = sign*(float)Math.min(.05, Math.abs(delta));
 				setRotation(getRotation() + delta);
 			} else
-				adjustAngularVelocity(myError);
-			adjustAngularVelocity(myError);
+				setMaxVelocity(xmax, ymax);
 		}
 	}
 
@@ -113,6 +114,6 @@ public class Laser2 extends Weapon {
 	}
 
 	public float getReloadTime() {
-		return 1100;
+		return 1000;
 	}
 }

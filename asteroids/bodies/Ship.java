@@ -10,7 +10,7 @@ import net.phys2d.raw.*;
 
 import static asteroids.Util.*;
 
-public class Ship extends ModelEntity {
+public class Ship extends Entity {
 	protected static ROVector2f[] raw = {v(31,4), v(35,8), v(37,16), v(38,23), v(37,29), v(40,28), v(55,28), v(55,32), v(41,40), v(37,36), v(38,45), v(24,45), v(24,36), v(22,40), v(8,33), v(8,28), v(23,28), v(27,30), v(26,24), v(26,16), v(28,7)};
 	protected int thrust;
 
@@ -28,13 +28,9 @@ public class Ship extends ModelEntity {
 
 	public void reset() {
 		super.reset();
+		raiseShield = false;
 		weapons.setRandomWeaponType();
 		weapons.incrRandomWeaponLevel();
-		numMissiles = 5;
-	}
-
-	public boolean canTarget() {
-		return cloak > 0;
 	}
 
 	public String getTexturePath() {

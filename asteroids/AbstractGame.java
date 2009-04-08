@@ -28,49 +28,22 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	public final static Color COLOR_BOLD = Color.ORANGE, COLOR = Color.lightGray;
 
 	private class MainLoop extends Thread {
-		long sleep_init, sleep_end, graphics_init, graphics_end, physics_init, physics_end, update_init, update_end;
 		int steps;
 		float dt;
 		public void run() {
 			Timer timer = new Timer(60f);
 			while (running) {
 				steps++;
-				sleep_init = System.nanoTime();
 				dt = timer.tick();
-				sleep_end = System.nanoTime();
 				while (pause) try {
 					Thread.sleep(Long.MAX_VALUE);
 				} catch (InterruptedException e) {
 					timer.reset();
 				}
-				graphics_init = System.nanoTime();
 				doGraphics();
-				physics_init = graphics_end = System.nanoTime();
 				doPhysics(dt);
-				update_init = physics_end = System.nanoTime();
 				update();
-				update_end = System.nanoTime();
-//				assert stat();
 			}
-		}
-
-		public boolean stat() {
-			if (steps % 100 == 0) {
-				double sleep = (sleep_end - sleep_init) / 1e9 / dt;
-				double graphics = (graphics_end - graphics_init) / 1e9 / dt;
-				double physics = (physics_end - physics_init) / 1e9 / dt;
-				double update = (update_end - update_init) / 1e9 / dt;
-				System.out.println("\nFRAME " + steps);
-				System.out.println("Sleep: " + percent(sleep));
-				System.out.println("Graphics: " + percent(graphics));
-				System.out.println("Physics: " + percent(physics));
-				System.out.println("Update: " + percent(update));
-			}
-			return true;
-		}
-
-		private String percent(double frac) {
-			return (int)(frac*1000)/10 + "%";
 		}
 	}
 

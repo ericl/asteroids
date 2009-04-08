@@ -11,6 +11,6 @@ import java.util.*;
 import net.phys2d.raw.*;
 
 public interface Asteroid extends Explodable, Drawable {
-	public static int MIN_SIZE = (int)Math.sqrt(10), BASE_CHANCE = 7;
+	public static int MIN_SIZE = (int)Math.sqrt(10), BASE_CHANCE = 12;
 	public void addPowerups(List<Body> list);
 }

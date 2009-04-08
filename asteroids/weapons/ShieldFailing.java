@@ -6,7 +6,7 @@ package asteroids.weapons;
 
 import asteroids.handlers.*;
 
-import asteroids.ai.*;
+import asteroids.display.*;
 
 import net.phys2d.math.*;
 
@@ -18,9 +18,9 @@ public class ShieldFailing extends Explosion {
 	private double inittime = Timer.gameTime();
 	private int frame = 1;
 	private float scale = 1;
-	private Targetable ship;
+	private Visible ship;
 
-	public ShieldFailing(Targetable ship, float radius) {
+	public ShieldFailing(Visible ship, float radius) {
 		super(TrackingMode.NONE);
 		this.ship = ship;
 		scale = radius / 10;
@@ -40,13 +40,18 @@ public class ShieldFailing extends Explosion {
 		return "pixmaps/exp2/" + frame + ".png";
 	}
 
+	private void recalcFrame() {
+		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
+	}
+
 	public void endFrame() {
 		super.endFrame();
-		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
+		recalcFrame();
 		setPosition(ship.getPosition().getX(), ship.getPosition().getY());
 	}
 
 	public boolean dead() {
+		recalcFrame();
 		return frame > FRAMES;
 	}
 

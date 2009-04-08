@@ -21,13 +21,13 @@ import net.phys2d.raw.*;
 
 import static asteroids.Util.*;
 
-// TODO implement cloak as a shield
-public abstract class ModelEntity extends TexturedPolyBody implements Targetable, Automated, Entity, Drawable, Enhancable {
-	protected static int CLOAK_DELAY = 75;
+public abstract class Entity extends TexturedPolyBody implements Targetable, Automated, Drawable, Enhancable {
+	protected static int CLOAK_DELAY = 75, CLOAK_MAX = 15000;
+	protected long cloaktime = CLOAK_MAX, t = Timer.gameTime();
 	protected WeaponSys missiles;
 	protected WeaponSys weapons;
 	protected World world;
-	protected Shield shield;
+	protected Shield shield, oldshield;
 	protected Color color = Color.ORANGE;
 	protected Explosion explosion;
 	protected int deaths, numMissiles;
@@ -40,7 +40,7 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
 	protected boolean raiseShield = true;
 
-	public ModelEntity(ROVector2f[] raw, String img, float nativesize, float size, float mass, World world, Weapon weapon) {
+	public Entity(ROVector2f[] raw, String img, float nativesize, float size, float mass, World world, Weapon weapon) {
 		super(raw, img, nativesize, size, mass);
 		this.world = world;
 		setRotDamping(mass*mass*mass/843750);
@@ -73,14 +73,19 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 		cloak = Integer.MAX_VALUE;
 		warningStart = invincibleEnd = 0;
 		raiseShield = true;
+		cloaktime = CLOAK_MAX;
 	}
 
 	public float getSpeedLimit() {
 		return 50;
 	}
 
+	public long cloakTime() {
+		return cloaktime;
+	}
+
 	public void cloak() {
-		if (shield == null)
+		if (cloaktime > 1000)
 			cloak = CLOAK_DELAY;
 	}
 
@@ -169,8 +174,8 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 		torque = t;
 	}
 
-	public void setShield(Shield s) {
-		shield = s;
+	public void raiseShields() {
+		raiseShield = true;
 	}
 
 	protected Shield getShield() {
@@ -178,7 +183,21 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 	}
 
 	protected void updateShield() {
+		if (canTarget()) {
+			if (shield == null && oldshield != null) {
+				shield = oldshield;
+				world.add(shield);
+			}
+		} else {
+			if (shield != null) {
+				world.remove(shield);
+				oldshield = shield;
+				shield = null;
+			}
+		}
 		if (raiseShield) {
+			if (shield != null)
+				world.remove(shield);
 			world.add(shield = getShield());
 			raiseShield = false;
 		}
@@ -211,6 +230,17 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 				cloak = Integer.MAX_VALUE;
 		if (destruct)
 			world.remove(this);
+		long dt = Timer.gameTime() - t;
+		t = Timer.gameTime();
+		if (!canTarget())
+			cloaktime -= dt;
+		else
+			cloaktime += dt / 3;
+		if (cloaktime < 0) {
+			uncloak();
+			cloaktime = 0;
+		} else if (cloaktime > CLOAK_MAX)
+			cloaktime = CLOAK_MAX;
 	}
 
 	public void addStatsListener(Stats s) {
@@ -224,7 +254,7 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 	}
 
 	public boolean canTarget() {
-		return true;
+		return cloak > 0 || cloaktime == 0;
 	}
 
 	public int getPointValue() {

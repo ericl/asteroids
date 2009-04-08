@@ -9,6 +9,7 @@ import java.util.*;
 import java.security.*;
 import net.phys2d.raw.*;
 import asteroids.ai.*;
+import asteroids.bodies.*;
 
 public class Stats {
 	protected Vector<String> list = new Vector<String>();

@@ -8,10 +8,10 @@ public class OrangeShield extends Shield {
 	}
 
 	public String getTexturePath() {
-		return "pixmaps/orange-shield.png";
+		return damage > getMax() ? "" : "pixmaps/orange-shield.png";
 	}
 
 	public float getMax() {
-		return 2;
+		return 2f;
 	}
 }

@@ -39,12 +39,17 @@ public class PowerUpExplosion extends Explosion {
 		return "pixmaps/exp3/" + frame + ".png";
 	}
 
-	public void endFrame() {
-		super.endFrame();
+	private void recalcFrame() {
 		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 
+	public void endFrame() {
+		super.endFrame();
+		recalcFrame();
+	}
+
 	public boolean dead() {
+		recalcFrame();
 		return frame > FRAMES;
 	}
 

@@ -15,7 +15,6 @@ import net.phys2d.raw.shapes.*;
 
 import static asteroids.Util.*;
 
-// TODO shield interface: cloaks/other overlays
 public class Shield extends Body implements Explodable, Textured, Drawable, Overlay, Targetable {
 	protected Entity ship;
 	protected float damage;
@@ -27,15 +26,14 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 		this.radius = ship.getRadius() * 4 / 3;
 		this.ship = ship;
 		this.addExcludedBody((Body)ship);
-		ship.setShield(this);
 	}
 	
 	public Color getColor() {
 		return Color.CYAN;
 	}
 
-	protected float getMax() {
-		return 5;
+	public float getMax() {
+		return 4;
 	}
 
 	public boolean canTarget() {
@@ -59,7 +57,7 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	}
 
 	public String getTexturePath() {
-		return "pixmaps/ship-shield.png";
+		return damage > getMax() ? "" : "pixmaps/ship-shield.png";
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {

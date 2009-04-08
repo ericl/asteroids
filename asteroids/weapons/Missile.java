@@ -6,6 +6,7 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 
 import asteroids.ai.*;
+import asteroids.bodies.*;
 import static asteroids.Util.*;
 
 public class Missile extends Weapon implements Automated {

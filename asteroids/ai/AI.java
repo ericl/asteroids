@@ -90,8 +90,11 @@ public abstract class AI {
 	public void update() {
 		if (steps % 300 == 0)
 			selectTarget();
-		if (steps % 5 == 0 && trackTarget())
+		if (steps % 5 == 0 && trackTarget()) {
 			ship.fire();
+			if (oneIn(50))
+				ship.launchMissile();
+		}
 		steps++;
 	}
 }

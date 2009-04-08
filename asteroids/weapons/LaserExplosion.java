@@ -35,16 +35,22 @@ public class LaserExplosion extends Explosion {
 	}
 
 	public String getTexturePath() {
-		if (dead()) return null;
+		if (dead())
+			return null;
 		return "pixmaps/exp2/" + frame + ".png";
+	}
+
+	private void recalcFrame() {
+		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 
 	public void endFrame() {
 		super.endFrame();
-		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
+		recalcFrame();
 	}
 
 	public boolean dead() {
+		recalcFrame();
 		return frame > FRAMES;
 	}
 

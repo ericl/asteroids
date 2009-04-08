@@ -198,7 +198,7 @@ public class MPAsteroids extends AbstractGame {
 		g2d.setColor(COLOR);
 		g2d.drawString(shield, display.w(-110),display.h(-79));
 		g2d.setColor(ship.getColor());
-		g2d.drawString("Armor: " + hull,
+		g2d.drawString("Hull: " + hull,
 			display.w(-110), display.h(-59));
 		g2d.setColor(COLOR);
 		g2d.drawString("Missiles: " + ship.numMissiles(),

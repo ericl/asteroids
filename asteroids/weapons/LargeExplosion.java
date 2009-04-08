@@ -33,12 +33,17 @@ public class LargeExplosion extends Explosion {
 		return "pixmaps/exp1/" + frame + ".png";
 	}
 
-	public void endFrame() {
-		super.endFrame();
+	private void recalcFrame() {
 		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 
+	public void endFrame() {
+		super.endFrame();
+		recalcFrame();
+	}
+
 	public boolean dead() {
+		recalcFrame();
 		return frame > FRAMES;
 	}
 
