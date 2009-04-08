@@ -24,11 +24,14 @@ import java.awt.image.BufferStrategy;
 
 import java.net.URL;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 
+import net.phys2d.raw.Body;
 import net.phys2d.raw.BodyList;
 import net.phys2d.raw.World;
 
@@ -113,11 +116,21 @@ public class Display {
 	 */
 	public void drawWorld(World world) {
 		BodyList bodies = world.getBodies();
-		for (int i=0; i < bodies.size(); i++)
-			if (bodies.get(i) instanceof Textured)
+		List<Body> top = new ArrayList<Body>();
+		for (int i=0; i < bodies.size(); i++) {
+			if (bodies.get(i) instanceof Overlay)
+				top.add(bodies.get(i));
+			else if (bodies.get(i) instanceof Textured)
 				drawTextured((Textured)bodies.get(i));
 			else if (bodies.get(i) instanceof Drawable)
 				drawDrawable((Drawable)bodies.get(i));
+		}
+		for (Body b : top) {
+			if (b instanceof Textured)
+				drawTextured((Textured)b);
+			else if (b instanceof Drawable)
+				drawDrawable((Drawable)b);
+		}
 	}
 
 	/**

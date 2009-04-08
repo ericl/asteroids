@@ -32,7 +32,9 @@ public class Exploder implements CollisionListener {
 	 * there are 63 bits/groups available for use so they wrap around
 	 */
 	private class CollisionGrouper {
-		private long nextmask = 2l;
+		// 1l reserved for shield + powerup
+		private long initmask = 2l;
+		private long nextmask = initmask;
 
 		/**
 		 * @return	Bitmask of next available group.
@@ -42,7 +44,7 @@ public class Exploder implements CollisionListener {
 				return b.getBitmask();
 			nextmask = nextmask << 1;
 			if (nextmask == 0)
-				nextmask = 2l; // 1 reserved for weapons
+				nextmask = initmask;
 			return nextmask;
 		}
 	}
@@ -159,6 +161,8 @@ public class Exploder implements CollisionListener {
 			else
 				rem.setPosition(body.getPosition().getX(),
 					body.getPosition().getY());
+			if (rem instanceof Explosion)
+				((Explosion)rem).setTracking(body, other);
 			rem.adjustVelocity(v);
 			rem.setRotation(body.getRotation());
 			rem.adjustAngularVelocity(body.getAngularVelocity());

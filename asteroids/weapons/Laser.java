@@ -64,7 +64,7 @@ public class Laser extends Weapon {
 	}
 
 	public Body getRemnant() {
-		return new LaserExplosion();
+		return new LaserExplosion(Explosion.TrackingMode.TARGET);
 	}
 	
 	public List<Body> getFragments() {

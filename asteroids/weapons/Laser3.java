@@ -25,7 +25,7 @@ public class Laser3 extends Weapon {
 	}
 
 	public Body getRemnant() {
-		return new LaserExplosion(2);
+		return new LaserExplosion(Explosion.TrackingMode.TARGET, 2);
 	}
 
 	public List<Body> getFragments() {

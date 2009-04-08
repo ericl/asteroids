@@ -33,27 +33,30 @@ public class WeaponSys {
 		Set<Weapon> all = new HashSet<Weapon>();
 
 		private void gc() {
+			List<Long> remove = new ArrayList<Long>();
 			for (Long type : types.keySet()) {
-				Queue<Weapon> fired = types.get(type);
-				while (!fired.isEmpty() && fired.peek().exploded()) {
-					Weapon w = fired.remove();
+				Queue<Weapon> queue = types.get(type);
+				while (!queue.isEmpty() && queue.peek().exploded()) {
+					Weapon w = queue.remove();
 					all.remove(w);
 					world.remove(w);
 					origin.removeExcludedBody(w);
 				}
-				if (fired.size() < 1)
-					types.remove(type);
+				if (queue.size() < 1)
+					remove.add(type);
 			}
+			for (Long type : remove)
+				types.remove(type);
 		}
 
 		public void add(Weapon w) {
 			Long type = w.getLifetime();
-			Queue<Weapon> fired = types.get(type);
-			if (fired == null) {
-				fired = new LinkedList<Weapon>();
-				types.put(type, fired);
+			Queue<Weapon> queue = types.get(type);
+			if (queue == null) {
+				queue = new LinkedList<Weapon>();
+				types.put(type, queue);
 			}
-			fired.add(w);
+			queue.add(w);
 			all.add(w);
 			gc();
 		}
@@ -149,7 +152,6 @@ public class WeaponSys {
 			c.addExcludedBody(el.get(i));
 		for (Weapon f : fired.getActive())
 			c.addExcludedBody(f);
-//		c.addBit(1l); // disable weapon collision
 		for (Stats stat : stats)
 			stat.fired(c);
 		return c;

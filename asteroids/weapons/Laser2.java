@@ -35,7 +35,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public boolean canExplode() {
-		return explode || damage > .2;
+		return explode || damage > .3;
 	}
 
 	public void collided(CollisionEvent e) {
@@ -45,7 +45,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public Body getRemnant() {
-		return new LargeExplosion(.75f);
+		return new LargeExplosion(Explosion.TrackingMode.TARGET, .75f);
 	}
 
 	public List<Body> getFragments() {

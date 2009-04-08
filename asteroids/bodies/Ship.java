@@ -19,7 +19,7 @@ public class Ship extends ModelEntity {
 	}
 
 	protected float getMaxArmor() {
-		return 6;
+		return 3;
 	}
 
 	public int getPointValue() {
@@ -52,9 +52,5 @@ public class Ship extends ModelEntity {
 		if (accel > 0)
 			thrust = 5;
 		super.accel();
-	}
-
-	public String toString() {
-		return "Controls: arrow keys, space, f";
 	}
 }

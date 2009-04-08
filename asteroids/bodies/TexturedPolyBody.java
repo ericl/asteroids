@@ -9,7 +9,7 @@ import net.phys2d.math.*;
 import asteroids.display.*;
 
 public abstract class TexturedPolyBody extends PolyBody implements Textured {
-	private String img;
+	protected String img;
 
 	/**
 	 * @param	raw	The coordinates making up the polygon.

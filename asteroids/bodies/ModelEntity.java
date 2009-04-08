@@ -21,11 +21,13 @@ import net.phys2d.raw.*;
 
 import static asteroids.Util.*;
 
+// TODO implement cloak as a shield
 public abstract class ModelEntity extends TexturedPolyBody implements Targetable, Automated, Entity, Drawable, Enhancable {
 	protected static int CLOAK_DELAY = 75;
 	protected WeaponSys missiles;
 	protected WeaponSys weapons;
 	protected World world;
+	protected Shield shield;
 	protected Color color = Color.ORANGE;
 	protected Explosion explosion;
 	protected int deaths, numMissiles;
@@ -36,6 +38,7 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 	protected int textStatus = Integer.MAX_VALUE; // for blinking only
 	protected long warningStart; // end of warning -> not invincible
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
+	protected boolean raiseShield = true;
 
 	public ModelEntity(ROVector2f[] raw, String img, float nativesize, float size, float mass, World world, Weapon weapon) {
 		super(raw, img, nativesize, size, mass);
@@ -49,11 +52,13 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 
 	public void setAI(AI ai) {
 		this.ai = ai;
-		ai.reset();
+		if (ai != null)
+			ai.reset();
 	}
 
 	public void reset() {
-		ai.reset();
+		if (ai != null)
+			ai.reset();
 		BodyList excluded = getExcludedList();
 		while (excluded.size() > 0)
 			removeExcludedBody(excluded.get(0));
@@ -67,6 +72,7 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 		numMissiles = 0;
 		cloak = Integer.MAX_VALUE;
 		warningStart = invincibleEnd = 0;
+		raiseShield = true;
 	}
 
 	public float getSpeedLimit() {
@@ -74,7 +80,8 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 	}
 
 	public void cloak() {
-		cloak = CLOAK_DELAY;
+		if (shield == null)
+			cloak = CLOAK_DELAY;
 	}
 
 	public void uncloak() {
@@ -145,6 +152,10 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 		return Math.max(0, (getMaxArmor() - damage) / getMaxArmor());
 	}
 
+	public double shieldInfo() {
+		return shield == null ? -1 : shield.health();
+	}
+
 	protected float getMaxArmor() {
 		return 3;
 	}
@@ -158,12 +169,37 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 		torque = t;
 	}
 
+	public void setShield(Shield s) {
+		shield = s;
+	}
+
+	protected Shield getShield() {
+		return new Shield(this);
+	}
+
+	protected void updateShield() {
+		if (raiseShield) {
+			world.add(shield = getShield());
+			raiseShield = false;
+		}
+		if (shield != null) {
+			if (canExplode() || shield.canExplode()) {
+				world.remove(shield);
+				shield = null;
+			} else {
+				shield.setPosition(getPosition().getX(), getPosition().getY());
+			}
+		}
+	}
+
 	public void endFrame() {
 		super.endFrame();
+		updateShield();
 		float v = getVelocity().length();
 		float limit = getSpeedLimit();
 		setDamping(v < limit ? 0 : v < limit*2 ? .1f : .5f);
-		ai.update();
+		if (ai != null)
+			ai.update();
 		accel();
 		torque();
 		cloak--;
@@ -184,7 +220,7 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 
 	public Body getRemnant() {
 		deaths++;
-		return explosion = new LargeExplosion(1.5f);
+		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 1.5f);
 	}
 
 	public boolean canTarget() {
@@ -215,6 +251,7 @@ public abstract class ModelEntity extends TexturedPolyBody implements Targetable
 	public void collided(CollisionEvent event) {
 		if (!isInvincible())
 			damage += Exploder.getDamage(event, this);
+		updateShield();
 	}
 
 	public List<Body> getFragments() {

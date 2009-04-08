@@ -17,11 +17,12 @@ public class LaserExplosion extends Explosion {
 	private int frame = 1;
 	private float scale = 1;
 
-	public LaserExplosion() {
-		// noop
+	public LaserExplosion(TrackingMode mode) {
+		super(mode);
 	}
 
-	public LaserExplosion(float scaler) {
+	public LaserExplosion(TrackingMode mode, float scaler) {
+		super(mode);
 		scale = scaler;
 	}
 
@@ -39,6 +40,7 @@ public class LaserExplosion extends Explosion {
 	}
 
 	public void endFrame() {
+		super.endFrame();
 		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 

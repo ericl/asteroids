@@ -79,7 +79,7 @@ public class Missile extends Weapon implements Automated {
 	}
 
 	public Body getRemnant() {
-		return new LargeExplosion(.5f);
+		return new LargeExplosion(Explosion.TrackingMode.TARGET, .5f);
 	}
 
 	public List<Body> getFragments() {

@@ -61,7 +61,7 @@ public class MPAsteroids extends AbstractGame {
 			ships[i] = ship;
 		}
 		if (NUM_PLAYERS > 1) {
-			Entity ship = new Ship(world) {
+			Entity ship = new Frigate(world) {
 				public boolean canTarget() {
 					return true;
 				}
@@ -69,6 +69,10 @@ public class MPAsteroids extends AbstractGame {
 				public void reset() {
 					super.reset();
 					setPosition(400, 200);
+				}
+
+				public String toString() {
+					return "Controls: arrow keys, space, f";
 				}
 			};
 			HumanShipAI human = new HumanShipAI(world, ship, 500, true) {
@@ -84,7 +88,7 @@ public class MPAsteroids extends AbstractGame {
 			ships[1] = ship;
 		}
 
-		Entity ship = new Ship(world) {
+		Entity ship = new Frigate(world) {
 			public boolean canTarget() {
 				return true;
 			}
@@ -187,6 +191,12 @@ public class MPAsteroids extends AbstractGame {
 		String hull = "Infinity";
 		if (!ship.isInvincible())
 			hull = (int)(ship.health()*1000)/10+"%";
+		String shield = "";
+		double s = ship.shieldInfo();
+		if (s >= 0)
+			shield = "Shield: " + (int)(s*1000)/10 + "%";
+		g2d.setColor(COLOR);
+		g2d.drawString(shield, display.w(-110),display.h(-79));
 		g2d.setColor(ship.getColor());
 		g2d.drawString("Armor: " + hull,
 			display.w(-110), display.h(-59));

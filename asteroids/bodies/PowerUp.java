@@ -61,7 +61,7 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 	protected abstract void up(Enhancable ship);
 
 	public Body getRemnant() {
-		return new PowerUpExplosion();
+		return new PowerUpExplosion(Explosion.TrackingMode.TARGET);
 	}
 
 	public List<Body> getFragments() {

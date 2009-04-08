@@ -12,8 +12,15 @@ public class Frigate extends ModelEntity {
 
 	public Frigate(World world) {
 		super(raw, "pixmaps/foo.png", 50, 30, 1000, world, new Laser());
-		if (oneIn(2))
-			weapons.upgrade();
+	}
+
+	public void reset() {
+		super.reset();
+		weapons.setWeaponType(new Laser());
+	}
+
+	protected Shield getShield() {
+		return new OrangeShield(this);
 	}
 
 	public int getPointValue() {
@@ -21,6 +28,6 @@ public class Frigate extends ModelEntity {
 	}
 
 	protected float getMaxArmor() {
-		return 2;
+		return 1;
 	}
 }

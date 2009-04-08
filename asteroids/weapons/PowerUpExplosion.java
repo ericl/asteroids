@@ -17,6 +17,10 @@ public class PowerUpExplosion extends Explosion {
 	private double inittime = Timer.gameTime();
 	private int frame = 1;
 
+	public PowerUpExplosion(TrackingMode mode) {
+		super(mode);
+	}
+
 	public float getRadius() {
 		return 12*SCALE;
 	}
@@ -30,11 +34,13 @@ public class PowerUpExplosion extends Explosion {
 	}
 
 	public String getTexturePath() {
-		if (dead()) return null;
+		if (dead())
+			return null;
 		return "pixmaps/exp3/" + frame + ".png";
 	}
 
 	public void endFrame() {
+		super.endFrame();
 		frame = 1 + (int)((Timer.gameTime() - inittime)/FRAMETIME*FRAMES);
 	}
 

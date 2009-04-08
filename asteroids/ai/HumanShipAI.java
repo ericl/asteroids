@@ -6,13 +6,13 @@ import java.awt.event.KeyEvent;
 import net.phys2d.raw.World;
 
 public class HumanShipAI extends ShipAI implements KeyListener {
-	protected int delay;
+	protected int delay, originalDelay;
 	protected boolean delayAI, active;
 	protected int activeTime;
 
 	public HumanShipAI(World world, Automated ship, int delay, boolean delayAI) {
 		super(world, ship);
-		this.delay = delay;
+		this.delay = originalDelay = delay;
 		this.delayAI = delayAI;
 		if (delayAI)
 			activeTime = delay;
@@ -28,12 +28,15 @@ public class HumanShipAI extends ShipAI implements KeyListener {
 
 	public void reset() {
 		super.reset();
+		delay = originalDelay;
 		activeTime = delayAI ? delay : 0;
 	}
 
 	public void notifyInput(boolean down) {
 		activeTime = delay;
 		active = down;
+		if (delay != Integer.MAX_VALUE)
+			delay += 5;
 	}
 
 	public void keyTyped(KeyEvent e) {}
