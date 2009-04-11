@@ -112,6 +112,12 @@ public class Exploder implements CollisionListener {
 		if (other instanceof Weapon)
 			for (Stats stat : stats)
 				stat.kill(((Weapon)other).getOrigin(), body, event);
+		else if (other instanceof Entity)
+			for (Stats stat : stats)
+				stat.kill((Entity)other, body, event);
+		else if (other instanceof Shield)
+			for (Stats stat : stats)
+				stat.kill(((Shield)other).getShip(), body, event);
 		Body rem = e.getRemnant();
 		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
 			return;

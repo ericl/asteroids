@@ -27,6 +27,10 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 		this.ship = ship;
 		this.addExcludedBody((Body)ship);
 	}
+
+	public Entity getShip() {
+		return ship;
+	}
 	
 	public Color getColor() {
 		return Color.CYAN;
