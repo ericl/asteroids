@@ -112,6 +112,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	public boolean launchMissile() {
 		if (numMissiles > 0) {
 			if (missiles.fire()) {
+				cloak = Integer.MAX_VALUE;
 				numMissiles--;
 				return true;
 			}
@@ -146,11 +147,19 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	public boolean fire() {
-		return weapons.fire();
+		if (weapons.fire()) {
+			cloak = Integer.MAX_VALUE;
+			return true;
+		}
+		return false;
 	}
 
 	public boolean fire(float rotation) {
-		return weapons.fire(rotation);
+		if (weapons.fire(rotation)) {
+			cloak = Integer.MAX_VALUE;
+			return true;
+		}
+		return false;
 	}
 
 	public float getWeaponSpeed() {
@@ -229,11 +238,9 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		torque();
 		cloak--;
 		if (fire)
-			if (fire() && !canTarget())
-				cloak = Integer.MAX_VALUE;
+			fire();
 		if (launch)
-			if (launchMissile() && !canTarget())
-				cloak = Integer.MAX_VALUE;
+			launchMissile();
 		if (destruct)
 			world.remove(this);
 		long dt = Timer.gameTime() - t;

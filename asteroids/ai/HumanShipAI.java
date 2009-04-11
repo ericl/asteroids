@@ -4,7 +4,7 @@ import java.awt.Dimension;
 
 import java.awt.event.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseListener;
+import javax.swing.event.MouseInputListener;
 
 import net.phys2d.raw.*;
 import net.phys2d.math.*;
@@ -13,7 +13,7 @@ import static net.phys2d.math.MathUtil.*;
 
 import static asteroids.Util.*;
 
-public class HumanShipAI extends ShipAI implements KeyListener, MouseListener {
+public class HumanShipAI extends ShipAI implements KeyListener, MouseInputListener {
 	protected int delay, originalDelay;
 	protected boolean delayAI, active;
 	protected Dimension screen;
@@ -81,15 +81,20 @@ public class HumanShipAI extends ShipAI implements KeyListener, MouseListener {
 		}
 	}
 
-	public void mousePressed(MouseEvent e) {
+	public void mouseDragged(MouseEvent e) {
 		Vector2f ds = sub(scale(v(screen), .5f), v(e.getPoint()));
 		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
 		ship.fire((float)tFinal);
+	}
+
+	public void mousePressed(MouseEvent e) {
+		mouseDragged(e);
 	}
 
 	public void mouseReleased(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	public void mouseClicked(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {}
 	public void keyTyped(KeyEvent e) {}
 }

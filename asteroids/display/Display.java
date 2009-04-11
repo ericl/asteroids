@@ -17,7 +17,7 @@ import java.awt.RenderingHints;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseListener;
+import javax.swing.event.MouseInputListener;
 
 import java.awt.geom.AffineTransform;
 
@@ -112,9 +112,11 @@ public class Display {
 		});
 	}
 
-	public void addMouseListener(MouseListener listener) {
-		for (int i=0; i < n; i++)
+	public void addMouseInputListener(MouseInputListener listener) {
+		for (int i=0; i < n; i++) {
+			screens[i].addMouseMotionListener(listener);
 			screens[i].addMouseListener(listener);
+		}
 	}
 
 	/**

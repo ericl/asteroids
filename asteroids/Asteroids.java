@@ -54,7 +54,7 @@ public class Asteroids extends AbstractGame {
 		ship = new Ship(world);
 		HumanShipAI human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true, display.getDimension());
 		frame.addKeyListener(human);
-		display.addMouseListener(human);
+		display.addMouseInputListener(human);
 		ship.addStatsListener(stats);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
@@ -105,7 +105,7 @@ public class Asteroids extends AbstractGame {
 			renderCenter(g2d, FONT_NORMAL, "This package is provided under the terms of the BSD License*", 55);
 			renderCenter(g2d, FONT_NORMAL, "Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster.", 35);
 			g2d.setColor(COLOR);
-			renderCenter(g2d, FONT_NORMAL, "Use arrow keys to navigate; space to fire.", 11);
+			renderCenter(g2d, FONT_NORMAL, "Use arrow keys to navigate; space/mouse to fire.", 11);
 			renderCenter(g2d, FONT_NORMAL, "Q - cancel game", -10);
 			renderCenter(g2d, FONT_NORMAL, "C - cloak ship", -30);
 			renderCenter(g2d, FONT_NORMAL, "F - launch missile", -50);
