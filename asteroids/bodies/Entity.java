@@ -142,11 +142,15 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	public void setAccel(float accel) {
-		this.accel =  accel;
+		this.accel = accel;
 	}
 
 	public boolean fire() {
 		return weapons.fire();
+	}
+
+	public boolean fire(float rotation) {
+		return weapons.fire(rotation);
 	}
 
 	public float getWeaponSpeed() {
@@ -214,6 +218,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	public void endFrame() {
 		super.endFrame();
 		updateShield();
+		weapons.gc();
+		missiles.gc();
 		float v = getVelocity().length();
 		float limit = getSpeedLimit();
 		setDamping(v < limit ? 0 : v < limit*2 ? .1f : .5f);

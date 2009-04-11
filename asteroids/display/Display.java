@@ -17,6 +17,7 @@ import java.awt.RenderingHints;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseListener;
 
 import java.awt.geom.AffineTransform;
 
@@ -109,6 +110,11 @@ public class Display {
 				resizetime = System.currentTimeMillis();
 			}
 		});
+	}
+
+	public void addMouseListener(MouseListener listener) {
+		for (int i=0; i < n; i++)
+			screens[i].addMouseListener(listener);
 	}
 
 	/**

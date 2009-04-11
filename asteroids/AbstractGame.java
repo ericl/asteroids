@@ -58,8 +58,11 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(dim);
 		frame.addKeyListener(this);
-		world = new World(v(0,0), 10, new QuadSpaceStrategy(20,5));
+		world = new World(v(0,0), 10, new QuadSpaceStrategy(20, 5));
+
+		/* IMPORTANT - enables endFrame() calls */
 		world.enableRestingBodyDetection(.1f, .1f, .1f);
+
 		mainLoop = new MainLoop();
 		display = makeDisplay();
 		final KeyboardFocusManager manager =

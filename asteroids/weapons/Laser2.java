@@ -6,18 +6,16 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
-import static net.phys2d.math.MathUtil.*;
 
 public class Laser2 extends Weapon {
 	private static float myRadius = 2;
 	private boolean thrust, explode;
-	private float myError = range(-3e-1, 3e-1);
 	private float xmax, ymax;
 	private float damage;
 	private int steps;
 
 	public Laser2() {
-		super(new Circle(myRadius), 1);
+		super(new Circle(myRadius), 10);
 		setRestitution(1);
 		setRotDamping(5);
 	}
@@ -68,16 +66,11 @@ public class Laser2 extends Weapon {
 		float accel = 10;
 		if (thrust) {
 			addForce(v(accel*getMass()*dir.getX(),accel*getMass()*dir.getY()));
-			adjustAngularVelocity(myError);
 			if (steps < 150) {
 				xmax = Math.max(xmax, Math.abs(getVelocity().getX()));
 				ymax = Math.max(ymax, Math.abs(getVelocity().getY()));
-				float delta = origin.getRotation() - getRotation();
-				float sign = sign(delta);
-				delta = sign*(float)Math.min(.05, Math.abs(delta));
-				setRotation(getRotation() + delta);
 			} else
-				setMaxVelocity(xmax, ymax);
+				setMaxVelocity(Math.max(40, xmax), Math.max(40, ymax));
 		}
 	}
 
@@ -101,6 +94,10 @@ public class Laser2 extends Weapon {
 		return 30;
 	}
 
+	public int getNum() {
+		return 1 + Math.min(1, level/2);
+	}
+
 	public float getWeaponSpeed() {
 		return 50;
 	}
@@ -109,11 +106,7 @@ public class Laser2 extends Weapon {
 		return myRadius;
 	}
 
-	public int getNum() {
-		return 1 + Math.min(2, level);
-	}
-
 	public float getReloadTime() {
-		return 1000;
+		return 1000 - 300 * Math.min(1, level);
 	}
 }

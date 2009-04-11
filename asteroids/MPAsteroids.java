@@ -75,7 +75,7 @@ public class MPAsteroids extends AbstractGame {
 					return "Controls: arrow keys, space, f";
 				}
 			};
-			HumanShipAI human = new HumanShipAI(world, ship, 500, true) {
+			HumanShipAI human = new HumanShipAI(world, ship, 500, true, null) {
 				public void keyPressed(KeyEvent e) {
 					switch (e.getKeyCode()) {
 						case KeyEvent.VK_Q:
@@ -98,7 +98,7 @@ public class MPAsteroids extends AbstractGame {
 			}
 		};
 
-		HumanShipAI human = new HumanShipAI(world, ship, 500, true) {
+		HumanShipAI human = new HumanShipAI(world, ship, 500, true, null) {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
 					case 'a': ship.modifyTorque(-8e-5f); notifyInput(true); break;

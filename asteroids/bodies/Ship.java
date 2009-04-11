@@ -30,7 +30,7 @@ public class Ship extends Entity {
 		super.reset();
 		raiseShield = false;
 		weapons.setRandomWeaponType();
-		weapons.incrRandomWeaponLevel();
+		weapons.upgrade();
 	}
 
 	public String getTexturePath() {

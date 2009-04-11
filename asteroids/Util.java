@@ -4,6 +4,7 @@
 
 package asteroids;
 import java.awt.*;
+import java.awt.geom.*;
 import net.phys2d.math.*;
 
 public class Util {
@@ -21,6 +22,10 @@ public class Util {
 
 	public static Vector2f v(Dimension d) {
 		return v(d.getWidth(), d.getHeight());
+	}
+
+	public static Vector2f v(Point p) {
+		return v(p.getX(), p.getY());
 	}
 
 	public static Dimension d(Vector2f d) {

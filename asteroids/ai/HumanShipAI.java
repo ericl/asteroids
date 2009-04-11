@@ -1,22 +1,35 @@
 package asteroids.ai;
 
+import java.awt.Dimension;
+
 import java.awt.event.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
 
-import net.phys2d.raw.World;
+import net.phys2d.raw.*;
+import net.phys2d.math.*;
 
-public class HumanShipAI extends ShipAI implements KeyListener {
+import static net.phys2d.math.MathUtil.*;
+
+import static asteroids.Util.*;
+
+public class HumanShipAI extends ShipAI implements KeyListener, MouseListener {
 	protected int delay, originalDelay;
 	protected boolean delayAI, active;
+	protected Dimension screen;
 	protected int activeTime;
 
-	public HumanShipAI(World world, Automated ship, int delay, boolean delayAI) {
+	public HumanShipAI(World world, Automated ship, int delay, boolean delayAI, Dimension screen) {
 		super(world, ship);
 		this.delay = originalDelay = delay;
 		this.delayAI = delayAI;
 		if (delayAI)
 			activeTime = delay;
 		ship.setAI(this);
+		if (screen == null)
+			screen = new Dimension();
+		else
+			this.screen = screen;
 	}
 
 	public void update() {
@@ -38,8 +51,6 @@ public class HumanShipAI extends ShipAI implements KeyListener {
 		if (delay != Integer.MAX_VALUE)
 			delay += 5;
 	}
-
-	public void keyTyped(KeyEvent e) {}
 	
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
@@ -69,4 +80,16 @@ public class HumanShipAI extends ShipAI implements KeyListener {
 			case KeyEvent.VK_F: ship.stopLaunching(); notifyInput(false); break;
 		}
 	}
+
+	public void mousePressed(MouseEvent e) {
+		Vector2f ds = sub(scale(v(screen), .5f), v(e.getPoint()));
+		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
+		ship.fire((float)tFinal);
+	}
+
+	public void mouseReleased(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
+	public void keyTyped(KeyEvent e) {}
 }

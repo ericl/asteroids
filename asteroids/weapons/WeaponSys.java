@@ -32,7 +32,7 @@ public class WeaponSys {
 		Map<Long,Queue<Weapon>> types = new HashMap<Long,Queue<Weapon>>();	
 		Set<Weapon> all = new HashSet<Weapon>();
 
-		private void gc() {
+		public void gc() {
 			List<Long> remove = new ArrayList<Long>();
 			for (Long type : types.keySet()) {
 				Queue<Weapon> queue = types.get(type);
@@ -58,7 +58,6 @@ public class WeaponSys {
 			}
 			queue.add(w);
 			all.add(w);
-			gc();
 		}
 
 		public Set<Weapon> getActive() {
@@ -98,6 +97,10 @@ public class WeaponSys {
 		weapon.incrementLevel();
 	}
 
+	public void gc() {
+		fired.gc();
+	}
+
 	public void setWeaponType(Weapon w) {
 		weapon = w;
 		lastFired = 0;
@@ -118,13 +121,17 @@ public class WeaponSys {
 		}
 		return false;
 	}
-	
+
 	public boolean fire() {
+		return fire(origin.getRotation());
+	}
+
+	public boolean fire(float rotation) {
 		if (!canFire())
 			return false;
 		float initialAngle = (weapon.getNum()-1)*ANGULAR_DISTRIBUTION/2;
 		for (int i=0; i < weapon.getNum(); i++) {
-			Weapon weap = makeWeapon(i*ANGULAR_DISTRIBUTION - initialAngle);
+			Weapon weap = makeWeapon(i*ANGULAR_DISTRIBUTION - initialAngle, rotation);
 			world.add(weap);
 			fired.add(weap);
 		}
@@ -136,12 +143,12 @@ public class WeaponSys {
 	}
 
 	// postcondition: nothing is modified
-	private Weapon makeWeapon(float angle) {
+	private Weapon makeWeapon(float angle, float originRotation) {
 		Weapon c = weapon.duplicate();
 		c.setOrigin(origin);
-		c.setRotation(origin.getRotation()+angle);
-		float xc = (float)Math.sin(origin.getRotation()+angle);
-		float yc = (float)Math.cos(origin.getRotation()+angle);
+		c.setRotation(originRotation+angle);
+		float xc = (float)Math.sin(originRotation+angle);
+		float yc = (float)Math.cos(originRotation+angle);
 		float sr = ((Visible)origin).getRadius(); // estimated length
 		c.setPosition(origin.getPosition().getX()+xc*sr, origin.getPosition().getY()-yc*sr);
 		c.adjustVelocity(v(weapon.getLaunchSpeed()*xc, weapon.getLaunchSpeed()*-yc));

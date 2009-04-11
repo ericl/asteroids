@@ -38,6 +38,10 @@ public class Missile extends Weapon implements Automated {
 	public void uncloak() {}
 	public void setAccel(float a) {}
 
+	public boolean fire(float rotation) {
+		return false;
+	}
+
 	public void modifyTorque(float t) {
 		torque = t;
 	}
