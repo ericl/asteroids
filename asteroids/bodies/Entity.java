@@ -218,8 +218,6 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			if (canExplode() || shield.canExplode()) {
 				world.remove(shield);
 				shield = null;
-			} else {
-				shield.setPosition(getPosition().getX(), getPosition().getY());
 			}
 		}
 	}

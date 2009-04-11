@@ -1,9 +1,9 @@
 package asteroids.bodies;
 
-import asteroids.ai.*;
+import asteroids.display.Visible;
 
 public class OrangeShield extends Shield {
-	public OrangeShield(Entity ship) {
+	public OrangeShield(Visible ship) {
 		super(ship);
 	}
 

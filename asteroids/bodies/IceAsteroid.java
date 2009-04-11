@@ -15,9 +15,9 @@ import static asteroids.Util.*;
 public class IceAsteroid extends CircleAsteroid implements Textured {
 	private double melting;
 	private int count = 0;
-	private boolean rocky = oneIn(2);
+	private boolean rocky = oneIn(3);
 	private static final int ICE_BOUND_MIN = 13;
-	private int ICE_TO_ROCK_RADIUS = (int)range(20,100);
+	private int ICE_TO_ROCK_RADIUS = (int)range(20,60);
 
 	public IceAsteroid(float radius) {
 		super(radius);

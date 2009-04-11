@@ -60,7 +60,7 @@ public class Stats {
 	/**
 	 * How many times someone has killed.
 	 */
-	public void kill(Body killer, Body victim, CollisionEvent event) {
+	public void kill(Object killer, Body victim, CollisionEvent event) {
 		if (finalized)
 			return;
 		if (victim instanceof Targetable) {

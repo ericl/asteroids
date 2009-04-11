@@ -21,9 +21,9 @@ import net.phys2d.raw.strategies.*;
 import static asteroids.Util.*;
 
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
+	protected World world;
 	protected Display display;
 	protected JFrame frame;
-	protected World world;
 	protected Stats stats;
 	protected final Dimension dim;
 	protected volatile boolean pause, running = true;
