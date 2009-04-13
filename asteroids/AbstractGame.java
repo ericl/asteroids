@@ -77,10 +77,8 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		      KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyEventDispatcher() {
 			public boolean dispatchKeyEvent(KeyEvent e) {
-				if (e.getSource() instanceof Canvas) {
+				if (e.getSource() instanceof Canvas)
 					manager.redispatchEvent(frame, e);
-					return true;
-				}
 				return false;
 			}
 		});

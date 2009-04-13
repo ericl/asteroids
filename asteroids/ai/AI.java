@@ -12,6 +12,7 @@ public abstract class AI {
 	protected Automated ship;
 	protected World world;
 	protected int steps;
+	protected float r500 = range(0,350);
 	protected ROVector2f targetPos;
 	protected Targetable target;
 
@@ -91,7 +92,8 @@ public abstract class AI {
 		if (steps % 300 == 0)
 			selectTarget();
 		if (steps % 5 == 0 && trackTarget()) {
-			ship.fire();
+			if (steps % 500 > r500)
+				ship.fire();
 			if (oneIn(50))
 				ship.launchMissile();
 		}

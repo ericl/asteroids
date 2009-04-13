@@ -70,7 +70,7 @@ public class Laser3 extends Weapon {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		explode = !(other instanceof Weapon) || other instanceof Laser3 || other instanceof Missile;
+		explode = !(other instanceof Weapon) || other instanceof Laser3;
 	}
 
 	public int getNum() {
