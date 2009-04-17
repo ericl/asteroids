@@ -16,11 +16,11 @@ import net.phys2d.raw.shapes.*;
 import static asteroids.Util.*;
 
 public class Shield extends Body implements Explodable, Textured, Drawable, Overlay, Targetable {
-	protected Visible ship;
+	protected Entity ship;
 	protected float damage;
 	protected float radius;
 
-	public Shield(Visible ship) {
+	public Shield(Entity ship) {
 		super(new Circle(ship.getRadius() * 4 / 3), 1000);
 		addBit(1l);
 		this.radius = ship.getRadius() * 4 / 3;
@@ -28,7 +28,7 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 		this.addExcludedBody((Body)ship);
 	}
 
-	public Visible getShip() {
+	public Entity getShip() {
 		return ship;
 	}
 	
@@ -88,9 +88,15 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 		return damage > getMax();
 	}
 
+	public boolean preferDrawableFallback() {
+		return false;
+	}
+
 	public void endFrame() {
 		super.endFrame();
 		setPosition(ship.getPosition().getX(), ship.getPosition().getY());
+		if (!ship.getWorld().getBodies().contains((Body)ship))
+			ship.getWorld().remove(ship);
 	}
 
 	public void collided(CollisionEvent event) {

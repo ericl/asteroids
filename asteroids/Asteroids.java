@@ -18,7 +18,7 @@ import asteroids.ai.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 
-import static asteroids.Util.*;
+import static asteroids.AbstractGame.Difficulty.*;
 
 public class Asteroids extends AbstractGame {
 	private static File nameFile = new File(System.getProperty("user.home") + "/.asteroids-name");
@@ -158,10 +158,10 @@ public class Asteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
+		AbstractGame.globalDifficulty = NONE;
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
-		int id = Field.ids[(int)range(0,Field.ids.length)];
-		scenario = new Field(world, display, id, ship);
+		scenario = new Field(world, display, ship);
 		scenario.setAIFrequency(.01);
 		stats.reset(scenario);
 		stats.setShip(ship);
@@ -174,8 +174,7 @@ public class Asteroids extends AbstractGame {
 		k.init();
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
-		int id = Field.ids[(int)range(0,Field.ids.length)];
-		scenario = new WelcomeScreen(world, display, id);
+		scenario = new WelcomeScreen(world, display);
 		stats.reset(scenario);
 		scenario.start();
 	}

@@ -78,6 +78,6 @@ public class Laser3 extends Weapon {
 	}
 
 	public float getReloadTime() {
-		return 1200;
+		return 1200 - 200 * Math.min(2, level);
 	}
 }

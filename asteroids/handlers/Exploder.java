@@ -186,7 +186,7 @@ public class Exploder implements CollisionListener {
 		else if (other instanceof PowerUp) // got killed this way before :(
 			return 0;
 		double vmod = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
-		return Math.min(other.getMass(),victim.getMass()) * vmod / 1e7;
+		return Math.min(other.getMass(), victim.getMass()) * vmod / 1e7;
 	}
 
 	/**

@@ -56,7 +56,7 @@ public class Laser extends Weapon {
 	}
 
 	public int getNum() {
-		return 1 + Math.min(1, level);
+		return 1 + Math.min(0, level);
 	}
 
 	public int getBurstLength() {

@@ -33,6 +33,10 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 
 	public abstract Weapon duplicate();
 
+	public boolean preferDrawableFallback() {
+		return false;
+	}
+
 	public Color getColor() {
 		return Color.ORANGE;
 	}

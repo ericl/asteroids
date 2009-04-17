@@ -34,7 +34,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public boolean canExplode() {
-		return explode || damage > .3;
+		return explode || damage > .2;
 	}
 
 	public void collided(CollisionEvent e) {
@@ -45,7 +45,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public Body getRemnant() {
-		return new LargeExplosion(Explosion.TrackingMode.TARGET, .75f);
+		return new LargeExplosion(Explosion.TrackingMode.TARGET, .70f);
 	}
 
 	public List<Body> getFragments() {
@@ -96,7 +96,7 @@ public class Laser2 extends Weapon {
 	}
 
 	public int getNum() {
-		return 1 + Math.min(1, level/2);
+		return 1 + Math.min(1, level/3);
 	}
 
 	public float getWeaponSpeed() {
@@ -108,6 +108,6 @@ public class Laser2 extends Weapon {
 	}
 
 	public float getReloadTime() {
-		return 1000 - 300 * Math.min(1, level);
+		return 900 - 100 * Math.min(5, level);
 	}
 }

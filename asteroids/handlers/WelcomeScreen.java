@@ -8,10 +8,10 @@ import net.phys2d.raw.*;
 import net.phys2d.math.*;
 
 public class WelcomeScreen extends Field {
-	private int x;
+	private long init = Timer.gameTime();
 
-	public WelcomeScreen(World w, Display d, int id, Ship ... ships) {
-		super(w, d, id, ships);
+	public WelcomeScreen(World w, Display d, Entity ... ships) {
+		super(w, d, ships);
 	}
 
 	public boolean done() {
@@ -19,7 +19,7 @@ public class WelcomeScreen extends Field {
 	}
 
 	public ROVector2f getCenter() {
-		return v(0,x--);
+		return v(0, ((double)Timer.gameTime() - init)/-15);
 	}
 
 	public String toString() {

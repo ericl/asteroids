@@ -47,6 +47,10 @@ public abstract class Explosion extends Body implements Drawable, Textured {
 		d = sub(getPosition(), t.getPosition());
 	}
 
+	public boolean preferDrawableFallback() {
+		return false;
+	}
+
 	public Color getColor() {
 		return Color.ORANGE;
 	}

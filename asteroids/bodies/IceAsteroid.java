@@ -36,6 +36,10 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 		return "pixmaps/fog.png";
 	}
 
+	public boolean preferDrawableFallback() {
+		return false;
+	}
+
 	public void endFrame() {
 		super.endFrame();
 		count++;

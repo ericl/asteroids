@@ -1,9 +1,7 @@
 package asteroids.bodies;
 
-import asteroids.display.Visible;
-
 public class OrangeShield extends Shield {
-	public OrangeShield(Visible ship) {
+	public OrangeShield(Entity ship) {
 		super(ship);
 	}
 
@@ -12,6 +10,6 @@ public class OrangeShield extends Shield {
 	}
 
 	public float getMax() {
-		return 2f;
+		return 3f;
 	}
 }

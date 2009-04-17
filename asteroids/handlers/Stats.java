@@ -3,13 +3,25 @@
  */
 
 package asteroids.handlers;
+
 import java.io.*;
+
 import java.net.*;
-import java.util.*;
+
 import java.security.*;
-import net.phys2d.raw.*;
+
+import java.util.*;
+
+import asteroids.AbstractGame;
+import asteroids.AbstractGame.Difficulty;
+
 import asteroids.ai.*;
+
 import asteroids.bodies.*;
+
+import net.phys2d.raw.*;
+
+import static asteroids.AbstractGame.Difficulty.*;
 
 public class Stats {
 	protected Vector<String> list = new Vector<String>();
@@ -32,6 +44,7 @@ public class Stats {
 		finalized = false;
 		finalScore = -1;
 		dmg = 0;
+		updateDifficulty();
 	}
 
 	public void setShip(Entity ship) {
@@ -70,6 +83,25 @@ public class Stats {
 			else
 				otherPoints += t.getPointValue();
 		}
+		updateDifficulty();
+	}
+
+	private void increaseDifficulty(Difficulty d) {
+		if (AbstractGame.globalDifficulty.quantify() < d.quantify())
+			AbstractGame.globalDifficulty = d;
+	}
+
+	private void updateDifficulty() {
+		int score = score();
+		int i = 100;
+		if (score > 27*i)
+			increaseDifficulty(IMPOSSIBLE);
+		else if (score > 15*i)
+			increaseDifficulty(HARD);
+		else if (score > 8*i)
+			increaseDifficulty(MEDIUM);
+		else if (score > 3*i)
+			increaseDifficulty(EASY);
 	}
 
 	public String get(int i) {
@@ -87,7 +119,7 @@ public class Stats {
 		if (finalized)
 			return finalScore;
 		else
-			return otherPoints / 5 + myPoints + scenario.asteroids() / 10;
+			return otherPoints / 5 + myPoints + (scenario == null ? 0 : scenario.asteroids() / 10);
 	}
 
 	/**
@@ -109,10 +141,10 @@ public class Stats {
 		freezeScores();
 		name = name.replace(" ", "%20");
 		try {
-			lastChk = md5(name + scenario.getID() + score() + hit + att
+			lastChk = md5(name + score() + hit + att
 				+ (System.currentTimeMillis()/1000));
-			URL init = new URL("http://a.cognoseed.org/post.php?scenario="
-					+ scenario.getID() + "&name=" + name + "&score=" + score() + "&chk="
+			URL init = new URL("http://a.cognoseed.org/post.php?scenario=0"
+					+ "&name=" + name + "&score=" + score() + "&chk="
 					+ lastChk);
 			HttpURLConnection con = (HttpURLConnection)init.openConnection();
 			con.connect();
@@ -134,8 +166,7 @@ public class Stats {
 		List<String> output = list;
 		output.clear();
 		try {
-			URL init = new URL("http://a.cognoseed.org/get.php?scenario="
-				+ scenario.getID());
+			URL init = new URL("http://a.cognoseed.org/get.php?scenario=0");
 			HttpURLConnection con = (HttpURLConnection)init.openConnection();
 			con.connect();
 			LineNumberReader content = new LineNumberReader(

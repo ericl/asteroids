@@ -18,7 +18,7 @@ import asteroids.handlers.*;
 
 import net.phys2d.math.ROVector2f;
 
-import static asteroids.Util.*;
+import static asteroids.AbstractGame.Difficulty.*;
 
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
@@ -61,7 +61,7 @@ public class MPAsteroids extends AbstractGame {
 			ships[i] = ship;
 		}
 		if (NUM_PLAYERS > 1) {
-			Entity ship = new Frigate(world) {
+			Entity ship = new Terror(world) {
 				public boolean canTarget() {
 					return true;
 				}
@@ -177,8 +177,8 @@ public class MPAsteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
-		int id = Field.ids[(int)range(0, Field.ids.length)];
-		scenario = new Field(world, display, id, ships);
+		AbstractGame.globalDifficulty = MEDIUM;
+		scenario = new Field(world, display, ships);
 		scenario.setAIFrequency(0);
 		scenario.setSpeedRatio(.25f);
 		scenario.setScalingRatio(.25f);

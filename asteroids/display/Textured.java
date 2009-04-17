@@ -30,4 +30,9 @@ public interface Textured extends Visible {
 	 * @return	Rotation as by body.getRotation()
 	 */
 	public float getRotation();
+
+	/**
+	 * @return	True if the object should be drawn without a texture if possible.
+	 */
+	public boolean preferDrawableFallback();
 }

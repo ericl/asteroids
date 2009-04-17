@@ -77,6 +77,8 @@ public abstract class AI {
 		double delta = Math.abs(delta1) > Math.abs(delta2) ? delta2 : delta1;
 		float torque = (float)(delta * getMaxTorque());
 		float x = minTorqueThreshold();
+		float sign = sign(torque);
+		torque = sign * Math.min(getMaxTorque() / 2, Math.abs(torque));
 		if (torque > 0 && torque < x) {
 			ship.modifyTorque(x);
 			return true;

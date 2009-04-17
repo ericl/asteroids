@@ -119,6 +119,20 @@ public class Display {
 		}
 	}
 
+	public void drawBody(Body b) {
+		if (b instanceof Textured) {
+			if (((Textured)b).preferDrawableFallback() && b instanceof Drawable) {
+				drawDrawable((Drawable)b);
+			} else {
+				drawTextured((Textured)b);
+			}
+		} else if (b instanceof Drawable) {
+			drawDrawable((Drawable)b);
+		} else {
+			throw new RuntimeException(b + " cannot be rendered");
+		}
+	}
+
 	/**
 	 * Draws all drawable bodies in the world to an offscreen buffer.
 	 */
@@ -126,19 +140,14 @@ public class Display {
 		BodyList bodies = world.getBodies();
 		List<Body> top = new ArrayList<Body>();
 		for (int i=0; i < bodies.size(); i++) {
-			if (bodies.get(i) instanceof Overlay)
-				top.add(bodies.get(i));
-			else if (bodies.get(i) instanceof Textured)
-				drawTextured((Textured)bodies.get(i));
-			else if (bodies.get(i) instanceof Drawable)
-				drawDrawable((Drawable)bodies.get(i));
+			Body b = bodies.get(i);
+			if (b instanceof Overlay)
+				top.add(b);
+			else
+				drawBody(b);
 		}
-		for (Body b : top) {
-			if (b instanceof Textured)
-				drawTextured((Textured)b);
-			else if (b instanceof Drawable)
-				drawDrawable((Drawable)b);
-		}
+		for (Body b : top)
+			drawBody(b);
 	}
 
 	/**

@@ -36,6 +36,10 @@ public abstract class TexturedPolyBody extends PolyBody implements Textured {
 		return ratio;
 	}
 
+	public boolean preferDrawableFallback() {
+		return false;
+	}
+
 	public String getTexturePath() {
 		return img;
 	}

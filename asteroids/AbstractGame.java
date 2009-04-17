@@ -21,6 +21,25 @@ import net.phys2d.raw.strategies.*;
 import static asteroids.Util.*;
 
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
+	// where NONE = game intro, IMPOSSIBLE = resource starvation
+	public enum Difficulty {
+		NONE(1), EASY(2), MEDIUM(3), HARD(4), IMPOSSIBLE(5);
+
+		private int level;
+
+		private Difficulty(int level) {
+			this.level = level;
+		}
+
+		public int quantify() {
+			return level;
+		}
+
+		public String toString() {
+			return "Level " + level;
+		}
+	};
+	public static Difficulty globalDifficulty = Difficulty.NONE;
 	protected World world;
 	protected Display display;
 	protected JFrame frame;

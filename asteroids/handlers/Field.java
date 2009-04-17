@@ -6,11 +6,11 @@ package asteroids.handlers;
 
 import java.awt.*;
 
+import asteroids.AbstractGame;
+
 import asteroids.bodies.*;
 
 import asteroids.display.*;
-
-import asteroids.ai.*;
 
 import net.phys2d.math.*;
 
@@ -33,16 +33,6 @@ public class Field {
 	protected static final float INIT_I = 40, INIT_S = 1;
 	protected float I = INIT_I, S = INIT_S; // speed of asteroids; scaling constant
 	protected float rI = 1, rS = 1; // scalers for above
-	public final static int HEX = 1, ROCKY = 3, ICEY = 4;
-	public final static int[] ids = {HEX, ICEY, ROCKY};
-	private int id;
-
-	/**
-	 * @return	The unique identifier of the field.
-	 */
-	public int getID() {
-		return id;
-	}
 
 	/**
 	 * @param	w	The world.
@@ -50,17 +40,10 @@ public class Field {
 	 * @param	id	What type of field to be created.
 	 * @param	ships Entitys inside the world.
 	 */
-	public Field(World w, Display d, int id, Entity ... ships) {
+	public Field(World w, Display d, Entity ... ships) {
 		this.display = d;
-		this.id = id;
 		this.ships = ships;
 		dim = display.getDimension();
-		boolean ok = false;
-		for (int i=0; i < ids.length; i++)
-			if (id == ids[i])
-				ok = true;
-		if (!ok)
-			throw new IllegalArgumentException("Unknown id " + id);
 		world = w;
 	}
 
@@ -140,7 +123,7 @@ public class Field {
 		for (int i=0; i < targets.length; i++)
 			if (Math.random() < ai_frequency)
 				world.add(newAI(targets[i].getPosition()));
-		int[] density = new int[targets.length];
+		float[] density = new float[targets.length];
 		BodyList bodies = world.getBodies();
 		for (int i=0; i < bodies.size(); i++) {
 			Body body = bodies.get(i);
@@ -148,8 +131,12 @@ public class Field {
 			for (int j=0; j < targets.length; j++)
 				if (display.inViewFrom(targets[j].getPosition(),
 						body.getPosition(), BORDER+BUF)) {
-					if (body instanceof Visible && ((Visible)body).getRadius() > 15)
-						density[j]++;
+					if (body instanceof Visible) {
+						if (((Visible)body).getRadius() > 15)
+							density[j]++;
+						else
+							density[j] += .3f;
+					}
 					outOfRange = false;
 				}
 			if (outOfRange) {
@@ -158,25 +145,48 @@ public class Field {
 			}
 		}
 		for (int i=0; i < density.length; i++)
-			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D)
-				world.add(newAsteroid(targets[i].getPosition()));
+			if (density[i] < dim.getWidth()*dim.getHeight()*MIN_DENSITY*D) {
+				Body a = newAsteroid(targets[i].getPosition());
+				if (a != null)
+					world.add(a);
+			}
 	}
 
 	public Body newAI(ROVector2f origin) {
-		Body ai;
-		switch ((int)(20*Math.random())) {
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5: ai = new Ship(world); break;
-			case 6:
-			case 7:
-			case 8:
-			case 9:
-			case 10:
-			default: ai = new Frigate(world);
+		Entity ai = null;
+		switch (AbstractGame.globalDifficulty) {
+			case NONE:
+				ai = new Frigate(world, false);
+				break;
+			case EASY:
+				ai = new Frigate(world, oneIn(2));
+				break;
+			case MEDIUM:
+				ai = oneIn(2) ? new Ship(world) : new Frigate(world, true);
+				if (oneIn(2))
+					ai.upgradeWeapons();
+				if (oneIn(3))
+					ai.upgradeWeapons();
+				if (oneIn(7))
+					ai.addMissiles(1);
+				break;
+			case HARD:
+				ai = oneIn(3) ? new Frigate(world, true) : oneIn(2) ? new Ship(world, true) : new Ship(world, false);
+				ai.upgradeWeapons();
+				if (oneIn(2))
+					ai.upgradeWeapons();
+				if (oneIn(3))
+					ai.upgradeWeapons();
+				if (oneIn(7))
+					ai.addMissiles(5);
+				if (oneIn(10))
+					ai.gainInvincibility(20000, 0);
+				break;
+			case IMPOSSIBLE:
+				ai = new Terror(world);
+				break;
+			default:
+				assert false;
 		}
 		ROVector2f vo = display.getOffscreenCoords(((Visible)ai).getRadius(), BORDER, origin);
 		ai.setPosition(vo.getX(), vo.getY());
@@ -191,18 +201,25 @@ public class Field {
 	 * @return	A new asteroid at some point.
 	 */
 	protected Body newAsteroid(ROVector2f origin) {
-		// difficulty increases with count
 		Body rock = null;
-		switch (id) {
-			case ROCKY:
-				rock = new BigAsteroid(range(20,50));
+		switch (AbstractGame.globalDifficulty) {
+			case NONE:
+				rock = new IceAsteroid(range(30,50));
 				break;
-			case ICEY:
-				rock = new IceAsteroid(oneIn(20) ? range(100,200) : range(30,50));
+			case EASY:
+				rock = new BigAsteroid(range(30,50));
 				break;
-			case HEX:
-				rock = new HexAsteroid(oneIn(15) ? range(100,200) : range(30,50));
+			case MEDIUM:
+				rock = new HexAsteroid(range(30,50));
 				break;
+			case HARD:
+				rock = new HexAsteroid(oneIn(100) ? range(100,200) : range(5,10));
+				break;
+			case IMPOSSIBLE:
+				rock = new HexAsteroid(range(5,10), Color.GRAY);
+				break;
+			default:
+				assert false;
 		}
 		adjustForDifficulty(rock);
 		rock.adjustAngularVelocity((float)(1.5*random()-.75));
@@ -222,14 +239,9 @@ public class Field {
 	}
 
 	/**
-	 * @return	What scenario is being played.
+	 * @return	Current state of scenario.
 	 */
 	public String toString() {
-		switch (id) {
-			case HEX: return "\"Hexagons\"";
-			case ROCKY: return "\"Rocky\"";
-			case ICEY: return "\"Ice\"";
-			default: return "Unknown";
-		}
+		return AbstractGame.globalDifficulty.toString();
 	}
 }

@@ -5,6 +5,5 @@ public interface Enhancable {
 	public void addMissiles(int num);
 	public void gainInvincibility(int time, int warn);
 	public void upgradeWeapons();
-	public void setRandomWeaponType();
 	public void raiseShields();
 }

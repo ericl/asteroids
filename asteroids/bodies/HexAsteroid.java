@@ -22,19 +22,20 @@ public class HexAsteroid extends PolyAsteroid {
 		setColor(Color.BLUE);
 	}
 
+	public HexAsteroid(float size, Color c) {
+		super(geo, size / 25);
+		setColor(c);
+	}
+
 	public Body getRemnant() {
-		return getRadius() > 15 ? new HexAsteroid(getRadius() / 2) : null;
+		return getRadius() > 15 ? new HexAsteroid(getRadius() / 2, getColor()) : null;
 	}
 
 	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(6);
-		HexAsteroid tmp;
 		if (getRadius() > 10)
-			for (int i=0; i < 6; i++) {
-				tmp = new HexAsteroid(getRadius() / 3);
-				tmp.setColor(getColor());
-				f.add(tmp);
-			}
+			for (int i=0; i < 6; i++)
+				f.add(new HexAsteroid(getRadius() / 3, getColor()));
 		addPowerups(f);
 		return f;
 	}

@@ -39,6 +39,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	protected long warningStart; // end of warning -> not invincible
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
 	protected boolean raiseShield = true;
+	protected boolean defaultShield;
 
 	public Entity(ROVector2f[] raw, String img, float nativesize, float size, float mass, World world, Weapon weapon) {
 		super(raw, img, nativesize, size, mass);
@@ -54,6 +55,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		this.ai = ai;
 		if (ai != null)
 			ai.reset();
+	}
+
+	public World getWorld() {
+		return world;
 	}
 
 	public void reset() {
@@ -72,8 +77,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		numMissiles = 0;
 		cloak = Integer.MAX_VALUE;
 		warningStart = invincibleEnd = 0;
-		raiseShield = true;
+		raiseShield = defaultShield;
 		cloaktime = CLOAK_MAX;
+		shield = null;
+		oldshield = null;
 	}
 
 	public float getSpeedLimit() {
@@ -110,6 +117,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	public boolean launchMissile() {
+		if (canExplode())
+			return false;
 		if (numMissiles > 0) {
 			if (missiles.fire()) {
 				cloak = Integer.MAX_VALUE;
@@ -147,6 +156,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	public boolean fire() {
+		if (canExplode())
+			return false;
 		if (weapons.fire()) {
 			cloak = Integer.MAX_VALUE;
 			return true;
@@ -261,15 +272,12 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 
 	public Body getRemnant() {
 		deaths++;
+		updateShield();
 		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 1.5f);
 	}
 
 	public boolean canTarget() {
 		return cloak > 0 || cloaktime == 0;
-	}
-
-	public int getPointValue() {
-		return 30;
 	}
 
 	public Color getColor() {
@@ -304,9 +312,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			tmp.setColor(Color.GRAY);
 			f.add(tmp);
 		}
+		if (oneIn((int)(30/Math.sqrt(getPointValue()))))
+			f.add(PowerUp.random());
 		return f;
 	}
-
 
 	public void gainInvincibility(int time, int warn) {
 		if (isInvincible())
@@ -331,5 +340,5 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		return invincibleEnd > Timer.gameTime();
 	}
 
-	public void setRandomWeaponType() {}
+	public abstract int getPointValue();
 }
