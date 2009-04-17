@@ -18,7 +18,7 @@ import asteroids.ai.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
 
-import static asteroids.AbstractGame.Difficulty.*;
+import static asteroids.AbstractGame.Level.*;
 
 public class Asteroids extends AbstractGame {
 	private static File nameFile = new File(System.getProperty("user.home") + "/.asteroids-name");
@@ -158,7 +158,7 @@ public class Asteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
-		AbstractGame.globalDifficulty = NONE;
+		AbstractGame.globalLevel = START;
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
 		scenario = new Field(world, display, ship);

@@ -14,10 +14,9 @@ import static asteroids.Util.*;
 
 public class Terror extends Entity {
 	protected static ROVector2f[] raw = {v(21,11),v(43,11),v(56,26),v(58,46),v(32,58),v(5,46),v(5,26)};
-	protected int thrust;
 	
-	// terrors tend to team up on others
-	protected boolean rogue = oneIn(2);
+	// allows them to swarm a bit
+	protected boolean rogue = oneIn(3);
 
 	public Terror(World world) {
 		super(raw, null, 64, 64, 7500, world, new Laser3());
@@ -63,16 +62,5 @@ public class Terror extends Entity {
 	public void reset() {
 		super.reset();
 		weapons.setWeaponType(new Laser3());
-	}
-
-	public void endFrame() {
-		super.endFrame();
-		thrust--;
-	}
-
-	protected void accel() {
-		if (accel > 0)
-			thrust = 5;
-		super.accel();
 	}
 }

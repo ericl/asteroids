@@ -190,7 +190,6 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	protected void torque() {
-		// setTorque() is unpredictable with varied dt
 		adjustAngularVelocity(getMass()*torque);
 	}
 
@@ -330,6 +329,12 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 
 	public void setHealth(float health) {
 		this.damage = getMaxArmor() - getMaxArmor() * health;
+	}
+
+	public void multiplyHealth(float m) {
+		setHealth((float)health() * m);
+		if (health() < .01)
+			selfDestruct();
 	}
 
 	public void addMissiles(int num) {

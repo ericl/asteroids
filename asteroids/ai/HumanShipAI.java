@@ -84,7 +84,7 @@ public class HumanShipAI extends ShipAI implements KeyListener, MouseInputListen
 	public void mouseDragged(MouseEvent e) {
 		Vector2f ds = sub(scale(v(screen), .5f), v(e.getPoint()));
 		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
-		ship.fire((float)tFinal);
+		fire((float)tFinal);
 	}
 
 	public void mousePressed(MouseEvent e) {

@@ -22,12 +22,12 @@ import static asteroids.Util.*;
 
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
 	// where NONE = game intro, IMPOSSIBLE = resource starvation
-	public enum Difficulty {
-		NONE(1), EASY(2), MEDIUM(3), HARD(4), IMPOSSIBLE(5);
+	public enum Level {
+		START(1), EASY(2), MEDIUM(3), HARD(4), BLUE(5), SWARM(6), DONE(7);
 
 		private int level;
 
-		private Difficulty(int level) {
+		private Level(int level) {
 			this.level = level;
 		}
 
@@ -39,7 +39,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 			return "Level " + level;
 		}
 	};
-	public static Difficulty globalDifficulty = Difficulty.NONE;
+	public static Level globalLevel = Level.START;
 	protected World world;
 	protected Display display;
 	protected JFrame frame;

@@ -64,10 +64,14 @@ public abstract class AI {
 		return v(pos.getX() + v.getX() - o.getX(), pos.getY() + v.getY() - o.getY());
 	}
 
+	protected ROVector2f predict(Automated origin, Targetable target, float speed, boolean movingOrigin) {
+		return predictTargetPosition(ship, target, ship.getWeaponSpeed(), true);
+	}
+
 	protected boolean trackTarget() {
 		if (target == null || !target.canTarget())
 			return false;
-		targetPos = predictTargetPosition(ship, target, ship.getWeaponSpeed(), true);
+		targetPos = predict(ship, target, ship.getWeaponSpeed(), true);
 		Vector2f ds = sub(ship.getPosition(), targetPos);
 		double tFinal = Math.atan2(ds.getY(), ds.getX()) - Math.PI/2;
 		double tInit1 = (ship.getRotation() % (2*Math.PI));
@@ -90,14 +94,26 @@ public abstract class AI {
 		return false;
 	}
 
+	protected void fire(float rot) {
+		ship.fire(rot);
+	}
+
+	protected void fire() {
+		ship.fire();
+	}
+
+	protected void launchMissile() {
+		ship.launchMissile();
+	}
+
 	public void update() {
 		if (steps % 300 == 0)
 			selectTarget();
 		if (steps % 5 == 0 && trackTarget()) {
 			if (steps % 500 > r500)
-				ship.fire();
+				fire();
 			if (oneIn(50))
-				ship.launchMissile();
+				launchMissile();
 		}
 		steps++;
 	}

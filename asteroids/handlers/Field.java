@@ -7,6 +7,7 @@ package asteroids.handlers;
 import java.awt.*;
 
 import asteroids.AbstractGame;
+import static asteroids.AbstractGame.Level.*;
 
 import asteroids.bodies.*;
 
@@ -26,7 +27,7 @@ public class Field {
 	protected Display display;
 	protected double ai_frequency = .01;
 	protected Dimension dim;
-	protected int count;
+	protected int count, newcount;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
 	protected static double D = 1;
@@ -87,7 +88,8 @@ public class Field {
 			ship.reset();
 			world.add((Body)ship);
 		}
-		count = 0;
+		count = 1;
+		newcount = 1;
 	}
 
 	/**
@@ -121,8 +123,11 @@ public class Field {
 	public void update() {
 		Visible[] targets = getTargets();
 		for (int i=0; i < targets.length; i++)
-			if (Math.random() < ai_frequency)
-				world.add(newAI(targets[i].getPosition()));
+			if (Math.random() < ai_frequency) {
+				Body ai = newAI(targets[i].getPosition());
+				if (ai != null)
+					world.add(ai);
+			}
 		float[] density = new float[targets.length];
 		BodyList bodies = world.getBodies();
 		for (int i=0; i < bodies.size(); i++) {
@@ -154,8 +159,8 @@ public class Field {
 
 	public Body newAI(ROVector2f origin) {
 		Entity ai = null;
-		switch (AbstractGame.globalDifficulty) {
-			case NONE:
+		switch (AbstractGame.globalLevel) {
+			case START:
 				ai = new Frigate(world, false);
 				break;
 			case EASY:
@@ -182,9 +187,14 @@ public class Field {
 				if (oneIn(10))
 					ai.gainInvincibility(20000, 0);
 				break;
-			case IMPOSSIBLE:
+			case BLUE:
 				ai = new Terror(world);
 				break;
+			case SWARM:
+				ai = new Swarm(world);
+				break;
+			case DONE:
+				return null;
 			default:
 				assert false;
 		}
@@ -202,21 +212,23 @@ public class Field {
 	 */
 	protected Body newAsteroid(ROVector2f origin) {
 		Body rock = null;
-		switch (AbstractGame.globalDifficulty) {
-			case NONE:
+		switch (AbstractGame.globalLevel) {
+			case START:
 				rock = new IceAsteroid(range(30,50));
 				break;
 			case EASY:
+			case SWARM:
 				rock = new BigAsteroid(range(30,50));
 				break;
 			case MEDIUM:
+			case BLUE:
 				rock = new HexAsteroid(range(30,50));
 				break;
 			case HARD:
 				rock = new HexAsteroid(oneIn(100) ? range(100,200) : range(5,10));
 				break;
-			case IMPOSSIBLE:
-				rock = new HexAsteroid(range(5,10), Color.GRAY);
+			case DONE:
+				rock = new Invincibility(range(20, 112.5));
 				break;
 			default:
 				assert false;
@@ -234,6 +246,10 @@ public class Field {
 	 */
 	private void adjustForDifficulty(Body rock) {
 		float max = I + (float)Math.max(S*log10(count)*cbrt(count), 0);
+		if (AbstractGame.globalLevel == DONE) {
+			newcount++;
+			max += newcount / 33f;
+		}
 		rock.setMaxVelocity(max,max);
 		rock.adjustVelocity(v(range(-max,max), range(-max,max)));
 	}
@@ -242,6 +258,6 @@ public class Field {
 	 * @return	Current state of scenario.
 	 */
 	public String toString() {
-		return AbstractGame.globalDifficulty.toString();
+		return AbstractGame.globalLevel.toString();
 	}
 }

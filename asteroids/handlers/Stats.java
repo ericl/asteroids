@@ -13,7 +13,7 @@ import java.security.*;
 import java.util.*;
 
 import asteroids.AbstractGame;
-import asteroids.AbstractGame.Difficulty;
+import asteroids.AbstractGame.Level;
 
 import asteroids.ai.*;
 
@@ -21,7 +21,7 @@ import asteroids.bodies.*;
 
 import net.phys2d.raw.*;
 
-import static asteroids.AbstractGame.Difficulty.*;
+import static asteroids.AbstractGame.Level.*;
 
 public class Stats {
 	protected Vector<String> list = new Vector<String>();
@@ -86,22 +86,25 @@ public class Stats {
 		updateDifficulty();
 	}
 
-	private void increaseDifficulty(Difficulty d) {
-		if (AbstractGame.globalDifficulty.quantify() < d.quantify())
-			AbstractGame.globalDifficulty = d;
+	private void increaseLevel(Level d) {
+		if (AbstractGame.globalLevel.quantify() < d.quantify())
+			AbstractGame.globalLevel = d;
 	}
 
 	private void updateDifficulty() {
-		int score = score();
-		int i = 100;
-		if (score > 27*i)
-			increaseDifficulty(IMPOSSIBLE);
+		int score = score(), i = 100;
+		if (score > 50*i)
+			increaseLevel(DONE);
+		else if (score > 40*i)
+			increaseLevel(SWARM);
+		else if (score > 27*i)
+			increaseLevel(BLUE);
 		else if (score > 15*i)
-			increaseDifficulty(HARD);
+			increaseLevel(HARD);
 		else if (score > 8*i)
-			increaseDifficulty(MEDIUM);
+			increaseLevel(MEDIUM);
 		else if (score > 3*i)
-			increaseDifficulty(EASY);
+			increaseLevel(EASY);
 	}
 
 	public String get(int i) {
