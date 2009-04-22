@@ -86,6 +86,12 @@ public class Field {
 		world.clear();
 		for (Entity ship : ships) {
 			ship.reset();
+			for (int i=1; i < AbstractGame.globalLevel.quantify(); i++)
+				ship.upgradeWeapons();
+			if (AbstractGame.globalLevel.quantify() > MEDIUM.quantify()) {
+				Shield s = new OrangeShield(ship);
+				world.add(s);
+			}
 			world.add((Body)ship);
 		}
 		count = 1;

@@ -30,7 +30,7 @@ public class Swarm extends Entity {
 	}
 
 	protected float getMaxArmor() {
-		return 1;
+		return .7f;
 	}
 
 	public Body getRemnant() {

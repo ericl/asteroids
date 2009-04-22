@@ -22,6 +22,7 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 
 	public Shield(Entity ship) {
 		super(new Circle(ship.getRadius() * 4 / 3), 1000);
+		ship.registerShield(this);
 		addBit(1l);
 		this.radius = ship.getRadius() * 4 / 3;
 		this.ship = ship;

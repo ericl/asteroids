@@ -225,11 +225,16 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			raiseShield = false;
 		}
 		if (shield != null) {
+			oldshield = null;
 			if (canExplode() || shield.canExplode()) {
 				world.remove(shield);
 				shield = null;
 			}
 		}
+	}
+
+	public void registerShield(Shield shield) {
+		this.shield = shield;
 	}
 
 	public void endFrame() {
@@ -272,7 +277,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	public Body getRemnant() {
 		deaths++;
 		updateShield();
-		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 1.5f);
+		return explosion = new LargeExplosion(Explosion.TrackingMode.ORIGIN, 1.5f);
 	}
 
 	public boolean canTarget() {
