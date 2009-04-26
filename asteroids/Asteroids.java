@@ -92,7 +92,8 @@ public class Asteroids extends AbstractGame {
 			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
 			g2d.setColor(COLOR_BOLD);
 			String score = name + "'s Score: " + stats.score();
-			renderCenter(g2d, FONT_BOLD, score, 20);
+			renderCenter(g2d, FONT_BOLD, score, 35);
+			renderCenter(g2d, FONT_NORMAL, ship.killer(), 20);
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
 			else if (scenario instanceof Field)
@@ -124,17 +125,22 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public void drawHighScores(Graphics2D g2d) {
-		g2d.setFont(FONT_NORMAL);
 		g2d.setColor(COLOR);
 		String loading = "Loading high scores...";
 		if (scoreBuilder.isAlive())
 			g2d.drawString(loading, centerX(FONT_NORMAL,loading,g2d),
 				display.h(0)/2);
 		else
-			for (int i=0; i<5; i++)
+			for (int i=0; i<5; i++) {
+				g2d.setFont(FONT_NORMAL);
 				g2d.drawString(stats.get(i+1),
 					centerX(FONT_NORMAL, stats.get(i+1), g2d),
-					display.h(0)/2+5+19*i);
+					display.h(0)/2+30*i);
+				g2d.setFont(FONT_SMALL);
+				g2d.drawString(stats.getCause(i+1),
+					centerX(FONT_SMALL, stats.getCause(i+1), g2d),
+					display.h(0)/2+12+30*i);
+			}
 	}
 
 	protected void preWorld() {

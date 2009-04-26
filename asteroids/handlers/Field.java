@@ -13,6 +13,8 @@ import asteroids.bodies.*;
 
 import asteroids.display.*;
 
+import asteroids.weapons.*;
+
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
@@ -89,7 +91,7 @@ public class Field {
 			for (int i=1; i < AbstractGame.globalLevel.quantify(); i++)
 				ship.upgradeWeapons();
 			if (AbstractGame.globalLevel.quantify() > MEDIUM.quantify()) {
-				Shield s = new OrangeShield(ship);
+				Shield s = new Shield(ship);
 				world.add(s);
 			}
 			world.add((Body)ship);
@@ -164,6 +166,7 @@ public class Field {
 	}
 
 	public Body newAI(ROVector2f origin) {
+		Body ret = null;
 		Entity ai = null;
 		switch (AbstractGame.globalLevel) {
 			case START:
@@ -200,13 +203,18 @@ public class Field {
 				ai = new Swarm(world);
 				break;
 			case DONE:
-				return null;
+				ret = new Missile(world);
+				break;
 			default:
 				assert false;
 		}
-		ROVector2f vo = display.getOffscreenCoords(((Visible)ai).getRadius(), BORDER, origin);
-		ai.setPosition(vo.getX(), vo.getY());
-		return ai;
+		if (ai != null)
+			ret = ai;
+		if (ret != null) {
+			ROVector2f vo = display.getOffscreenCoords(((Visible)ret).getRadius(), BORDER, origin);
+			ret.setPosition(vo.getX(), vo.getY());
+		}
+		return ret;
 	}
 
 	public ROVector2f getCenter() {

@@ -21,6 +21,10 @@ public class Frigate extends Entity {
 		this.defaultShield = true;
 	}
 
+	public String getCause() {
+		return "a frigate";
+	}
+
 	public void reset() {
 		super.reset();
 		weapons.setWeaponType(new Laser());

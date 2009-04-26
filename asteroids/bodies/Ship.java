@@ -20,6 +20,10 @@ public class Ship extends Entity {
 		super(raw, "pixmaps/ship.png", 64, 44, 1500, world, null);
 	}
 
+	public String getCause() {
+		return "another ship";
+	}
+
 	public Ship(World world, boolean shieldOn) {
 		super(raw, "pixmaps/ship.png", 64, 44, 1500, world, null);
 		defaultShield = raiseShield = shieldOn;
@@ -39,7 +43,7 @@ public class Ship extends Entity {
 	}
 
 	public String getTexturePath() {
-		if (!canTarget())
+		if (!isVisible())
 			return "pixmaps/ship-c.png";
 		return thrust > 0 ? "pixmaps/ship-t.png" : "pixmaps/ship.png";
 	}

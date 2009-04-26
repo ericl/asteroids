@@ -29,6 +29,10 @@ public class Swarm extends Entity {
 			super.collided(e);
 	}
 
+	public String getCause() {
+		return "a heavy rock";
+	}
+
 	protected float getMaxArmor() {
 		return .7f;
 	}
@@ -41,8 +45,8 @@ public class Swarm extends Entity {
 		return 50;
 	}
 
-	public boolean canTarget() {
-		return false;
+	public boolean targetableBy(Object o) {
+		return !(o instanceof Swarm);
 	}
 
 	public void endFrame() {

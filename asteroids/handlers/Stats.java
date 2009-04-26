@@ -115,6 +115,10 @@ public class Stats {
 		}
 	}
 
+	public String getCause(int i) {
+		return "(unimplemented)";
+	}
+
 	/**
 	 * @return	The current score of the scenario.
 	 */

@@ -16,12 +16,16 @@ import asteroids.handlers.Exploder;
 
 import static asteroids.Util.*;
 
-public abstract class TexturedAsteroid extends TexturedPolyBody implements Asteroid {
+public abstract class TexturedAsteroid extends TexturedPolyBody implements Asteroid, CauseOfDeath {
 	protected float damage;
 	protected Color color = Color.darkGray;
 
 	public TexturedAsteroid(ROVector2f[] raw, String img, float nativesize, float size) {
 		super(raw, img, nativesize, size);
+	}
+
+	public String getCause() {
+		return "a textured asteroid";
 	}
 
 	public void addPowerups(List<Body> list) {

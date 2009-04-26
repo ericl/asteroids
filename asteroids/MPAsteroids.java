@@ -52,7 +52,7 @@ public class MPAsteroids extends AbstractGame {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
-			Entity ship = new Frigate(world) {
+			Entity ship = new Ship(world, true) {
 				public void reset() {
 					super.reset();
 					setPosition(350*foo, 200*(foo % 2));
@@ -61,8 +61,8 @@ public class MPAsteroids extends AbstractGame {
 			ships[i] = ship;
 		}
 		if (NUM_PLAYERS > 1) {
-			Entity ship = new Frigate(world) {
-				public boolean canTarget() {
+			Entity ship = new Ship(world, true) {
+				public boolean isVisible() {
 					return true;
 				}
 
@@ -88,8 +88,8 @@ public class MPAsteroids extends AbstractGame {
 			ships[1] = ship;
 		}
 
-		Entity ship = new Frigate(world) {
-			public boolean canTarget() {
+		Entity ship = new Ship(world, true) {
+			public boolean isVisible() {
 				return true;
 			}
 

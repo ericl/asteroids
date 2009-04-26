@@ -14,12 +14,16 @@ import net.phys2d.raw.*;
 
 import static asteroids.Util.*;
 
-public class HexAsteroid extends PolyAsteroid {
+public class HexAsteroid extends PolyAsteroid implements CauseOfDeath {
 	private static ROVector2f[] geo = {v(-30,0),v(-10,-10),v(10,-10),v(30,0),v(10,20),v(-10,20)};
 
 	public HexAsteroid(float size) {
 		super(geo, size / 25);
 		setColor(Color.BLUE);
+	}
+
+	public String getCause() {
+		return getRadius() > 99 ? "a massive hexagon" : "a hexagonal asteroid";
 	}
 
 	public HexAsteroid(float size, Color c) {

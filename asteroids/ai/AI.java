@@ -22,7 +22,7 @@ public abstract class AI {
 	}
 
 	protected boolean canTarget(Targetable object) {
-		return object.canTarget();
+		return object.isVisible() && object.targetableBy(ship);
 	}
 
 	public void reset() {
@@ -69,7 +69,7 @@ public abstract class AI {
 	}
 
 	protected boolean trackTarget() {
-		if (target == null || !target.canTarget())
+		if (target == null || !canTarget(target))
 			return false;
 		targetPos = predict(ship, target, ship.getWeaponSpeed(), true);
 		Vector2f ds = sub(ship.getPosition(), targetPos);

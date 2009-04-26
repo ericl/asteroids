@@ -20,6 +20,10 @@ public class SmallAsteroid extends TexturedAsteroid {
 		return null;
 	}
 
+	public String getCause() {
+		return "a pebble";
+	}
+
 	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(6);
 		SmallAsteroid tmp;

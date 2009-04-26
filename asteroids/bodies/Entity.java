@@ -20,11 +20,13 @@ import net.phys2d.math.*;
 import net.phys2d.raw.*;
 
 import static asteroids.Util.*;
+import static asteroids.AbstractGame.Level.*;
 
-public abstract class Entity extends TexturedPolyBody implements Targetable, Automated, Drawable, Enhancable {
+public abstract class Entity extends TexturedPolyBody implements Targetable, Automated, Drawable, Enhancable, CauseOfDeath {
 	protected static int CLOAK_DELAY = 75, CLOAK_MAX = 15000;
 	protected long cloaktime = CLOAK_MAX, t = Timer.gameTime();
 	protected WeaponSys missiles;
+	protected Body killer;
 	protected WeaponSys weapons;
 	protected World world;
 	protected Shield shield, oldshield;
@@ -51,6 +53,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		reset();
 	}
 
+	public void setKiller(Body killer) {
+		this.killer = killer;
+	}
+
 	public void setAI(AI ai) {
 		this.ai = ai;
 		if (ai != null)
@@ -59,6 +65,11 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 
 	public World getWorld() {
 		return world;
+	}
+
+	@Override
+	public String getCause() {
+		return "an unknown entity";
 	}
 
 	public void reset() {
@@ -206,7 +217,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	protected void updateShield() {
-		if (canTarget()) {
+		if (isVisible()) {
 			if (shield == null && oldshield != null) {
 				shield = oldshield;
 				world.add(shield);
@@ -258,7 +269,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			world.remove(this);
 		long dt = Timer.gameTime() - t;
 		t = Timer.gameTime();
-		if (!canTarget())
+		if (!isVisible())
 			cloaktime -= dt;
 		else
 			cloaktime += dt / 3;
@@ -277,11 +288,15 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	public Body getRemnant() {
 		deaths++;
 		updateShield();
-		return explosion = new LargeExplosion(Explosion.TrackingMode.ORIGIN, 1.5f);
+		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 1.5f);
 	}
 
-	public boolean canTarget() {
+	public boolean isVisible() {
 		return cloak > 0 || cloaktime == 0;
+	}
+
+	public boolean targetableBy(Object o) {
+		return isVisible();
 	}
 
 	public Color getColor() {
@@ -302,20 +317,52 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	public void collided(CollisionEvent event) {
+		if (!canExplode()) {
+			killer = event.getBodyA();
+			if (killer == this)
+				killer = event.getBodyB();
+		}
 		if (!isInvincible())
 			damage += Exploder.getDamage(event, this);
 		updateShield();
+	}
+
+	public String killer() {
+		Object foo = killer; // do not modify killer!
+		if (AbstractGame.globalLevel == DONE)
+			return "completed game";
+		else if (destruct)
+			return "quit game";
+		else if (killer == null)
+			return "died of unknown causes";
+		else if (killer == this)
+			return "imploded";
+		String prefix = "";
+		if (killer instanceof Missile || killer instanceof Swarm) {
+			prefix = "tracked down by ";
+		} else if (killer instanceof Weapon && !(killer instanceof Missile)) {
+			prefix = "shot by ";
+			foo = ((Weapon)killer).getOrigin();
+		} else if (killer instanceof Entity) {
+			prefix = "collided with ";
+		} else {
+			prefix = "crashed into ";
+		}
+		String sub = "a " + foo.getClass().getName();
+		if (foo instanceof CauseOfDeath) {
+			sub = ((CauseOfDeath)foo).getCause();
+		} else {
+			sub = sub.substring(sub.lastIndexOf(".") + 1);
+		}
+		return prefix + sub;
 	}
 
 	public List<Body> getFragments() {
 		double min = Math.sqrt(getMass())/10;
 		double max = Math.sqrt(getMass())/4;
 		List<Body> f = new ArrayList<Body>(11);
-		for (int i=0; i < 11; i++) {
-			HexAsteroid tmp = new HexAsteroid(range(min,max));
-			tmp.setColor(Color.GRAY);
-			f.add(tmp);
-		}
+		for (int i=0; i < 11; i++)
+			f.add(new SpaceDebris(range(min,max)));
 		if (oneIn((int)(30/Math.sqrt(getPointValue()))))
 			f.add(PowerUp.random());
 		return f;

@@ -2,9 +2,10 @@ package asteroids.bodies;
 
 import java.awt.Color;
 
-import asteroids.weapons.Laser3;
-
 import java.util.List;
+
+import asteroids.weapons.Laser3;
+import asteroids.weapons.ShieldFailing;
 
 import net.phys2d.math.*;
 
@@ -23,12 +24,16 @@ public class Terror extends Entity {
 		setColor(Color.BLUE);
 	}
 
+	public String getCause() {
+		return "a blue terror";
+	}
+
 	protected float getMaxArmor() {
 		return 10;
 	}
 
 	public Body getRemnant() {
-		return null;
+		return new ShieldFailing(this, getRadius());
 	}
 
 	public int getPointValue() {
@@ -43,8 +48,8 @@ public class Terror extends Entity {
 		torque = t / 2;
 	}
 
-	public boolean canTarget() {
-		return rogue;
+	public boolean targetableBy(Object o) {
+		return rogue || !(o instanceof Terror);
 	}
 
 	public List<Body> getFragments() {

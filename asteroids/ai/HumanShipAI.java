@@ -62,7 +62,7 @@ public class HumanShipAI extends ShipAI implements KeyListener, MouseInputListen
 			case KeyEvent.VK_F: ship.startLaunching(); notifyInput(true); break;
 			case KeyEvent.VK_Q: ship.selfDestruct(); break;
 			case KeyEvent.VK_C:
-				if (ship.canTarget())
+				if (ship.isVisible())
 					ship.cloak();
 				else
 					ship.uncloak();

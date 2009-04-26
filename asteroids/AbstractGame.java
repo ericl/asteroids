@@ -51,6 +51,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	public final static Font FONT_BOLD = new Font("Serif", Font.BOLD, 15);
 	public final static Font FONT_VERY_BOLD = new Font("Serif", Font.BOLD, 30);
 	public final static Font FONT_NORMAL = new Font("SansSerif", Font.PLAIN, 12);
+	public final static Font FONT_SMALL = new Font("SansSerif", Font.PLAIN, 9);
 	public final static String RESTART_MSG = "R - Restart Game";
 	public final static Color COLOR_BOLD = Color.ORANGE, COLOR = Color.lightGray;
 

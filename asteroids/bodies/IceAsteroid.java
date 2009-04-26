@@ -12,7 +12,7 @@ import asteroids.display.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
-public class IceAsteroid extends CircleAsteroid implements Textured {
+public class IceAsteroid extends CircleAsteroid implements Textured, CauseOfDeath {
 	private double melting;
 	private int count = 0;
 	private boolean rocky = oneIn(3);
@@ -22,6 +22,10 @@ public class IceAsteroid extends CircleAsteroid implements Textured {
 	public IceAsteroid(float radius) {
 		super(radius);
 		color = Color.CYAN;
+	}
+
+	public String getCause() {
+		return "a globe of ice";
 	}
 
 	public Vector2f getTextureCenter() {

@@ -15,10 +15,14 @@ import net.phys2d.raw.shapes.*;
 
 import static asteroids.Util.*;
 
-public class Shield extends Body implements Explodable, Textured, Drawable, Overlay, Targetable {
+public class Shield extends Body implements Explodable, Textured, Drawable, Overlay, Targetable, CauseOfDeath {
 	protected Entity ship;
 	protected float damage;
 	protected float radius;
+
+	public String getCause() {
+		return "a force field";
+	}
 
 	public Shield(Entity ship) {
 		super(new Circle(ship.getRadius() * 4 / 3), 1000);
@@ -41,7 +45,11 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 		return 4;
 	}
 
-	public boolean canTarget() {
+	public boolean isVisible() {
+		return false;
+	}
+
+	public boolean targetableBy(Object o) {
 		return false;
 	}
 

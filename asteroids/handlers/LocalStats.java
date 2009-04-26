@@ -45,10 +45,12 @@ public class LocalStats extends Stats {
 		private class Score implements Comparable<Score>, java.io.Serializable {
 			public final static long serialVersionUID = 134987263492L;
 			public String name;
+			public String killer;
 			public final int score;
 
-			public Score(String n, int s) {
+			public Score(String n, String k, int s) {
 				name = n;
+				killer = k;
 				score = s;
 			}
 
@@ -58,6 +60,10 @@ public class LocalStats extends Stats {
 
 			public String toString() {
 				return this.name + "     " + this.score;
+			}
+
+			public String getCause() {
+				return killer;
 			}
 		}
 
@@ -75,8 +81,8 @@ public class LocalStats extends Stats {
 			scores = tmp;
 		}
 
-		public void submit(String id, String name, int score) {
-			Score obj = new Score(name, score);
+		public void submit(String id, String name, String killer, int score) {
+			Score obj = new Score(name, killer, score);
 			scores.put(id, obj);
 			ranks.add(obj);
 			Collections.sort(ranks);
@@ -99,6 +105,14 @@ public class LocalStats extends Stats {
 			}
 		}
 
+		public String getCause(int rank) {
+			try {
+				return ranks.get(rank - 1).getCause();
+			} catch (Exception e) {
+				return "";
+			}
+		}
+
 		public String toString() {
 			return ranks.toString();
 		}
@@ -108,6 +122,10 @@ public class LocalStats extends Stats {
 		return record.get(i);
 	}
 
+	public String getCause(int i) {
+		return record.getCause(i);
+	}
+
 	/**
 	 * Sends the current score to the high score tables.
 	 * @param	name	Name of user.
@@ -115,7 +133,7 @@ public class LocalStats extends Stats {
 	public void build(String name) {
 		freezeScores();
 		lastChk = "TIMESTAMP=" + System.currentTimeMillis();
-		record.submit(lastChk, name, score());
+		record.submit(lastChk, name, myShip.killer(), score());
 	}
 
 	/**

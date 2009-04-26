@@ -19,6 +19,10 @@ public class MediumAsteroid extends TexturedAsteroid {
 		return getRadius() > 15 ? new SmallAsteroid(getRadius() / 2) : null;
 	}
 
+	public String getCause() {
+		return "an asteroid";
+	}
+
 	public List<Body> getFragments() {
 		List<Body> f = new ArrayList<Body>(6);
 		SmallAsteroid tmp;
