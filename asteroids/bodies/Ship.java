@@ -39,7 +39,7 @@ public class Ship extends Entity {
 
 	public void reset() {
 		super.reset();
-		weapons.setWeaponType(new Laser2());
+		setWeaponType(new Laser2());
 	}
 
 	public String getTexturePath() {

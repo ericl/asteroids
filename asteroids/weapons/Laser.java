@@ -31,10 +31,6 @@ public class Laser extends Weapon {
 		return v(7,3);
 	}
 
-	public boolean canExplode() {
-		return true;
-	}
-
 	protected long getLifetime() {
 		return 2000;
 	}

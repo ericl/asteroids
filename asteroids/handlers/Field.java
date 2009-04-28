@@ -7,7 +7,6 @@ package asteroids.handlers;
 import java.awt.*;
 
 import asteroids.AbstractGame;
-import static asteroids.AbstractGame.Level.*;
 
 import asteroids.bodies.*;
 
@@ -18,6 +17,8 @@ import asteroids.weapons.*;
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
+
+import static asteroids.AbstractGame.Level.*;
 
 import static asteroids.Util.*;
 
@@ -35,7 +36,6 @@ public class Field {
 	protected static double D = 1;
 	protected static final float INIT_I = 40, INIT_S = 1;
 	protected float I = INIT_I, S = INIT_S; // speed of asteroids; scaling constant
-	protected float rI = 1, rS = 1; // scalers for above
 
 	/**
 	 * @param	w	The world.
@@ -91,7 +91,7 @@ public class Field {
 			for (int i=1; i < AbstractGame.globalLevel.quantify(); i++)
 				ship.upgradeWeapons();
 			if (AbstractGame.globalLevel.quantify() > MEDIUM.quantify()) {
-				Shield s = new Shield(ship);
+				Shield s = new Shield(ship, world);
 				world.add(s);
 			}
 			world.add((Body)ship);
@@ -173,28 +173,13 @@ public class Field {
 				ai = new Frigate(world, false);
 				break;
 			case EASY:
-				ai = new Frigate(world, oneIn(2));
+				ai = new Frigate(world, true);
 				break;
 			case MEDIUM:
-				ai = oneIn(2) ? new Ship(world) : new Frigate(world, true);
-				if (oneIn(2))
-					ai.upgradeWeapons();
-				if (oneIn(3))
-					ai.upgradeWeapons();
-				if (oneIn(7))
-					ai.addMissiles(1);
+				ai = new Ship(world, oneIn(2));
 				break;
 			case HARD:
-				ai = oneIn(3) ? new Frigate(world, true) : oneIn(2) ? new Ship(world, true) : new Ship(world, false);
-				ai.upgradeWeapons();
-				if (oneIn(2))
-					ai.upgradeWeapons();
-				if (oneIn(3))
-					ai.upgradeWeapons();
-				if (oneIn(7))
-					ai.addMissiles(5);
-				if (oneIn(10))
-					ai.gainInvincibility(20000, 0);
+				ai = new Jug(world);
 				break;
 			case BLUE:
 				ai = new Terror(world);
@@ -228,18 +213,16 @@ public class Field {
 		Body rock = null;
 		switch (AbstractGame.globalLevel) {
 			case START:
+			case EASY:
 				rock = new IceAsteroid(range(30,50));
 				break;
-			case EASY:
 			case SWARM:
+			case MEDIUM:
+			case HARD:
 				rock = new BigAsteroid(range(30,50));
 				break;
-			case MEDIUM:
 			case BLUE:
 				rock = new HexAsteroid(range(30,50));
-				break;
-			case HARD:
-				rock = new HexAsteroid(oneIn(100) ? range(100,200) : range(5,10));
 				break;
 			case DONE:
 				rock = new Invincibility(range(20, 112.5));

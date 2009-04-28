@@ -33,7 +33,7 @@ public class Exploder implements CollisionListener {
 	 */
 	private class CollisionGrouper {
 		// 1l reserved for shield + powerup
-		private long initmask = 2l;
+		private long initmask = BIT_MIN_FREE;
 		private long nextmask = initmask;
 
 		/**
@@ -117,7 +117,7 @@ public class Exploder implements CollisionListener {
 				stat.kill((Entity)other, body, event);
 		else if (other instanceof Shield)
 			for (Stats stat : stats)
-				stat.kill(((Shield)other).getShip(), body, event);
+				stat.kill(((Shield)other).getSource(), body, event);
 		Body rem = e.getRemnant();
 		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
 			return;

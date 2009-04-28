@@ -18,7 +18,7 @@ public class Frigate extends Entity {
 
 	public Frigate(World world) {
 		super(raw, "pixmaps/foo.png", 50, 30, 1000, world, new Laser());
-		this.defaultShield = true;
+		this.defaultShield = raiseShield = false;
 	}
 
 	public String getCause() {
@@ -27,11 +27,11 @@ public class Frigate extends Entity {
 
 	public void reset() {
 		super.reset();
-		weapons.setWeaponType(new Laser());
+		setWeaponType(new Laser());
 	}
 
 	protected Shield getShield() {
-		return new OrangeShield(this);
+		return new OrangeShield(this, world);
 	}
 
 	public int getPointValue() {

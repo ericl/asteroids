@@ -4,10 +4,11 @@
 
 package asteroids;
 import java.awt.*;
-import java.awt.geom.*;
 import net.phys2d.math.*;
 
 public class Util {
+	public static final long BIT_SHIELD_PENETRATING = 1l;
+	public static final long BIT_MIN_FREE = 2l;
 	private Util() {
 		// prevent construction
 	}

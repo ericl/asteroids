@@ -16,25 +16,33 @@ import net.phys2d.raw.shapes.*;
 import static asteroids.Util.*;
 
 public class Shield extends Body implements Explodable, Textured, Drawable, Overlay, Targetable, CauseOfDeath {
-	protected Entity ship;
+	protected Visible source;
 	protected float damage;
+	protected int visible;
 	protected float radius;
+	protected float MAX = 3f;
+	protected World world;
 
 	public String getCause() {
 		return "a force field";
 	}
 
-	public Shield(Entity ship) {
-		super(new Circle(ship.getRadius() * 4 / 3), 1000);
-		ship.registerShield(this);
-		addBit(1l);
-		this.radius = ship.getRadius() * 4 / 3;
-		this.ship = ship;
-		this.addExcludedBody((Body)ship);
+	public Shield(Visible source, World world) {
+		super(new Circle(source.getRadius() * 4 / 3), 1000);
+		assert source instanceof Body;
+		if (source instanceof Entity) {
+			Entity e = (Entity)source;
+			e.registerShield(this);
+		}
+		addBit(BIT_SHIELD_PENETRATING);
+		this.world = world;
+		this.radius = source.getRadius() * 4 / 3;
+		this.source = source;
+		this.addExcludedBody((Body)source);
 	}
 
-	public Entity getShip() {
-		return ship;
+	public Visible getSource() {
+		return source;
 	}
 	
 	public Color getColor() {
@@ -42,7 +50,7 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	}
 
 	public float getMax() {
-		return 4;
+		return MAX;
 	}
 
 	public boolean isVisible() {
@@ -70,7 +78,11 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	}
 
 	public String getTexturePath() {
-		return damage > getMax() ? "" : "pixmaps/ship-shield.png";
+		return damage > MAX || visible++ < 0  ? "" : "pixmaps/ship-shield.png";
+	}
+
+	public void cloak() {
+		visible = -20;
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
@@ -82,11 +94,11 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	}
 
 	public Body getRemnant() {
-		return new ShieldFailing(ship, radius);
+		return new ShieldFailing(source, radius);
 	}
 
 	public double health() {
-		return Math.max(0, (getMax() - damage) / getMax());
+		return Math.max(0, (MAX - damage) / MAX);
 	}
 
 	public List<Body> getFragments() {
@@ -94,7 +106,7 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	}
 
 	public boolean canExplode() {
-		return damage > getMax();
+		return damage > MAX;
 	}
 
 	public boolean preferDrawableFallback() {
@@ -103,9 +115,9 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 
 	public void endFrame() {
 		super.endFrame();
-		setPosition(ship.getPosition().getX(), ship.getPosition().getY());
-		if (!ship.getWorld().getBodies().contains((Body)ship))
-			ship.getWorld().remove(ship);
+		setPosition(source.getPosition().getX(), source.getPosition().getY());
+		if (!world.getBodies().contains((Body)source))
+			world.remove(this);
 	}
 
 	public void collided(CollisionEvent event) {

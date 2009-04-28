@@ -24,6 +24,7 @@ import static asteroids.AbstractGame.Level.*;
 
 public abstract class Entity extends TexturedPolyBody implements Targetable, Automated, Drawable, Enhancable, CauseOfDeath {
 	protected static int CLOAK_DELAY = 75, CLOAK_MAX = 15000;
+	protected String cause;
 	protected long cloaktime = CLOAK_MAX, t = Timer.gameTime();
 	protected WeaponSys missiles;
 	protected Body killer;
@@ -57,17 +58,16 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		this.killer = killer;
 	}
 
+	public void setWeaponType(Weapon w) {
+		weapons.setWeaponType(w);
+	}
+
 	public void setAI(AI ai) {
 		this.ai = ai;
 		if (ai != null)
 			ai.reset();
 	}
 
-	public World getWorld() {
-		return world;
-	}
-
-	@Override
 	public String getCause() {
 		return "an unknown entity";
 	}
@@ -75,6 +75,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	public void reset() {
 		if (ai != null)
 			ai.reset();
+		cause = null;
 		BodyList excluded = getExcludedList();
 		while (excluded.size() > 0)
 			removeExcludedBody(excluded.get(0));
@@ -213,7 +214,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	protected Shield getShield() {
-		return new Shield(this);
+		return new Shield(this, world);
 	}
 
 	protected void updateShield() {
@@ -238,6 +239,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		if (shield != null) {
 			oldshield = null;
 			if (canExplode() || shield.canExplode()) {
+				if (canExplode())
+					killer(); // get message "while shielded"
 				world.remove(shield);
 				shield = null;
 			}
@@ -322,12 +325,17 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			if (killer == this)
 				killer = event.getBodyB();
 		}
+		if (killer instanceof Cannon)
+			if (shield != null)
+				shield.cloak();
 		if (!isInvincible())
 			damage += Exploder.getDamage(event, this);
 		updateShield();
 	}
 
 	public String killer() {
+		if (cause != null)
+			return cause;
 		Object foo = killer; // do not modify killer!
 		if (AbstractGame.globalLevel == DONE)
 			return "completed game";
@@ -338,8 +346,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		else if (killer == this)
 			return "imploded";
 		String prefix = "";
-		if (killer instanceof Missile || killer instanceof Swarm) {
+		if (killer instanceof Missile) {
 			prefix = "tracked down by ";
+		} else if (killer instanceof Swarm) {
+			prefix = "crushed by ";
 		} else if (killer instanceof Weapon && !(killer instanceof Missile)) {
 			prefix = "shot by ";
 			foo = ((Weapon)killer).getOrigin();
@@ -354,17 +364,27 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		} else {
 			sub = sub.substring(sub.lastIndexOf(".") + 1);
 		}
-		return prefix + sub;
+		String suffix = "";
+		if (isInvincible())
+			suffix = " while invincible!?";
+		else if (!isVisible())
+			suffix = " while cloaked";
+		else if (shield != null)
+			suffix = " through shields";
+		return cause = prefix + sub + suffix;
 	}
 
 	public List<Body> getFragments() {
-		double min = Math.sqrt(getMass())/10;
-		double max = Math.sqrt(getMass())/4;
-		List<Body> f = new ArrayList<Body>(11);
-		for (int i=0; i < 11; i++)
+		double min = 3;
+		double max = 8;
+		int num = 11;
+		num += getMass() / 750;
+		List<Body> f = new ArrayList<Body>(num + 1);
+		for (int i=0; i < num; i++)
 			f.add(new SpaceDebris(range(min,max)));
 		if (oneIn((int)(30/Math.sqrt(getPointValue()))))
 			f.add(PowerUp.random());
+		System.out.println(f.size());
 		return f;
 	}
 

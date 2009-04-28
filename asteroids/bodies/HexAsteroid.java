@@ -36,7 +36,7 @@ public class HexAsteroid extends PolyAsteroid implements CauseOfDeath {
 	}
 
 	public List<Body> getFragments() {
-		List<Body> f = new ArrayList<Body>(6);
+		List<Body> f = new ArrayList<Body>(7);
 		if (getRadius() > 10)
 			for (int i=0; i < 6; i++)
 				f.add(new HexAsteroid(getRadius() / 3, getColor()));

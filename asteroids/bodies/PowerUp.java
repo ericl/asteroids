@@ -14,12 +14,14 @@ import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
 
+import static asteroids.Util.*;
+
 public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 	protected boolean explode;
 
 	public PowerUp(ROVector2f[] raw, String img, float nativesize, float size) {
 		super(raw, img, nativesize, size);
-		addBit(1l);
+		addBit(BIT_SHIELD_PENETRATING);
 		setDamping(1);
 		setMaxVelocity(20, 20);
 	}

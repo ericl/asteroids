@@ -2,6 +2,7 @@ package asteroids.bodies;
 
 import java.awt.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import asteroids.weapons.Laser3;
@@ -15,9 +16,6 @@ import static asteroids.Util.*;
 
 public class Terror extends Entity {
 	protected static ROVector2f[] raw = {v(21,11),v(43,11),v(56,26),v(58,46),v(32,58),v(5,46),v(5,26)};
-	
-	// allows them to swarm a bit
-	protected boolean rogue = oneIn(3);
 
 	public Terror(World world) {
 		super(raw, null, 64, 64, 7500, world, new Laser3());
@@ -49,14 +47,19 @@ public class Terror extends Entity {
 	}
 
 	public boolean targetableBy(Object o) {
-		return rogue || !(o instanceof Terror);
+		return !(o instanceof Terror);
 	}
 
 	public List<Body> getFragments() {
-		List<Body> f = super.getFragments();
+		double min = Math.sqrt(getMass())/10;
+		double max = Math.sqrt(getMass())/4;
+		List<Body> f = new ArrayList<Body>(12);
+		for (int i=0; i < 11; i++)
+			f.add(new SpaceDebris(range(min,max)));
 		for (Body b : f)
-			if (b instanceof PolyBody)
-				((PolyBody)b).setColor(Color.BLUE);
+			((PolyBody)b).setColor(Color.BLUE);
+		if (oneIn((int)(30/Math.sqrt(getPointValue()))))
+			f.add(PowerUp.random());
 		return f;
 	}
 
@@ -66,6 +69,6 @@ public class Terror extends Entity {
 
 	public void reset() {
 		super.reset();
-		weapons.setWeaponType(new Laser3());
+		setWeaponType(new Laser3());
 	}
 }

@@ -37,6 +37,20 @@ public class Asteroids extends AbstractGame {
 		}
 	}
 
+	public void newGame() {
+		k.init();
+		AbstractGame.globalLevel = START;
+		scoreBuilder = new ScoreBuilder();
+		scoresBuilt = false;
+		scenario = new Field(world, display, ship);
+		scenario.setAIFrequency(.01);
+		stats.reset(scenario);
+		stats.setShip(ship);
+		scenario.setDensity(.4f);
+		scenario.setScalingRatio(.33f);
+		scenario.start();
+	}
+
 	public static void main(String[] args) {
 		new Asteroids().mainLoop();
 	}
@@ -92,8 +106,8 @@ public class Asteroids extends AbstractGame {
 			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
 			g2d.setColor(COLOR_BOLD);
 			String score = name + "'s Score: " + stats.score();
-			renderCenter(g2d, FONT_BOLD, score, 35);
-			renderCenter(g2d, FONT_NORMAL, ship.killer(), 20);
+			renderCenter(g2d, FONT_BOLD, score, 40);
+			renderCenter(g2d, FONT_NORMAL, ship.killer(), 25);
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
 				scoreBuilder.start();
 			else if (scenario instanceof Field)
@@ -135,11 +149,11 @@ public class Asteroids extends AbstractGame {
 				g2d.setFont(FONT_NORMAL);
 				g2d.drawString(stats.get(i+1),
 					centerX(FONT_NORMAL, stats.get(i+1), g2d),
-					display.h(0)/2+30*i);
+					display.h(0)/2+33*i);
 				g2d.setFont(FONT_SMALL);
 				g2d.drawString(stats.getCause(i+1),
 					centerX(FONT_SMALL, stats.getCause(i+1), g2d),
-					display.h(0)/2+12+30*i);
+					display.h(0)/2+12+33*i);
 			}
 	}
 
@@ -149,7 +163,7 @@ public class Asteroids extends AbstractGame {
 
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'r': restart = true; break;
+			case 'r': if (scenario.done()) restart = true; break;
 			case 'n': changeName(); break;
 			case 'm':
 				if (scenario instanceof WelcomeScreen)
@@ -160,20 +174,6 @@ public class Asteroids extends AbstractGame {
 					restart = true;
 				break;
 		}
-	}
-
-	public void newGame() {
-		k.init();
-		AbstractGame.globalLevel = START;
-		scoreBuilder = new ScoreBuilder();
-		scoresBuilt = false;
-		scenario = new Field(world, display, ship);
-		scenario.setAIFrequency(.01);
-		stats.reset(scenario);
-		stats.setShip(ship);
-		scenario.setDensity(.4f);
-		scenario.setScalingRatio(.33f);
-		scenario.start();
 	}
 
 	public void newWelcome() {
