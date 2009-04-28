@@ -102,7 +102,7 @@ public class Asteroids extends AbstractGame {
 			stats.freezeScores();
 			g2d.setColor(COLOR);
 			g2d.setFont(FONT_NORMAL);
-			g2d.drawString("N - Change Name", display.w(-115),display.h(-30));
+			g2d.drawString("n - Change Name", display.w(-115),display.h(-30));
 			g2d.drawString(RESTART_MSG, display.w(-115),display.h(-13));
 			g2d.setColor(COLOR_BOLD);
 			String score = name + "'s Score: " + stats.score();
@@ -121,12 +121,12 @@ public class Asteroids extends AbstractGame {
 			renderCenter(g2d, FONT_NORMAL, "Copyright (c) 2008, Evan Hang, William Ho, Eric Liang, Sean Webster.", 35);
 			g2d.setColor(COLOR);
 			renderCenter(g2d, FONT_NORMAL, "Use arrow keys to navigate; space/mouse to fire.", 11);
-			renderCenter(g2d, FONT_NORMAL, "Q - cancel game", -10);
-			renderCenter(g2d, FONT_NORMAL, "C - cloak ship", -30);
-			renderCenter(g2d, FONT_NORMAL, "F - launch missile", -50);
+			renderCenter(g2d, FONT_NORMAL, "q - cancel game", -10);
+			renderCenter(g2d, FONT_NORMAL, "c - cloak ship", -30);
+			renderCenter(g2d, FONT_NORMAL, "f - launch missile", -50);
 			renderCenter(g2d, FONT_BOLD, "Press SPACE to continue.", -90);
 			g2d.setFont(FONT_NORMAL);
-			g2d.drawString("M - multiplayer mode", display.w(-140),display.h(-10));
+			g2d.drawString("m - multiplayer mode", display.w(-140),display.h(-10));
 			g2d.drawString("* see README inside jar file", 10, display.h(-10));
 		} else {
 			shipStatus(g2d);
@@ -163,7 +163,7 @@ public class Asteroids extends AbstractGame {
 
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'r': if (scenario.done()) restart = true; break;
+			case 'R': restart = true; break;
 			case 'n': changeName(); break;
 			case 'm':
 				if (scenario instanceof WelcomeScreen)
