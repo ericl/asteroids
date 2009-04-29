@@ -54,10 +54,6 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		reset();
 	}
 
-	public void setKiller(Body killer) {
-		this.killer = killer;
-	}
-
 	public void setWeaponType(Weapon w) {
 		weapons.setWeaponType(w);
 	}
@@ -337,10 +333,13 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		if (cause != null)
 			return cause;
 		Object foo = killer; // do not modify killer!
-		if (AbstractGame.globalLevel == DONE)
-			return "completed game";
-		else if (destruct)
-			return "quit game";
+		if (destruct) {
+			if (AbstractGame.globalLevel == DONE)
+				return "quit while ahead";
+			else
+				return "quit game";
+		} else if (AbstractGame.globalLevel == DONE)
+			return "crushed by a malevolent force";
 		else if (killer == null)
 			return "died of unknown causes";
 		else if (killer == this)
@@ -370,21 +369,25 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		else if (!isVisible())
 			suffix = " while cloaked";
 		else if (shield != null)
-			suffix = " through shields";
+			suffix = " while shielded";
 		return cause = prefix + sub + suffix;
 	}
 
 	public List<Body> getFragments() {
 		double min = 3;
-		double max = 8;
-		int num = 11;
+		double max = 6;
+		if (getMass() > 1200)
+			max += 2;
+		int num = 10;
 		num += getMass() / 750;
 		List<Body> f = new ArrayList<Body>(num + 1);
 		for (int i=0; i < num; i++)
 			f.add(new SpaceDebris(range(min,max)));
+		if (getMass() > 3000)
+			for (int i=0; i < 3; i++)
+				f.add(new SpaceDebris(range(10,15)));
 		if (oneIn((int)(30/Math.sqrt(getPointValue()))))
 			f.add(PowerUp.random());
-		System.out.println(f.size());
 		return f;
 	}
 

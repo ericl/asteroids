@@ -1,7 +1,5 @@
 package asteroids.bodies;
 
-import java.util.List;
-
 import static asteroids.Util.*;
 
 import asteroids.weapons.*;
@@ -32,14 +30,9 @@ public class Jug extends Entity {
 	}
 
 	protected Shield getShield() {
-		return new OrangeShield(this, world, 11);
-	}
-
-	public List<Body> getFragments() {
-		List<Body> f = super.getFragments();
-		for (int i=0; i < 3; i++)
-			f.add(new SpaceDebris(range(10,15)));
-		return f;
+		Shield s = new OrangeShield(this, world, 11);
+		s.removeBit(BIT_SHIELD_PENETRATING);
+		return s;
 	}
 
 	public Body getRemnant() {
