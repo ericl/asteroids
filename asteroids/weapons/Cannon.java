@@ -64,7 +64,6 @@ public class Cannon extends Weapon {
 	}
 
 	public void collided(CollisionEvent e) {
-		explode = true;
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
 		explode = !(other instanceof Weapon) || other instanceof Cannon || other instanceof Missile || other instanceof Laser3 || other instanceof Laser2;
 	}
