@@ -171,7 +171,7 @@ public class MPAsteroids extends AbstractGame {
 
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'R': restart = true; break;
+			case 'r': restart = true; break;
 		}
 	}
 

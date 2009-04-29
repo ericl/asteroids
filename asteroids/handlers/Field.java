@@ -12,8 +12,6 @@ import asteroids.bodies.*;
 
 import asteroids.display.*;
 
-import asteroids.weapons.*;
-
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
@@ -188,7 +186,6 @@ public class Field {
 				ai = new Swarm(world);
 				break;
 			case DONE:
-				ret = new Missile(world);
 				break;
 			default:
 				assert false;
@@ -225,7 +222,7 @@ public class Field {
 				rock = new HexAsteroid(range(30,50));
 				break;
 			case DONE:
-				rock = new Invincibility(range(20, 112.5));
+				rock = new Swarm(world);
 				break;
 			default:
 				assert false;
@@ -255,6 +252,8 @@ public class Field {
 	 * @return	Current state of scenario.
 	 */
 	public String toString() {
-		return AbstractGame.globalLevel.toString();
+		if (AbstractGame.globalLevel == DONE)
+			return "Out of levels!";
+		return AbstractGame.globalLevel.toString() + " of " + (DONE.quantify() - 1);
 	}
 }

@@ -82,7 +82,7 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	}
 
 	public void cloak() {
-		visible = -20;
+		visible = -5;
 	}
 
 	public void drawTo(Graphics2D g2d, ROVector2f o) {
@@ -94,7 +94,10 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	}
 
 	public Body getRemnant() {
-		return new ShieldFailing(source, radius);
+		float modifier = 1f;
+		if (radius > 30)
+			modifier = .5f;
+		return new ShieldFailing(source, radius * modifier);
 	}
 
 	public double health() {
@@ -116,6 +119,7 @@ public class Shield extends Body implements Explodable, Textured, Drawable, Over
 	public void endFrame() {
 		super.endFrame();
 		setPosition(source.getPosition().getX(), source.getPosition().getY());
+		// O(n) but like .002 ms...
 		if (!world.getBodies().contains((Body)source))
 			world.remove(this);
 	}

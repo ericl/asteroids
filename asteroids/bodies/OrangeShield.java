@@ -1,10 +1,13 @@
+/**
+ * same as shield but with variable strength and does NOT let powerups through
+ */
 package asteroids.bodies;
 
-import net.phys2d.raw.*;
+import asteroids.display.*;
 
 import asteroids.weapons.*;
 
-import asteroids.display.*;
+import net.phys2d.raw.*;
 
 public class OrangeShield extends Shield {
 
