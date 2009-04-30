@@ -375,17 +375,16 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 				return "quit while ahead";
 			else
 				return "quit game";
-		}
+		} else if (killer instanceof Beam)
+			return "blasted apart";
+		else if (killer instanceof Missile)
+			return "tracked down";
 		else if (killer == null)
 			return "died of unknown causes";
 		else if (killer == this)
 			return "imploded";
 		String prefix = "";
-		if (killer instanceof Missile) {
-			prefix = "tracked down by ";
-		} else if (killer instanceof Beam) {
-			prefix = "vaporized by ";
-		} else if (killer instanceof Swarm) {
+		if (killer instanceof Swarm) {
 			prefix = "crushed by ";
 		} else if (killer instanceof Weapon) {
 			prefix = "shot by ";

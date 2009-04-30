@@ -9,7 +9,7 @@ import asteroids.ai.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
 
-public class Missile extends Weapon implements Automated, CauseOfDeath, Heavy {
+public class Missile extends Weapon implements Automated, Heavy {
 	private static float myRadius = 2;
 	private HomingAI ai;
 	private float torque;
@@ -22,10 +22,6 @@ public class Missile extends Weapon implements Automated, CauseOfDeath, Heavy {
 		ai = new HomingAI(world, this);
 		setMaxVelocity(50, 50);
 		setRotDamping(100);
-	}
-
-	public String getCause() {
-		return "a missile";
 	}
 
 	public Missile duplicate() {

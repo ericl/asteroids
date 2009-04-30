@@ -9,8 +9,6 @@ import java.awt.Graphics2D;
 
 import java.util.*;
 
-import asteroids.bodies.*;
-
 import asteroids.display.*;
 
 import net.phys2d.math.*;
@@ -21,7 +19,7 @@ import net.phys2d.raw.shapes.*;
 
 import static asteroids.Util.*;
 
-public class Beam extends Weapon implements Drawable, Heavy, CauseOfDeath {
+public class Beam extends Weapon implements Drawable, Heavy {
 	private static ROVector2f[] geo = {v(-1,5),v(1,5),v(1,-5),v(-1,-5)};
 	private static ROVector2f[] geo2 = {v(-.3,5),v(.3,5),v(.3,-5),v(-.3,-5)};
 	private static Polygon poly = new Polygon(geo);
@@ -40,10 +38,6 @@ public class Beam extends Weapon implements Drawable, Heavy, CauseOfDeath {
 		super(new Circle(myRadius), 60);
 		this.state = state;
 		setRestitution(1);
-	}
-
-	public String getCause() {
-		return "a beam of energy";
 	}
 
 	protected long getLifetime() {
