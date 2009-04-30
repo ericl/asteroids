@@ -66,7 +66,10 @@ public class WeaponSys {
 	}
 
 	public WeaponSys(Body origin, World wo, Weapon w) {
-		setWeaponType(w);
+		if (w == null)
+			setWeaponType(new Laser());
+		else
+			setWeaponType(w);
 		this.origin = origin;
 		world = wo;
 	}

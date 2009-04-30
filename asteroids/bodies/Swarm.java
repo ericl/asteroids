@@ -23,7 +23,8 @@ public class Swarm extends Entity {
 		super(raw, "pixmaps/3.png", 35, range(8,15), 1000, world, null);
 		setAI(new HomingAI(world, this));
 		setRotDamping(5000);
-		setMaxVelocity(50,50);
+		if (AbstractGame.globalLevel != DONE)
+			setMaxVelocity(50,50);
 	}
 
 	public void collided(CollisionEvent e) {

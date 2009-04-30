@@ -28,7 +28,7 @@ public class Field {
 	protected Display display;
 	protected double ai_frequency = .01;
 	protected Dimension dim;
-	protected int count, newcount;
+	protected int count;
 	protected final static int BORDER = 300, BUF = 500;
 	protected final static double MIN_DENSITY = 2e-4;
 	protected static double D = 1;
@@ -95,7 +95,6 @@ public class Field {
 			world.add((Body)ship);
 		}
 		count = 1;
-		newcount = 1;
 	}
 
 	/**
@@ -239,10 +238,6 @@ public class Field {
 	 */
 	private void adjustForDifficulty(Body rock) {
 		float max = I + (float)Math.max(S*log10(count)*cbrt(count), 0);
-		if (AbstractGame.globalLevel == DONE) {
-			newcount++;
-			max += newcount / 33f;
-		}
 		rock.setMaxVelocity(max,max);
 		rock.adjustVelocity(v(range(-max,max), range(-max,max)));
 	}
