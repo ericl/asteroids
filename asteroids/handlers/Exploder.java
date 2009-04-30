@@ -98,10 +98,6 @@ public class Exploder implements CollisionListener {
 			return;
 		exploded.add(body);
 		Explodable e = (Explodable)body;
-		if (other instanceof Weapon) {
-			for (Stats stat : stats)
-				stat.hit(body, event);
-		}
 		// don't explode some offscreen or non-exploding bodies
 		if (!isStuck(body, other) && (!e.canExplode()
 				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)

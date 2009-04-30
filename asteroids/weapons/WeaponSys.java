@@ -9,7 +9,6 @@ import java.util.Collections;
 
 import asteroids.display.*;
 
-import asteroids.handlers.*;
 import asteroids.handlers.Timer;
 
 import net.phys2d.math.*;
@@ -20,7 +19,6 @@ import static asteroids.Util.*;
 
 public class WeaponSys {
 	protected static float ANGULAR_DISTRIBUTION = (float)Math.PI/48;
-	protected List<Stats> stats = new LinkedList<Stats>();
 	protected Body origin;
 	protected World world;
 	protected Weapon weapon;
@@ -123,10 +121,6 @@ public class WeaponSys {
 		return true;
 	}
 
-	public void addStatsListener(Stats s) {
-		stats.add(s);
-	}
-
 	// postcondition: nothing is modified
 	private Weapon makeWeapon(float angle, float originRotation) {
 		Weapon c = weapon.duplicate();
@@ -145,13 +139,11 @@ public class WeaponSys {
 			c.hintVelocity(vel);
 		c.adjustVelocity((Vector2f)origin.getVelocity());
 		c.addExcludedBody(origin);
-		BodyList el = origin.getExcludedList();
-		for (int i=0; i < el.size(); i++)
-			c.addExcludedBody(el.get(i));
+		Set<Body> excluded = origin.getExcluded();
+		for (Body e : excluded)
+			c.addExcludedBody(e);
 		for (Weapon f : fired.getActive())
 			c.addExcludedBody(f);
-		for (Stats stat : stats)
-			stat.fired(c);
 		return c;
 	}
 

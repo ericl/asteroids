@@ -77,6 +77,6 @@ public class Cannon extends Weapon implements Heavy {
 	}
 
 	public float getReloadTime() {
-		return 333;
+		return 555;
 	}
 }

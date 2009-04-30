@@ -26,28 +26,7 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 		setMaxVelocity(20, 20);
 	}
 
-	public static PowerUp random() {
-		if (Entity.weaponsAreMaxed) {
-			switch ((int)(16*Math.random())) {
-				case 0:
-				case 1: return new Invincibility();
-				case 2:
-				case 3: return new ArmorRecovery();
-				case 4:
-				case 5:
-				case 6: return new MissilePower();
-				case 7:
-				case 8:
-				case 9: return new BeamPower();
-				case 10:
-				case 11:
-				case 12:
-				case 13:
-				case 14:
-				case 15:
-				default: return new ShieldRecovery();
-			}
-		}
+	private static PowerUp create() {
 		switch ((int)(20*Math.random())) {
 			case 0:
 			case 1: return new Invincibility();
@@ -71,6 +50,25 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 			case 19:
 			default: return new ShieldRecovery();
 		}
+	}
+
+	public static PowerUp random() {
+		PowerUp ret = create();
+		for (int i=0; i < 5; i++) {
+			if (ret instanceof WeaponPower && Entity.reference.weaponsMaxed())
+				ret = create();
+			else if (ret instanceof ShieldRecovery && Entity.reference.shieldInfo() > .75)
+				ret = create();
+			else if (ret instanceof Invincibility && Entity.reference.isInvincible())
+				ret = create();
+			else if (ret instanceof BeamPower && Entity.reference.numBeams() > 4000)
+				ret = create();
+			else if (ret instanceof MissilePower && Entity.reference.numMissiles() > 45)
+				ret = create();
+			else
+				break;
+		}
+		return ret;
 	}
 
 	public Color getColor() {

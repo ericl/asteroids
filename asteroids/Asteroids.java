@@ -69,7 +69,6 @@ public class Asteroids extends AbstractGame {
 		HumanShipAI human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true, display.getDimension());
 		frame.addKeyListener(human);
 		display.addMouseInputListener(human);
-		ship.addStatsListener(stats);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newWelcome();

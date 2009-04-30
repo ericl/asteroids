@@ -11,6 +11,7 @@ import java.util.*;
 import asteroids.*;
 import asteroids.ai.*;
 import asteroids.display.*;
+
 import asteroids.handlers.*;
 import asteroids.handlers.Timer;
 import asteroids.weapons.*;
@@ -42,10 +43,12 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	protected int textStatus = Integer.MAX_VALUE; // for blinking only
 	protected long warningStart; // end of warning -> not invincible
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
+	protected long accum;
+	protected long last = Timer.gameTime();
 	protected boolean raiseShield = true;
 	protected boolean defaultShield;
 	protected int beams;
-	protected static boolean weaponsAreMaxed;
+	protected static Entity reference;
 
 	public Entity(ROVector2f[] raw, String img, float nativesize, float size, float mass, World world, Weapon weapon) {
 		super(raw, img, nativesize, size, mass);
@@ -57,10 +60,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		reset();
 	}
 
-	public void gainBeams(int add, int max) {
+	public void gainBeams(int add) {
 		beams += add;
-		if (beams > max)
-			beams = max;
 	}
 
 	public void setWeaponType(Weapon w) {
@@ -82,10 +83,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			ai.reset();
 		cause = null;
 		beams = 0;
+		accum = 0;
+		last = Timer.gameTime();
 		count = 0;
-		BodyList excluded = getExcludedList();
-		while (excluded.size() > 0)
-			removeExcludedBody(excluded.get(0));
+		getExcluded().clear();
 		setRotation(0);
 		setPosition(0,0);
 		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
@@ -100,10 +101,6 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		cloaktime = CLOAK_MAX;
 		shield = null;
 		oldshield = null;
-	}
-
-	public float getSpeedLimit() {
-		return 50;
 	}
 
 	public long cloakTime() {
@@ -266,18 +263,32 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		this.shield = shield;
 	}
 
+	public boolean weaponsMaxed() {
+		if (oldweapons != null)
+			return oldweapons.isMaxed();
+		else
+			return weapons.isMaxed();
+	}
+
 	public void endFrame() {
+		long now = Timer.gameTime();
 		super.endFrame();
-		if (ai instanceof HumanShipAI)
-			weaponsAreMaxed = weapons.isMaxed();
+		if (ai instanceof HumanShipAI) {
+			reference = this;
+			accum += now - last;
+			while (accum > 0 && damage > 0) {
+				damage -= .02;
+				accum -= 1000;
+			}
+		}
 		updateShield();
 		weapons.gc();
 		if (oldweapons != null)
 			oldweapons.gc();
 		missiles.gc();
 		float v = getVelocity().length();
-		float limit = getSpeedLimit();
-		setDamping(getMass() / 1500 * v < limit ? 0 : v < limit*2 ? .1f : .5f);
+		float limit = 50;
+		setDamping(getMass() / 1500 * (v < limit ? 0 : v < limit*2 ? .1f : .5f));
 		if (ai != null)
 			ai.update();
 		torque();
@@ -303,22 +314,16 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			launchMissile();
 		if (destruct)
 			world.remove(this);
-		long dt = Timer.gameTime() - t;
-		t = Timer.gameTime();
 		if (!isVisible())
-			cloaktime -= dt;
+			cloaktime -= now - last;
 		else
-			cloaktime += dt / 3;
+			cloaktime += (now - last) / 3;
 		if (cloaktime < 0) {
 			uncloak();
 			cloaktime = 0;
 		} else if (cloaktime > CLOAK_MAX)
 			cloaktime = CLOAK_MAX;
-	}
-
-	public void addStatsListener(Stats s) {
-		weapons.addStatsListener(s);	
-		missiles.addStatsListener(s);
+		last = now;
 	}
 
 	public Body getRemnant() {

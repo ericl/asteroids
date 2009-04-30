@@ -9,8 +9,20 @@ import net.phys2d.math.*;
 public class Util {
 	public static final long BIT_SHIELD_PENETRATING = 1l;
 	public static final long BIT_MIN_FREE = 2l;
+	private static String id;
+	private static long time;
+
 	private Util() {
 		// prevent construction
+	}
+
+	public static void mark(String id) {
+		Util.id = id;
+		time = System.nanoTime();
+	}
+
+	public static void report() {
+		System.out.println(((System.nanoTime() - time) / 1e6) + "ms @ " + id);
 	}
 
 	public static Vector2f v(Number x, Number y) {

@@ -11,6 +11,8 @@ import java.util.*;
 
 import asteroids.display.*;
 
+import asteroids.handlers.Timer;
+
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
@@ -25,17 +27,16 @@ public class Beam extends Weapon implements Drawable, Heavy {
 	private static Polygon poly = new Polygon(geo);
 	private static Polygon poly2 = new Polygon(geo2);
 	private static float myRadius = 3;
-	private boolean explode;
 	private SharedBeam state;
 
 	public Beam() {
-		super(new Circle(myRadius), 60);
+		super(new Circle(myRadius), 20);
 		state = new SharedBeam();
 		setRestitution(1);
 	}
 
 	public Beam(SharedBeam state) {
-		super(new Circle(myRadius), 60);
+		super(new Circle(myRadius), 20);
 		this.state = state;
 		setRestitution(1);
 	}
@@ -116,7 +117,7 @@ public class Beam extends Weapon implements Drawable, Heavy {
 	}
 
 	public boolean canExplode() {
-		return explode;
+		return true;
 	}
 
 	public float getDamage() {
@@ -147,11 +148,6 @@ public class Beam extends Weapon implements Drawable, Heavy {
 		return myRadius;
 	}
 
-	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		explode = !(other instanceof Weapon) || other instanceof Heavy;
-	}
-
 	public int getNum() {
 		return 1;
 	}
@@ -167,7 +163,7 @@ class SharedBeam {
 	private long time;
 
 	public SharedBeam() {
-		this.time = System.currentTimeMillis();
+		this.time = Timer.gameTime();
 	}
 
 	public void setRotation(float rotation) {
@@ -188,8 +184,8 @@ class SharedBeam {
 
 	public boolean continuous() {
 		boolean ret = true;
-		long t = System.currentTimeMillis();
-		if (t > time + 100)
+		long t = Timer.gameTime();
+		if (t > time + 50)
 			ret = false;
 		time = t;
 		return ret;

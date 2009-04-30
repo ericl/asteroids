@@ -88,7 +88,7 @@ public class MPAsteroids extends AbstractGame {
 			ships[1] = ship;
 		}
 
-		Entity ship = new Ship(world, true) {
+		Entity ship = new Frigate(world, true) {
 			public boolean isVisible() {
 				return true;
 			}
@@ -177,12 +177,12 @@ public class MPAsteroids extends AbstractGame {
 
 	public void newGame() {
 		k.init();
-		AbstractGame.globalLevel = MEDIUM;
+		AbstractGame.globalLevel = BLUE;
 		scenario = new Field(world, display, ships);
 		scenario.setAIFrequency(0);
 		scenario.setSpeedRatio(.25f);
 		scenario.setScalingRatio(.25f);
-		scenario.setDensity(.40f);
+		scenario.setDensity(.80f);
 		scenario.start();
 	}
 
@@ -196,15 +196,20 @@ public class MPAsteroids extends AbstractGame {
 		if (s >= 0)
 			shield = "Shield: " + (int)(s*1000)/10 + "%";
 		g2d.setColor(COLOR);
-		g2d.drawString(shield, display.w(-110),display.h(-79));
+		g2d.drawString(shield, display.w(-110),display.h(-59));
 		g2d.setColor(ship.getColor());
 		g2d.drawString("Hull: " + hull,
-			display.w(-110), display.h(-59));
-		g2d.setColor(COLOR);
-		g2d.drawString("Missiles: " + ship.numMissiles(),
 			display.w(-110), display.h(-39));
+		g2d.setColor(COLOR);
 		g2d.drawString("Deaths: " + ship.numDeaths(),
 			display.w(-110), display.h(-19));
 		g2d.drawString(ship.toString(), 10, 20);
+		int pos = 20;
+		if (ship.numMissiles() > 0) {
+			g2d.drawString("Missiles: " + ship.numMissiles(), display.w(-90), pos);
+			pos += 20;
+		}
+		if (ship.numBeams() > 0)
+			g2d.drawString("Power: " + ship.numBeams(), display.w(-90), pos);
 	}
 }

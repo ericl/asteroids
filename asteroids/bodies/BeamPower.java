@@ -17,6 +17,6 @@ public class BeamPower extends PowerUp {
 	}
 
 	protected void up(Enhancable ship) {
-		ship.gainBeams(1000, 5000);
+		ship.gainBeams(1000);
 	}
 }

@@ -41,9 +41,12 @@
 package net.phys2d.raw;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
+
 import net.phys2d.raw.shapes.DynamicShape;
 import net.phys2d.raw.shapes.Shape;
 
@@ -107,8 +110,6 @@ public strictfp class Body {
 	private int id;
 	/** The restitution of this body */
 	private float restitution = 0f;
-	/** The list of bodies excluded from colliding with this body */
-	private BodyList excluded = new BodyList();
 	/** True if this body is effected by gravity */
 	private boolean gravity = true;
 	
@@ -157,6 +158,9 @@ public strictfp class Body {
 	
 	/** The maximum velocity the the body can travel at on each axis */
 	private Vector2f maxVelocity;
+
+	/** The list of bodies excluded from colliding with this body */
+	private WeakHashMap<Body,Object> excluded = new WeakHashMap<Body,Object>();
 	
 	/**
 	 * Create a new un-named body
@@ -599,8 +603,8 @@ public strictfp class Body {
 		if (other.equals(this)) {
 			return;
 		}
-		if (!excluded.contains(other)) {
-			excluded.add(other);
+		if (!excluded.containsKey(other)) {
+			excluded.put(other, null);
 			other.addExcludedBody(this);
 		}
 	}
@@ -615,7 +619,7 @@ public strictfp class Body {
 		if (other.equals(this)) {
 			return;
 		}
-		if (excluded.contains(other)) {
+		if (excluded.containsKey(other)) {
 			excluded.remove(other);
 			other.removeExcludedBody(this);
 		}
@@ -626,8 +630,8 @@ public strictfp class Body {
 	 * 
 	 * @return The list of bodies that can not collide with this body
 	 */
-	public BodyList getExcludedList() {
-		return excluded;
+	public Set<Body> getExcluded() {
+		return excluded.keySet();
 	}
 	
 	/**

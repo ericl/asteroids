@@ -20,7 +20,7 @@ public class Missile extends Weapon implements Automated, Heavy {
 		super(new Circle(myRadius), 1000);
 		world = w;
 		ai = new HomingAI(world, this);
-		setMaxVelocity(50, 50);
+		setMaxVelocity(40, 40);
 		setRotDamping(100);
 	}
 

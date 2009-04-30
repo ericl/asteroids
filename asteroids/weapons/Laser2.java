@@ -100,7 +100,7 @@ public class Laser2 extends Weapon implements Heavy {
 	}
 
 	public int getNum() {
-		return 1 + Math.min(1, level/3);
+		return 1 + Math.min(1, level/2);
 	}
 
 	public float getWeaponSpeed() {
