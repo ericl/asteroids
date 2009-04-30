@@ -9,7 +9,7 @@ import asteroids.ai.*;
 import asteroids.bodies.*;
 import static asteroids.Util.*;
 
-public class Missile extends Weapon implements Automated, CauseOfDeath {
+public class Missile extends Weapon implements Automated, CauseOfDeath, Heavy {
 	private static float myRadius = 2;
 	private HomingAI ai;
 	private float torque;
@@ -20,7 +20,7 @@ public class Missile extends Weapon implements Automated, CauseOfDeath {
 		super(new Circle(myRadius), 1000);
 		world = w;
 		ai = new HomingAI(world, this);
-		setMaxVelocity(40, 40);
+		setMaxVelocity(50, 50);
 		setRotDamping(100);
 	}
 
@@ -109,7 +109,7 @@ public class Missile extends Weapon implements Automated, CauseOfDeath {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		if (other instanceof Entity || other instanceof Missile && ((Missile)other).getOrigin() != origin || other instanceof Laser3)
+		if (other instanceof Entity || other instanceof Missile && ((Missile)other).getOrigin() != origin)
 			explode = true;
 	}
 

@@ -23,12 +23,13 @@ import static asteroids.Util.*;
 import static asteroids.AbstractGame.Level.*;
 
 public abstract class Entity extends TexturedPolyBody implements Targetable, Automated, Drawable, Enhancable, CauseOfDeath {
-	protected static int CLOAK_DELAY = 75, CLOAK_MAX = 15000;
+	protected static int CLOAK_DELAY = 75, CLOAK_MAX = 15000, BEAM_MIN = 30;
+	protected int count = 0;
 	protected String cause;
 	protected long cloaktime = CLOAK_MAX, t = Timer.gameTime();
 	protected WeaponSys missiles;
 	protected Body killer;
-	protected WeaponSys weapons;
+	protected WeaponSys weapons, oldweapons;
 	protected World world;
 	protected Shield shield, oldshield;
 	protected Color color = Color.ORANGE;
@@ -43,6 +44,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
 	protected boolean raiseShield = true;
 	protected boolean defaultShield;
+	protected int beams;
+	protected static boolean weaponsAreMaxed;
 
 	public Entity(ROVector2f[] raw, String img, float nativesize, float size, float mass, World world, Weapon weapon) {
 		super(raw, img, nativesize, size, mass);
@@ -52,6 +55,12 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		missiles = new WeaponSys(this, world, new Missile(world));
 		ai = new ShipAI(world, this);
 		reset();
+	}
+
+	public void gainBeams(int add, int max) {
+		beams += add;
+		if (beams > max)
+			beams = max;
 	}
 
 	public void setWeaponType(Weapon w) {
@@ -72,6 +81,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		if (ai != null)
 			ai.reset();
 		cause = null;
+		beams = 0;
+		count = 0;
 		BodyList excluded = getExcludedList();
 		while (excluded.size() > 0)
 			removeExcludedBody(excluded.get(0));
@@ -110,6 +121,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 
 	public void startFiring() {
 		fire = true;
+		count = BEAM_MIN;
 	}
 
 	public void stopFiring() {
@@ -145,6 +157,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		return numMissiles;
 	}
 
+	public int numBeams() {
+		return beams;
+	}
+
 	public void selfDestruct() {
 		destruct = true;
 		damage = getMaxArmor() + 1;
@@ -163,7 +179,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		this.accel = accel;
 	}
 
-	public boolean fire() {
+	private boolean fire() {
 		if (canExplode())
 			return false;
 		if (weapons.fire()) {
@@ -173,7 +189,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		return false;
 	}
 
+	// directional - only for certain weapons
 	public boolean fire(float rotation) {
+		if (weapons.isBeam())
+			return false;
 		if (weapons.fire(rotation)) {
 			cloak = Integer.MAX_VALUE;
 			return true;
@@ -249,19 +268,37 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 
 	public void endFrame() {
 		super.endFrame();
+		if (ai instanceof HumanShipAI)
+			weaponsAreMaxed = weapons.isMaxed();
 		updateShield();
 		weapons.gc();
+		if (oldweapons != null)
+			oldweapons.gc();
 		missiles.gc();
 		float v = getVelocity().length();
 		float limit = getSpeedLimit();
-		setDamping(v < limit ? 0 : v < limit*2 ? .1f : .5f);
+		setDamping(getMass() / 1500 * v < limit ? 0 : v < limit*2 ? .1f : .5f);
 		if (ai != null)
 			ai.update();
-		accel();
 		torque();
 		cloak--;
-		if (fire)
-			fire();
+		count--;
+		if (weapons.isBeam()) {
+			if ((fire || count > 0) && fire())
+				beams--;
+			else
+				accel();
+			if (beams <= 0 && oldweapons != null)
+				weapons = oldweapons;
+		} else {
+			if (fire)
+				fire();
+			accel();
+			if (beams > 0) {
+				oldweapons = weapons;
+				weapons = new WeaponSys(this, world, new Beam());
+			}
+		}
 		if (launch)
 			launchMissile();
 		if (destruct)
@@ -338,8 +375,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 				return "quit while ahead";
 			else
 				return "quit game";
-		} else if (AbstractGame.globalLevel == DONE)
-			return "crushed by a malevolent force";
+		}
 		else if (killer == null)
 			return "died of unknown causes";
 		else if (killer == this)
@@ -347,9 +383,11 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		String prefix = "";
 		if (killer instanceof Missile) {
 			prefix = "tracked down by ";
+		} else if (killer instanceof Beam) {
+			prefix = "vaporized by ";
 		} else if (killer instanceof Swarm) {
 			prefix = "crushed by ";
-		} else if (killer instanceof Weapon && !(killer instanceof Missile)) {
+		} else if (killer instanceof Weapon) {
 			prefix = "shot by ";
 			foo = ((Weapon)killer).getOrigin();
 		} else if (killer instanceof Entity) {

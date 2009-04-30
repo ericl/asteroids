@@ -27,6 +27,27 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 	}
 
 	public static PowerUp random() {
+		if (Entity.weaponsAreMaxed) {
+			switch ((int)(16*Math.random())) {
+				case 0:
+				case 1: return new Invincibility();
+				case 2:
+				case 3: return new ArmorRecovery();
+				case 4:
+				case 5:
+				case 6: return new MissilePower();
+				case 7:
+				case 8:
+				case 9: return new BeamPower();
+				case 10:
+				case 11:
+				case 12:
+				case 13:
+				case 14:
+				case 15:
+				default: return new ShieldRecovery();
+			}
+		}
 		switch ((int)(20*Math.random())) {
 			case 0:
 			case 1: return new Invincibility();
@@ -34,12 +55,20 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 			case 3: return new ArmorRecovery();
 			case 4:
 			case 5:
-			case 6:
-			case 7: return new MissilePower();
+			case 6: return new MissilePower();
+			case 7:
 			case 8:
-			case 9:
+			case 9: return new WeaponPower();
 			case 10:
-			case 11: return new WeaponPower();
+			case 11:
+			case 12: return new BeamPower();
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:
+			case 18:
+			case 19:
 			default: return new ShieldRecovery();
 		}
 	}

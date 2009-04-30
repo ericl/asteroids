@@ -26,7 +26,7 @@ public class Jug extends Entity {
 	}
 
 	public float getSpeedLimit() {
-		return 35;
+		return 20;
 	}
 
 	protected Shield getShield() {
@@ -46,6 +46,6 @@ public class Jug extends Entity {
 	}
 
 	protected float getMaxArmor() {
-		return 4;
+		return 5;
 	}
 }

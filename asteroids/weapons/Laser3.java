@@ -9,7 +9,7 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 import static asteroids.Util.*;
 
-public class Laser3 extends Weapon {
+public class Laser3 extends Weapon implements Heavy {
 	private static float myRadius = 3;
 	private boolean explode;
 
@@ -56,6 +56,10 @@ public class Laser3 extends Weapon {
 		return "pixmaps/exp2/1.png";
 	}
 
+	public boolean isMaxed() {
+		return level >= 2;
+	}
+
 	public float getLaunchSpeed() {
 		return 50;
 	}
@@ -70,7 +74,7 @@ public class Laser3 extends Weapon {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		explode = !(other instanceof Weapon) || other instanceof Laser3 || other instanceof Cannon;
+		explode = !(other instanceof Weapon) || other instanceof Heavy;
 	}
 
 	public int getNum() {

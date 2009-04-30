@@ -98,10 +98,6 @@ public abstract class AI {
 		ship.fire(rot);
 	}
 
-	protected void fire() {
-		ship.fire();
-	}
-
 	protected void launchMissile() {
 		ship.launchMissile();
 	}
@@ -109,11 +105,17 @@ public abstract class AI {
 	public void update() {
 		if (steps % 300 == 0)
 			selectTarget();
-		if (steps % 5 == 0 && trackTarget()) {
-			if (steps % 500 > r500)
-				fire();
-			if (oneIn(50))
-				launchMissile();
+		if (steps % 5 == 0) {
+			if (trackTarget()) {
+				if (steps % 500 > r500)
+					ship.startFiring();
+				else
+					ship.stopFiring();
+				if (oneIn(50))
+					launchMissile();
+			} else {
+				ship.stopFiring();
+			}
 		}
 		steps++;
 	}

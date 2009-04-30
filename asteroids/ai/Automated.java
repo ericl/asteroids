@@ -22,7 +22,6 @@ public interface Automated extends Targetable {
 	/**
 	 * @return true if the automated successfully fired
 	 */
-	public boolean fire();
 	public boolean fire(float rotation);
 
 	/**

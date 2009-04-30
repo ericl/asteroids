@@ -194,13 +194,19 @@ public class Asteroids extends AbstractGame {
 		if (s >= 0)
 			shield = "Shield: " + (int)(s*1000)/10 + "%";
 		g2d.setColor(COLOR);
-		g2d.drawString(shield, display.w(-90),display.h(-75));
+		g2d.drawString(shield, display.w(-90),display.h(-55));
 		g2d.setColor(ship.getColor());
-		g2d.drawString("Hull: " + hull, display.w(-90),display.h(-55));
+		g2d.drawString("Hull: " + hull, display.w(-90),display.h(-35));
 		g2d.setColor(COLOR);
-		g2d.drawString("Cloak: " + (int)(ship.cloakTime()/1000) + "s", display.w(-90), display.h(-35));
-		g2d.drawString("Missiles: " + ship.numMissiles(), display.w(-90), display.h(-15));
+		g2d.drawString("Cloak: " + (int)(ship.cloakTime()/1000) + "s", display.w(-90), display.h(-15));
 		g2d.drawString("Score: " + stats.score(), 15, display.h(-15));
+		int pos = 20;
+		if (ship.numMissiles() > 0) {
+			g2d.drawString("Missiles: " + ship.numMissiles(), display.w(-90), pos);
+			pos += 20;
+		}
+		if (ship.numBeams() > 0)
+			g2d.drawString("Power: " + ship.numBeams(), display.w(-90), pos);
 	}
 
 	public void changeName() {

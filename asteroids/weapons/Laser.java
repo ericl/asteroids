@@ -31,6 +31,10 @@ public class Laser extends Weapon {
 		return v(7,3);
 	}
 
+	public boolean isMaxed() {
+		return level >= 3;
+	}
+
 	protected long getLifetime() {
 		return 2000;
 	}

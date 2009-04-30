@@ -66,35 +66,17 @@ public class WeaponSys {
 	}
 
 	public WeaponSys(Body origin, World wo, Weapon w) {
-		if (w != null)
-			setWeaponType(w);
-		else
-			setRandomWeaponType();
+		setWeaponType(w);
 		this.origin = origin;
 		world = wo;
 	}
 
-	public void setRandomWeaponType() {
-		switch ((int)(3*Math.random())) {
-			case 0: setWeaponType(new Laser()); break;
-			case 1: setWeaponType(new Laser2()); break;
-			case 2: setWeaponType(new Laser3()); break;
-		}
-	}
-
-	public void incrRandomWeaponLevel() {
-		if (weapon instanceof Laser && (oneIn(3) || oneIn(3)))
-			weapon.incrementLevel();
-		else if (weapon instanceof Laser2 && oneIn(2))
-			weapon.incrementLevel();
-		if (oneIn(3))
-			weapon.incrementLevel();
-		if (oneIn(4))
-			weapon.incrementLevel();
-	}
-
 	public void upgrade() {
 		weapon.incrementLevel();
+	}
+
+	public boolean isMaxed() {
+		return weapon.isMaxed();
 	}
 
 	public void gc() {
@@ -145,13 +127,19 @@ public class WeaponSys {
 	// postcondition: nothing is modified
 	private Weapon makeWeapon(float angle, float originRotation) {
 		Weapon c = weapon.duplicate();
+		if (weapon.hasPreferredRotation())
+			originRotation = weapon.getPreferredRotation();
 		c.setOrigin(origin);
 		c.setRotation(originRotation+angle);
 		float xc = (float)Math.sin(originRotation+angle);
 		float yc = (float)Math.cos(originRotation+angle);
 		float sr = ((Visible)origin).getRadius(); // estimated length
 		c.setPosition(origin.getPosition().getX()+xc*sr, origin.getPosition().getY()-yc*sr);
-		c.adjustVelocity(v(weapon.getLaunchSpeed()*xc, weapon.getLaunchSpeed()*-yc));
+		Vector2f vel = v(weapon.getLaunchSpeed()*xc, weapon.getLaunchSpeed()*-yc);
+		if (weapon.hasPreferredVelocity())
+			c.adjustVelocity(weapon.getPreferredVelocity());
+		else
+			c.hintVelocity(vel);
 		c.adjustVelocity((Vector2f)origin.getVelocity());
 		c.addExcludedBody(origin);
 		BodyList el = origin.getExcludedList();
@@ -166,5 +154,9 @@ public class WeaponSys {
 
 	public float getWeaponSpeed() {
 		return weapon.getWeaponSpeed();
+	}
+
+	public boolean isBeam() {
+		return weapon instanceof Beam;
 	}
 }

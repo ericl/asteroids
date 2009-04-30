@@ -15,6 +15,8 @@ import asteroids.display.*;
 
 import asteroids.handlers.Timer;
 
+import net.phys2d.math.*;
+
 import net.phys2d.raw.*;
 
 import net.phys2d.raw.shapes.*;
@@ -29,6 +31,32 @@ public abstract class Weapon extends Body implements Textured, Explodable {
 
 	public Weapon(DynamicShape weap, float mass) {
 		super(weap, mass);
+	}
+
+	public boolean isMaxed() {
+		return false;
+	}
+
+	public boolean hasPreferredRotation() {
+		return false;
+	}
+
+	// precondition: hasPreferredRotation has returned true
+	public float getPreferredRotation() {
+		return 0;
+	}
+
+	public boolean hasPreferredVelocity() {
+		return false;
+	}
+
+	public void hintVelocity(Vector2f vel) {
+		adjustVelocity(vel);
+	}
+
+	// precondition: hasPreferredVelocity has returned true
+	public Vector2f getPreferredVelocity() {
+		return null;
 	}
 
 	public abstract Weapon duplicate();

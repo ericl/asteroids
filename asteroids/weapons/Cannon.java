@@ -9,12 +9,12 @@ import net.phys2d.raw.shapes.*;
 import net.phys2d.math.*;
 import static asteroids.Util.*;
 
-public class Cannon extends Weapon {
+public class Cannon extends Weapon implements Heavy {
 	private static float myRadius = 3;
 	private boolean explode;
 
 	public Cannon() {
-		super(new Circle(myRadius), 100);
+		super(new Circle(myRadius), 20);
 		addBit(BIT_SHIELD_PENETRATING);
 		setRestitution(1);
 	}
@@ -29,6 +29,10 @@ public class Cannon extends Weapon {
 
 	public List<Body> getFragments() {
 		return null;
+	}
+
+	public boolean isMaxed() {
+		return true;
 	}
 
 	public boolean canExplode() {
@@ -65,7 +69,7 @@ public class Cannon extends Weapon {
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		explode = !(other instanceof Weapon) || other instanceof Cannon || other instanceof Missile || other instanceof Laser3 || other instanceof Laser2;
+		explode = !(other instanceof Weapon) || other instanceof Heavy;
 	}
 
 	public int getNum() {

@@ -6,7 +6,7 @@ package asteroids.bodies;
 
 import static asteroids.Util.*;
 
-import asteroids.weapons.Laser2;
+import asteroids.weapons.*;
 
 import net.phys2d.math.*;
 

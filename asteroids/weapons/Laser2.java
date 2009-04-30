@@ -7,7 +7,7 @@ import net.phys2d.math.*;
 import asteroids.handlers.*;
 import static asteroids.Util.*;
 
-public class Laser2 extends Weapon {
+public class Laser2 extends Weapon implements Heavy {
 	private static float myRadius = 2;
 	private boolean thrust, explode;
 	private float xmax, ymax;
@@ -33,13 +33,17 @@ public class Laser2 extends Weapon {
 		return l;
 	}
 
+	public boolean isMaxed() {
+		return level >= 5;
+	}
+
 	public boolean canExplode() {
 		return explode || damage > .2;
 	}
 
 	public void collided(CollisionEvent e) {
 		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
-		if (other instanceof Laser3 || other instanceof Cannon || other instanceof Missile || !(other instanceof Weapon) && other.getMass() > 100)
+		if (other instanceof Heavy || !(other instanceof Weapon) && other.getMass() > 100)
 			explode = true;
 		damage += Exploder.getDamage(e, this);
 	}
