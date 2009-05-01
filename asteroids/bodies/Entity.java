@@ -433,7 +433,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	}
 
 	public void upgradeWeapons() {
-		weapons.upgrade();
+		if (oldweapons != null)
+			oldweapons.upgrade();
+		else
+			weapons.upgrade();
 	}
 
 	public void setHealth(float health) {
