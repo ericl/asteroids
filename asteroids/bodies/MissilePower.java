@@ -21,6 +21,6 @@ public class MissilePower extends PowerUp {
 	 * @param	ship	The Ship to receive the upgrade.
 	 */
 	protected void up(Enhancable ship) {
-		ship.addMissiles(5);
+		ship.addMissiles(10);
 	}
 }

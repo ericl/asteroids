@@ -24,7 +24,7 @@ import static asteroids.Util.*;
 import static asteroids.AbstractGame.Level.*;
 
 public abstract class Entity extends TexturedPolyBody implements Targetable, Automated, Drawable, Enhancable, CauseOfDeath {
-	protected static int CLOAK_DELAY = 75, CLOAK_MAX = 15000, BEAM_MIN = 30;
+	protected static int CLOAK_DELAY = 250, CLOAK_MAX = 15000, BEAM_MIN = 30;
 	protected int count = 0;
 	protected String cause;
 	protected long cloaktime = CLOAK_MAX, t = Timer.gameTime();
@@ -43,7 +43,6 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	protected int textStatus = Integer.MAX_VALUE; // for blinking only
 	protected long warningStart; // end of warning -> not invincible
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
-	protected long accum;
 	protected long last = Timer.gameTime();
 	protected boolean raiseShield = true;
 	protected boolean defaultShield;
@@ -83,9 +82,9 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 			ai.reset();
 		cause = null;
 		beams = 0;
-		accum = 0;
-		last = Timer.gameTime();
 		count = 0;
+		numMissiles = 0;
+		last = Timer.gameTime();
 		getExcluded().clear();
 		setRotation(0);
 		setPosition(0,0);
@@ -94,7 +93,6 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		torque = damage = accel = 0;
 		fire = launch = destruct = false;
 		explosion = null;
-		numMissiles = 0;
 		cloak = Integer.MAX_VALUE;
 		warningStart = invincibleEnd = 0;
 		raiseShield = defaultShield;
@@ -273,14 +271,8 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 	public void endFrame() {
 		long now = Timer.gameTime();
 		super.endFrame();
-		if (ai instanceof HumanShipAI) {
+		if (ai instanceof HumanShipAI)
 			reference = this;
-			accum += now - last;
-			while (accum > 0 && damage > 0) {
-				damage -= .02;
-				accum -= 1000;
-			}
-		}
 		updateShield();
 		weapons.gc();
 		if (oldweapons != null)
@@ -292,7 +284,7 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 		if (ai != null)
 			ai.update();
 		torque();
-		cloak--;
+		cloak -= now - last;
 		count--;
 		if (weapons.isBeam()) {
 			if ((fire || count > 0) && fire())
@@ -446,6 +438,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 
 	public void setHealth(float health) {
 		this.damage = getMaxArmor() - getMaxArmor() * health;
+	}
+
+	public World getWorld() {
+		return world;
 	}
 
 	public void multiplyHealth(float m) {

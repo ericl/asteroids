@@ -14,9 +14,12 @@ import asteroids.ai.*;
 
 import asteroids.bodies.*;
 
+import asteroids.weapons.LevelUp;
+
 import net.phys2d.raw.*;
 
 import static asteroids.AbstractGame.Level.*;
+import static asteroids.bodies.Invincibility.*;
 
 public abstract class Stats {
 	protected Vector<String> list = new Vector<String>();
@@ -61,8 +64,15 @@ public abstract class Stats {
 	}
 
 	private void increaseLevel(Level d) {
-		if (AbstractGame.globalLevel.quantify() < d.quantify())
+		if (AbstractGame.globalLevel.quantify() < d.quantify()) {
 			AbstractGame.globalLevel = d;
+			myShip.setHealth(1);
+			myShip.gainInvincibility(WARNING_TIME, WARNING_TIME);
+			LevelUp e = new LevelUp(myShip.getWorld());
+			e.setPosition(myShip.getPosition().getX(), myShip.getPosition().getY());
+			e.setTracking(myShip, myShip);
+			myShip.getWorld().add(e);
+		}
 	}
 
 	private void updateDifficulty() {

@@ -31,16 +31,16 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 			case 0:
 			case 1: return new Invincibility();
 			case 2:
-			case 3: return new ArmorRecovery();
+			case 3: return new MissilePower();
 			case 4:
-			case 5:
-			case 6: return new MissilePower();
+			case 5: return new BeamPower();
+			case 6:
 			case 7:
-			case 8:
-			case 9: return new WeaponPower();
+			case 8: return new ArmorRecovery();
+			case 9:
 			case 10:
-			case 11:
-			case 12: return new BeamPower();
+			case 11: return new WeaponPower();
+			case 12:
 			case 13:
 			case 14:
 			case 15:
