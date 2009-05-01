@@ -18,13 +18,29 @@ import static asteroids.AbstractGame.Level.*;
 
 public class Swarm extends Entity {
 	protected static ROVector2f[] raw = {v(32,2), v(45,1), v(54,9), v(55,18), v(57,21), v(58,32), v(46,50), v(39,56), v(32,56), v(19,62), v(9,54), v(7,46), v(1,39), v(6,24), v(25,8)};
+	protected static int fuse = 10;
+	protected static long step;
 
 	public Swarm(World world) {
 		super(raw, "pixmaps/3.png", 35, range(8,15), 1000, world, null);
 		setAI(new HomingAI(world, this));
 		setRotDamping(5000);
-		if (AbstractGame.globalLevel != DONE)
+		if (AbstractGame.globalLevel == DONE) {
+			super.setMaxVelocity(fuse, fuse);
+			if (System.currentTimeMillis() > step + 1000) {
+				fuse++;
+				step = System.currentTimeMillis();
+			}
+		} else {
 			setMaxVelocity(50,50);
+			fuse = 10;
+		}
+	}
+
+	// HACK: workaround for using this as "asteroid" in field
+	public void setMaxVelocity(float vx, float vy) {
+		if (AbstractGame.globalLevel != DONE)
+			super.setMaxVelocity(vx, vy);
 	}
 
 	public void collided(CollisionEvent e) {
@@ -34,10 +50,7 @@ public class Swarm extends Entity {
 	}
 
 	public String getCause() {
-		if (AbstractGame.globalLevel == DONE)
-			return "a malevolent force";
-		else
-			return "a heavy rock";
+		return "a heavy rock";
 	}
 
 	protected float getMaxArmor() {

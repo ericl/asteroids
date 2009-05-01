@@ -372,7 +372,10 @@ public abstract class Entity extends TexturedPolyBody implements Targetable, Aut
 				return "quit while ahead";
 			else
 				return "quit game";
-		} else if (killer instanceof Beam)
+		}
+		else if (AbstractGame.globalLevel == DONE)
+			return "ran out of levels";
+		else if (killer instanceof Beam)
 			return "blasted apart";
 		else if (killer instanceof Missile)
 			return "tracked down";
