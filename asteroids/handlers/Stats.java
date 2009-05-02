@@ -77,13 +77,13 @@ public abstract class Stats {
 
 	private void updateDifficulty() {
 		int score = score(), i = 100;
-		if (score > 56*i) // 20 heavy rocks
+		if (score > 76*i) // 20 heavy rocks
 			increaseLevel(DONE);
-		else if (score > 46*i) // 5 blue terrors
+		else if (score > 66*i) // 10 blue terrors
 			increaseLevel(SWARM);
-		else if (score > 36*i) // 7 shielded juggernauts
+		else if (score > 46*i) // 10 shielded juggernauts
 			increaseLevel(BLUE);
-		else if (score > 15*i) // 9 [shielded] ships
+		else if (score > 16*i) // 10 [shielded] ships
 			increaseLevel(HARD);
 		else if (score > 6*i) // 10 shielded frigates
 			increaseLevel(MEDIUM);
