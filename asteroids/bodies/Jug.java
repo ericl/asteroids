@@ -27,7 +27,7 @@ public class Jug extends Entity {
 	}
 
 	protected Shield getShield() {
-		Shield s = new OrangeShield(this, world, 11);
+		Shield s = new OrangeShield(this, world, 20);
 		s.removeBit(BIT_SHIELD_PENETRATING);
 		return s;
 	}

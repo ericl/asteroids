@@ -40,7 +40,7 @@ public class Cannon extends Weapon implements Heavy {
 	}
 
 	public float getDamage() {
-		return .33f;
+		return .22f;
 	}
 
 	public Vector2f getTextureCenter() {
@@ -77,6 +77,6 @@ public class Cannon extends Weapon implements Heavy {
 	}
 
 	public float getReloadTime() {
-		return 555;
+		return 333;
 	}
 }

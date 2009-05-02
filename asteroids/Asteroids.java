@@ -65,7 +65,16 @@ public class Asteroids extends AbstractGame {
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-		ship = new Ship(world);
+		if (name.equals("a juggernaut"))
+			ship = new Jug(world);
+		else if (name.equals("a frigate"))
+			ship = new Frigate(world);
+		else if (name.equals("a blue terror"))
+			ship = new Terror(world);
+		else if (name.equals("a heavy rock"))
+			ship = new Swarm(world);
+		else
+			ship = new Ship(world);
 		HumanShipAI human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true, display.getDimension());
 		frame.addKeyListener(human);
 		display.addMouseInputListener(human);
@@ -171,7 +180,32 @@ public class Asteroids extends AbstractGame {
 				if (scenario instanceof WelcomeScreen || scenario.done())
 					restart = true;
 				break;
+			case '1':
+				if (ok()) AbstractGame.globalLevel = START;
+				break;
+			case '2':
+				if (ok()) AbstractGame.globalLevel = EASY;
+				break;
+			case '3':
+				if (ok()) AbstractGame.globalLevel = MEDIUM;
+				break;
+			case '4':
+				if (ok()) AbstractGame.globalLevel = HARD;
+				break;
+			case '5':
+				if (ok()) AbstractGame.globalLevel = BLUE;
+				break;
+			case '6':
+				if (ok()) AbstractGame.globalLevel = SWARM;
+				break;
+			case '7':
+				if (ok()) AbstractGame.globalLevel = DONE;
+				break;
 		}
+	}
+
+	private boolean ok() {
+		return name.equals("dev");
 	}
 
 	public void newWelcome() {

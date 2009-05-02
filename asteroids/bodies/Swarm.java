@@ -49,6 +49,10 @@ public class Swarm extends Entity {
 			super.collided(e);
 	}
 
+	public boolean dead() {
+		return destruct || canExplode();
+	}
+
 	public String getCause() {
 		return "a heavy rock";
 	}

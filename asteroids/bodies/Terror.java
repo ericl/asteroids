@@ -31,7 +31,7 @@ public class Terror extends Entity {
 	}
 
 	public Body getRemnant() {
-		return new ShieldFailing(this, getRadius());
+		return explosion = new ShieldFailing(this, getRadius());
 	}
 
 	public int getPointValue() {
