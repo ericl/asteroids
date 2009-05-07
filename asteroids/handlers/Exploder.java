@@ -3,15 +3,24 @@
  */
 
 package asteroids.handlers;
+
 import java.util.*;
-import net.phys2d.raw.*;
-import net.phys2d.math.*;
-import static net.phys2d.math.MathUtil.*;
-import asteroids.bodies.*;
+
 import asteroids.ai.*;
-import asteroids.weapons.*;
+
+import asteroids.bodies.*;
+
 import asteroids.display.*;
+
+import asteroids.weapons.*;
+
+import net.phys2d.math.*;
+
+import net.phys2d.raw.*;
+
 import static asteroids.Util.*;
+
+import static net.phys2d.math.MathUtil.*;
 
 public class Exploder implements CollisionListener {
 	// queue of explosions that will likey be removed soon
@@ -199,5 +208,67 @@ public class Exploder implements CollisionListener {
 		if (diff < e.getRadius() / 2)
 			return true;
 		return false;
+	}
+
+	// for use in alternative implementation... just ignore
+	public void fragment(Body body, Body other) {
+		exploded.add(body);
+		Explodable e = (Explodable)body;
+		// don't explode some offscreen or non-exploding bodies
+		if (!display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS))
+			return;
+		world.remove(body);
+		Body rem = e.getRemnant();
+		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
+			return;
+		List<Body> f = e.getFragments();
+		long group = grouper.findGroup(body);
+		if (rem instanceof Explosion) // gah, another special case
+			explosionQueue.add((Explosion)rem);
+		if (rem != null)
+			rem.addBit(group);
+		if (!(other instanceof Targetable || body instanceof Weapon))
+			other.addBit(group);
+		// user-related stuff automatically passes the group limit
+		if (!(body instanceof Targetable || other instanceof Targetable
+				|| other instanceof Weapon || rem instanceof Explosion)) {
+			body.addBit(group);
+		}
+		// not really J
+		float J = other.getMass() / body.getMass() *
+				   (body.getRestitution() + other.getRestitution()) / 2;
+		J = Math.min(MAX_J, J);
+		Vector2f v = sub(body.getVelocity(),(scale(other.getVelocity(),-J)));
+		if (f != null) {
+			for (Body b : f) {
+				b.addBit(group);
+				double theta = Math.random()*2*Math.PI;
+				float sx = body.getPosition().getX();
+				float sy = body.getPosition().getY();
+				sx += e.getRadius() * (float)Math.sin(theta) / 2;
+				sy -= e.getRadius() * (float)Math.cos(theta) / 2;
+				sx += range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
+				sy -= range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
+				b.setRotation((float)(2 * Math.PI * Math.random()));
+				b.adjustAngularVelocity(range(
+				   -body.getAngularVelocity(), body.getAngularVelocity()));
+				b.adjustVelocity(scale(direction(theta),
+					(float)Math.sqrt(Math.random()*2*v.length())));
+				if (!(body instanceof Targetable)) // looks bad onscreen
+					b.adjustVelocity(v);
+				b.setPosition(sx, sy);
+				world.add(b);
+			}
+		}
+		if (rem != null) {
+			rem.setPosition(body.getPosition().getX(),
+				body.getPosition().getY());
+			if (rem instanceof Explosion)
+				((Explosion)rem).setTracking(body, other);
+			rem.adjustVelocity(v);
+			rem.setRotation(body.getRotation());
+			rem.adjustAngularVelocity(body.getAngularVelocity());
+			world.add(rem);
+		}
 	}
 }
