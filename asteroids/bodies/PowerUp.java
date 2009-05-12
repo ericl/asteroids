@@ -50,18 +50,18 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 
 	public static PowerUp random() {
 		PowerUp ret = create();
-		if (Entity.reference == null)
+		if (AbstractEntity.reference == null)
 			return ret;
 		for (int i=0; i < 5; i++) {
-			if (ret instanceof WeaponPower && Entity.reference.weaponsMaxed())
+			if (ret instanceof WeaponPower && AbstractEntity.reference.weaponsMaxed())
 				ret = create();
-			else if (ret instanceof ShieldRecovery && Entity.reference.shieldInfo() > .75)
+			else if (ret instanceof ShieldRecovery && AbstractEntity.reference.shieldInfo() > .75)
 				ret = create();
-			else if (ret instanceof Invincibility && Entity.reference.isInvincible())
+			else if (ret instanceof Invincibility && AbstractEntity.reference.isInvincible())
 				ret = create();
-			else if (ret instanceof BeamPower && Entity.reference.numBeams() > 4000)
+			else if (ret instanceof BeamPower && AbstractEntity.reference.numBeams() > 4000)
 				ret = create();
-			else if (ret instanceof MissilePower && Entity.reference.numMissiles() > 45)
+			else if (ret instanceof MissilePower && AbstractEntity.reference.numMissiles() > 45)
 				ret = create();
 			else
 				break;

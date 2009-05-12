@@ -34,6 +34,7 @@ public class Field {
 	protected static double D = 1;
 	protected static final float INIT_I = 40, INIT_S = 1;
 	protected float I = INIT_I, S = INIT_S; // speed of asteroids; scaling constant
+	protected String name;
 
 	/**
 	 * @param	w	The world.
@@ -41,11 +42,16 @@ public class Field {
 	 * @param	id	What type of field to be created.
 	 * @param	ships Entitys inside the world.
 	 */
-	public Field(World w, Display d, Entity ... ships) {
+	public Field(World w, Display d, String name, Entity ... ships) {
 		this.display = d;
+		this.name = name;
 		this.ships = ships;
 		dim = display.getDimension();
 		world = w;
+	}
+
+	public String startingName() {
+		return name;
 	}
 
 	/**
@@ -246,8 +252,13 @@ public class Field {
 	 * @return	Current state of scenario.
 	 */
 	public String toString() {
-		if (AbstractGame.globalLevel == DONE)
-			return "Out of levels!";
+		if (AbstractGame.globalLevel == DONE) {
+			if (done())
+				return "Challenge: set your name to an enemy of your choice.\n"
+					+ "e.g. \"a frigate\" \"my frigate\" \"a heavy rock\"";
+			else
+				return "Out of levels!";
+		}
 		return AbstractGame.globalLevel.toString() + " of " + (DONE.quantify() - 1);
 	}
 }

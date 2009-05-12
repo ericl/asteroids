@@ -21,7 +21,7 @@ import net.phys2d.raw.*;
 
 import net.phys2d.raw.shapes.*;
 
-public abstract class Weapon extends Body implements Textured, Explodable {
+public abstract class Weapon extends PObj implements Textured, Explodable {
 	private boolean exploded;
 	private long startTime = Timer.gameTime();
 	protected float lastFire = 0;

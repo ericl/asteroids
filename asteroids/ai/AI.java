@@ -25,6 +25,10 @@ public abstract class AI {
 		return object.isVisible() && object.targetableBy(ship);
 	}
 
+	public void setShip(Automated ship) {
+		this.ship = ship;
+	}
+
 	public void reset() {
 		steps = 0;
 		targetPos = null;

@@ -14,6 +14,8 @@ import java.io.FileOutputStream;
 
 import javax.swing.*;
 
+import java.lang.reflect.Proxy;
+
 import asteroids.ai.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;
@@ -23,16 +25,36 @@ import static asteroids.AbstractGame.Level.*;
 public class Asteroids extends AbstractGame {
 	private static File nameFile = new File(System.getProperty("user.home") + "/.asteroids-name");
 	private Entity ship;
+	private boolean devmode;
 	private Field scenario;
 	private StarField k;
 	private Thread scoreBuilder;
 	private String name = System.getProperty("user.name");
+	private DynamicEntity swapper;
+	private HumanShipAI human;
 	private boolean restart, scoresBuilt, multi;
 	private static final int BASE_WIDTH = 700, BASE_HEIGHT = 700;
+
+	private boolean isSpecial(String name) {
+		if (name.indexOf("juggernaut") >= 0)
+			return true;
+		else if (name.indexOf("frigate") >= 0)
+			return true;
+		else if (name.indexOf("blue terror") >= 0)
+			return true;
+		else if (name.indexOf("heavy rock") >= 0)
+			return true;
+		return false;
+	}
 	
 	protected class ScoreBuilder extends Thread {
 		public void run() {
-			stats.build(name);
+			if (!devmode) {
+				if (!isSpecial(name) && !isSpecial(scenario.startingName()))
+					stats.build(name);
+				else
+					stats.build(scenario.startingName());
+			}
 			scoresBuilt = true;
 		}
 	}
@@ -40,9 +62,22 @@ public class Asteroids extends AbstractGame {
 	public void newGame() {
 		k.init();
 		AbstractGame.globalLevel = START;
+		if (name.indexOf("juggernaut") >= 0)
+			swapper.setEntity(ship = new Jug(world));
+		else if (name.indexOf("frigate") >= 0)
+			swapper.setEntity(ship = new Frigate(world));
+		else if (name.indexOf("blue terror") >= 0)
+			swapper.setEntity(ship = new Terror(world));
+		else if (name.indexOf("heavy rock") >= 0)
+			swapper.setEntity(ship = new Swarm(world));
+		else
+			swapper.setEntity(ship = new Ship(world));
+		devmode = false;
+		human.setShip(ship);
+		ship.setAI(human);
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
-		scenario = new Field(world, display, ship);
+		scenario = new Field(world, display, name, ship);
 		scenario.setAIFrequency(.01);
 		stats.reset(scenario);
 		stats.setShip(ship);
@@ -65,17 +100,9 @@ public class Asteroids extends AbstractGame {
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-		if (name.equals("a juggernaut"))
-			ship = new Jug(world);
-		else if (name.equals("a frigate"))
-			ship = new Frigate(world);
-		else if (name.equals("a blue terror"))
-			ship = new Terror(world);
-		else if (name.equals("a heavy rock"))
-			ship = new Swarm(world);
-		else
-			ship = new Ship(world);
-		HumanShipAI human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true, display.getDimension());
+		swapper = new DynamicEntity(new Ship(world));
+		ship = swapper.newProxyInstance();
+		human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true, display.getDimension());
 		frame.addKeyListener(human);
 		display.addMouseInputListener(human);
 		display.setBackground("pixmaps/background2.jpg");
@@ -102,18 +129,25 @@ public class Asteroids extends AbstractGame {
 		g2d.setColor(COLOR);
 		g2d.setFont(FONT_BOLD);
 		int vpos = 20;
+		if (AbstractGame.globalLevel == DONE)
+			g2d.setColor(COLOR_BOLD);
 		for (String string : scenario.toString().split("\n")) {
 			g2d.drawString(string, 10, vpos);
 			vpos += 20;
 		}
 		if (scenario.done()) {
 			stats.freezeScores();
-			g2d.setColor(COLOR);
 			g2d.setFont(FONT_NORMAL);
+			g2d.setColor(COLOR);
 			g2d.drawString("N - Change Name", display.w(-115),display.h(-30));
 			g2d.drawString("SPACE - Retry", display.w(-115),display.h(-13));
+			String sname = name;
+			if ((isSpecial(name) || isSpecial(scenario.startingName())) && !name.equals(scenario.startingName()))
+				sname = "(" + name + ")";
 			g2d.setColor(COLOR_BOLD);
-			String score = name + "'s Score: " + stats.score();
+			String score = sname + "'s Score: " + stats.score();
+			if (devmode)
+				score = "Score: " + stats.score();
 			renderCenter(g2d, FONT_BOLD, score, 40);
 			renderCenter(g2d, FONT_NORMAL, ship.killer(), 25);
 			if (!scoreBuilder.isAlive() && !scoresBuilt)
@@ -181,31 +215,27 @@ public class Asteroids extends AbstractGame {
 					restart = true;
 				break;
 			case '1':
-				if (ok()) AbstractGame.globalLevel = START;
+				if (devmode) AbstractGame.globalLevel = START;
 				break;
 			case '2':
-				if (ok()) AbstractGame.globalLevel = EASY;
+				if (devmode) AbstractGame.globalLevel = EASY;
 				break;
 			case '3':
-				if (ok()) AbstractGame.globalLevel = MEDIUM;
+				if (devmode) AbstractGame.globalLevel = MEDIUM;
 				break;
 			case '4':
-				if (ok()) AbstractGame.globalLevel = HARD;
+				if (devmode) AbstractGame.globalLevel = HARD;
 				break;
 			case '5':
-				if (ok()) AbstractGame.globalLevel = BLUE;
+				if (devmode) AbstractGame.globalLevel = BLUE;
 				break;
 			case '6':
-				if (ok()) AbstractGame.globalLevel = SWARM;
+				if (devmode) AbstractGame.globalLevel = SWARM;
 				break;
 			case '7':
-				if (ok()) AbstractGame.globalLevel = DONE;
+				if (devmode) AbstractGame.globalLevel = DONE;
 				break;
 		}
-	}
-
-	private boolean ok() {
-		return name.equals("dev");
 	}
 
 	public void newWelcome() {
@@ -250,16 +280,24 @@ public class Asteroids extends AbstractGame {
 			"Asteroids",
 			JOptionPane.PLAIN_MESSAGE,
 			null, null, name);
-		if (s != null && !s.equals("")) {
-			try {
-				File swp = new File(nameFile.getPath() + ".swp");
-				FileOutputStream stream = new FileOutputStream(swp);
-				stream.write(s.getBytes());
-				swp.renameTo(nameFile);
-			} catch (Exception e) {
-				System.err.println(e);
+		if (s != null) {
+			s = s.trim();
+			if (s.equals("dev"))
+				devmode = true;
+			else if (!s.equals("")) {
+				try {
+					File swp = new File(nameFile.getPath() + ".swp");
+					FileOutputStream stream = new FileOutputStream(swp);
+					stream.write(s.getBytes());
+					swp.renameTo(nameFile);
+				} catch (Exception e) {
+					System.err.println(e);
+				}
+				name = s;
+				if (!isSpecial(s) && !isSpecial(scenario.startingName()))
+					if (!devmode)
+						stats.edit(s);
 			}
-			stats.edit(name = s);
 		}
 		unpause();
 	}

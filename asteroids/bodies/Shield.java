@@ -15,7 +15,7 @@ import net.phys2d.raw.shapes.*;
 
 import static asteroids.Util.*;
 
-public class Shield extends Body implements Explodable, Textured, Drawable, Overlay, Targetable, CauseOfDeath {
+public class Shield extends PObj implements Explodable, Textured, Drawable, Overlay, Targetable, CauseOfDeath {
 	protected Visible source;
 	protected float damage;
 	protected int visible;

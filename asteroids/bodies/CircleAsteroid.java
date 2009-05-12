@@ -12,7 +12,7 @@ import net.phys2d.raw.shapes.*;
 import asteroids.handlers.Exploder;
 import static asteroids.Util.*;
 
-public class CircleAsteroid extends Body implements Asteroid {
+public class CircleAsteroid extends PObj implements Asteroid {
 	protected float damage;
 	protected Color color = Color.ORANGE;
 

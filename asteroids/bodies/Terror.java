@@ -14,7 +14,7 @@ import net.phys2d.raw.*;
 
 import static asteroids.Util.*;
 
-public class Terror extends Entity {
+public class Terror extends AbstractEntity {
 	protected static ROVector2f[] raw = {v(21,11),v(43,11),v(56,26),v(58,46),v(32,58),v(5,46),v(5,26)};
 
 	public Terror(World world) {

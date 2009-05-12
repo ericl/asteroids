@@ -15,21 +15,21 @@ import asteroids.handlers._
 import asteroids.handlers.Timer
 
 object Main extends Application {
-  implicit def makeVector(t: Tuple2[Number, Number]): Vector2f = new Vector2f(t._1.floatValue, t._2.floatValue)
+  implicit def makeVector(t: (Number, Number)): Vector2f = new Vector2f(t._1.floatValue, t._2.floatValue)
   implicit def makeFloat(n: Number): Float = n.floatValue
 
   def range(min: Number, max: Number): Number = min + (max - min) * Math.random
 
   def add(pos: ROVector2f) = world ! Insert({
     val body: Body = new BigAsteroid(range(5, 50)) with PhysicsObj
-    val coords = display.getOffscreenCoords(20, 0, pos)
+    val coords = display.getOffscreenCoords(50, 0, pos)
     body.setPosition(coords.getX, coords.getY)
     body.adjustAngularVelocity(range(-Math.Pi, Math.Pi))
     body.adjustVelocity((range(-100, 100), range(-100, 100)));
     body
   })
 
-  val canvas = new Canvas()
+  val canvas = new Canvas
   val frame = new JFrame("Asteroids in Scala")
   val dimension = new Dimension(500, 500)
   frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
@@ -41,7 +41,7 @@ object Main extends Application {
   val display = new Display(frame, dimension, canvas)
   val world = new WorldController(display)
   val stars = new StarField(display)
-  stars.init()
+  stars.init
 
   var x = 0
   var y = 0
@@ -50,7 +50,7 @@ object Main extends Application {
     stars.starField()
     world !? Paint(display)
     display.show()
-    val dt = timer.tick()
+    val dt = timer.tick
     add(world.pickPos)
     world !? Step(dt)
     display.setCenter(world.pickPos)
@@ -90,7 +90,7 @@ class WorldController(display: Display) extends CollisionListener with Actor {
 
   def collisionOccured(event: CollisionEvent) = this ! Collide(event)
 
-  def pickPos(): ROVector2f = {
+  def pickPos: ROVector2f = {
     val bodies = world.getBodies();
     var i = 0
     while (i < bodies.size) {
@@ -124,8 +124,8 @@ class WorldController(display: Display) extends CollisionListener with Actor {
         case Destroy(body) =>
           world.remove(body)
         case Fragment(body, other, fragments, remnant) =>
-          // NOTE: funny behavior is because of async nature:
-          // bodies have changed velocities since collision
+          // NOTE: any funny behavior is because of async nature:
+          // bodies may have changed velocities since collision
           exploder.fragment(body, other)
         case Collide(event) =>
           val A = event.getBodyA()

@@ -178,7 +178,7 @@ public class MPAsteroids extends AbstractGame {
 	public void newGame() {
 		k.init();
 		AbstractGame.globalLevel = BLUE;
-		scenario = new Field(world, display, ships);
+		scenario = new Field(world, display, "fight", ships);
 		scenario.setAIFrequency(0);
 		scenario.setSpeedRatio(.25f);
 		scenario.setScalingRatio(.25f);

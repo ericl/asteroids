@@ -17,7 +17,7 @@ import net.phys2d.raw.shapes.*;
 
 import static net.phys2d.math.MathUtil.*;
 
-public abstract class Explosion extends Body implements Drawable, Textured {
+public abstract class Explosion extends PObj implements Drawable, Textured {
 	private boolean tracking = true;
 	private Vector2f d;
 	private Body t;

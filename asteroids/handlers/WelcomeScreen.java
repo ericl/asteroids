@@ -11,7 +11,7 @@ public class WelcomeScreen extends Field {
 	private long init = Timer.gameTime();
 
 	public WelcomeScreen(World w, Display d, Entity ... ships) {
-		super(w, d, ships);
+		super(w, d, "hi", ships);
 	}
 
 	public boolean done() {

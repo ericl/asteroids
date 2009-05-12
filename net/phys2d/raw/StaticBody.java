@@ -47,7 +47,7 @@ import net.phys2d.raw.shapes.Shape;
  * 
  * @author Kevin Glass
  */
-public strictfp class StaticBody extends Body {
+public strictfp class StaticBody extends PObj {
 
 	/**
 	 * Create a static body
