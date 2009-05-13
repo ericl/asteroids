@@ -247,7 +247,7 @@ public class Field {
 		if (AbstractGame.globalLevel == DONE) {
 			if (done())
 				return "Challenge: set your name to an enemy of your choice.\n"
-					+ "e.g. \"a frigate\" \"my frigate\" \"a heavy rock\"";
+					+ "e.g. \"a frigate\" \"my frigate\" \"a juggernaut\"";
 			else
 				return "Out of levels!";
 		}

@@ -18,6 +18,8 @@ import asteroids.handlers.*;
 
 import net.phys2d.math.ROVector2f;
 
+import net.phys2d.raw.World;
+
 import static asteroids.AbstractGame.Level.*;
 
 public class MPAsteroids extends AbstractGame {
@@ -53,12 +55,11 @@ public class MPAsteroids extends AbstractGame {
 	public MPAsteroids() {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		for (int i=2; i < NUM_PLAYERS; i++) {
-			final int foo = i;
-			swap[i] = new DynamicEntity(randomEntity());
+			swap[i] = new DynamicEntity(randomEntity(world));
 			ships[i] = swap[i].newProxyInstance();
 		}
 		if (NUM_PLAYERS > 1) {
-			swap[1] = new DynamicEntity(randomEntity());
+			swap[1] = new DynamicEntity(randomEntity(world));
 			ships[1] = swap[1].newProxyInstance();
 			HumanShipAI human = new HumanShipAI(world, ships[1], 500, true, null) {
 				public void keyPressed(KeyEvent e) {
@@ -78,7 +79,7 @@ public class MPAsteroids extends AbstractGame {
 			frame.addKeyListener(human);
 		}
 
-		swap[0] = new DynamicEntity(randomEntity());
+		swap[0] = new DynamicEntity(randomEntity(world));
 		ships[0] = swap[0].newProxyInstance();
 
 		HumanShipAI human = new HumanShipAI(world, ships[0], 500, true, null) {
@@ -166,7 +167,7 @@ public class MPAsteroids extends AbstractGame {
 		}
 	}
 
-	private Entity randomEntity() {
+	public static Entity randomEntity(World world) {
 		switch ((int)(6*Math.random())) {
 			case 1:
 				return new Jug(world);
@@ -184,14 +185,14 @@ public class MPAsteroids extends AbstractGame {
 	public void newGame() {
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
-			swap[i].setEntity(randomEntity());
+			swap[i].setEntity(randomEntity(world));
 			ships[i].setPosition(350*foo, 200*(foo % 2));
 		}
 		if (NUM_PLAYERS > 1) {
-			swap[1].setEntity(randomEntity());
+			swap[1].setEntity(randomEntity(world));
 			ships[1].setPosition(400, 200);
 		}
-		swap[0].setEntity(randomEntity());
+		swap[0].setEntity(randomEntity(world));
 		k.init();
 		AbstractGame.globalLevel = BLUE;
 		scenario = new Field(world, display, "fight", ships);

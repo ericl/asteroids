@@ -997,7 +997,7 @@ public strictfp class PObj implements Body {
 	 * 
 	 * @param delta The amount to change the velocity by
 	 */
-	public void adjustVelocity(Vector2f delta) {
+	public void adjustVelocity(ROVector2f delta) {
 		if (!isMoveable()) {
 			return;
 		}

@@ -15,10 +15,16 @@ import java.io.FileOutputStream;
 import javax.swing.*;
 
 import asteroids.ai.*;
+
 import asteroids.bodies.*;
+
 import asteroids.handlers.*;
 
+import net.phys2d.math.ROVector2f;
+
 import static asteroids.AbstractGame.Level.*;
+
+import static asteroids.MPAsteroids.*;
 
 public class Asteroids extends AbstractGame {
 	private static File nameFile = new File(System.getProperty("user.home") + "/.asteroids-name");
@@ -30,7 +36,7 @@ public class Asteroids extends AbstractGame {
 	private String name = System.getProperty("user.name");
 	private DynamicEntity swapper;
 	private HumanShipAI human;
-	private boolean restart, scoresBuilt, multi;
+	private boolean restart_pressed, restart_up, scoresBuilt, multi;
 	private static final int BASE_WIDTH = 700, BASE_HEIGHT = 700;
 
 	private boolean isSpecial(String name) {
@@ -61,18 +67,16 @@ public class Asteroids extends AbstractGame {
 		k.init();
 		AbstractGame.globalLevel = START;
 		if (name.indexOf("juggernaut") >= 0)
-			swapper.setEntity(ship = new Jug(world));
+			swapper.setEntity(new Jug(world));
 		else if (name.indexOf("frigate") >= 0)
-			swapper.setEntity(ship = new Frigate(world));
+			swapper.setEntity(new Frigate(world));
 		else if (name.indexOf("blue terror") >= 0)
-			swapper.setEntity(ship = new Terror(world));
+			swapper.setEntity(new Terror(world));
 		else if (name.indexOf("heavy rock") >= 0)
-			swapper.setEntity(ship = new Swarm(world));
+			swapper.setEntity(new Swarm(world));
 		else
-			swapper.setEntity(ship = new Ship(world));
+			swapper.setEntity(new Ship(world));
 		devmode = false;
-		human.setShip(ship);
-		ship.setAI(human);
 		scoreBuilder = new ScoreBuilder();
 		scoresBuilt = false;
 		scenario = new Field(world, display, name, ship);
@@ -101,6 +105,7 @@ public class Asteroids extends AbstractGame {
 		swapper = new DynamicEntity(new Ship(world));
 		ship = swapper.newProxyInstance();
 		human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true, display.getDimension());
+		swapper.setAI(human);
 		frame.addKeyListener(human);
 		display.addMouseInputListener(human);
 		display.setBackground("pixmaps/background2.jpg");
@@ -109,9 +114,9 @@ public class Asteroids extends AbstractGame {
 	}
 
 	protected void update() {
-		if (restart) {
+		if (restart_pressed && restart_up) {
+			restart_pressed = restart_up = false;
 			newGame();
-			restart = false;
 		}
 		if (multi) {
 			new MPAsteroids().mainLoop();
@@ -201,6 +206,12 @@ public class Asteroids extends AbstractGame {
 		k.starField();
 	}
 
+	public void keyReleased(KeyEvent event) {
+		switch (event.getKeyChar()) {
+			case ' ': restart_up = true; break;
+		}
+	}
+
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
 			case 'n': changeName(); break;
@@ -210,28 +221,62 @@ public class Asteroids extends AbstractGame {
 				break;
 			case ' ':
 				if (scenario instanceof WelcomeScreen || scenario.done())
-					restart = true;
+					restart_pressed = true;
+				break;
+		}
+		if (devmode) switch (event.getKeyChar()) {
+			case '?':
+				System.out.println("Bodies: " + world.getBodies().size());
+				System.out.println("Position: " + ship.getPosition());
+				System.out.println("Velocity: " + ship.getVelocity());
+				System.out.println("Rotation: " + ship.getRotation());
+				break;
+			case '|':
+				ship.gainBeams(1000);
+				break;
+			case 'M':
+				ship.addMissiles(10);
+				break;
+			case 'H':
+				ship.setHealth(1);
+				break;
+			case 'S':
+				ship.raiseShields();
+				break;
+			case 'I':
+				ship.gainInvincibility(20000, 4000);
+				break;
+			case 'W':
+				ship.upgradeWeapons();
+				break;
+			case 'T':
+				ROVector2f pos = ship.getPosition(), vel = ship.getVelocity();
+				float rot = ship.getRotation();
+				swapper.setEntity(randomEntity(world));
+				ship.setPosition(pos.getX(), pos.getY());
+				ship.adjustVelocity(vel);
+				ship.setRotation(rot);
 				break;
 			case '1':
-				if (devmode) AbstractGame.globalLevel = START;
+				AbstractGame.globalLevel = START;
 				break;
 			case '2':
-				if (devmode) AbstractGame.globalLevel = EASY;
+				AbstractGame.globalLevel = EASY;
 				break;
 			case '3':
-				if (devmode) AbstractGame.globalLevel = MEDIUM;
+				AbstractGame.globalLevel = MEDIUM;
 				break;
 			case '4':
-				if (devmode) AbstractGame.globalLevel = HARD;
+				AbstractGame.globalLevel = HARD;
 				break;
 			case '5':
-				if (devmode) AbstractGame.globalLevel = BLUE;
+				AbstractGame.globalLevel = BLUE;
 				break;
 			case '6':
-				if (devmode) AbstractGame.globalLevel = SWARM;
+				AbstractGame.globalLevel = SWARM;
 				break;
 			case '7':
-				if (devmode) AbstractGame.globalLevel = DONE;
+				AbstractGame.globalLevel = DONE;
 				break;
 		}
 	}

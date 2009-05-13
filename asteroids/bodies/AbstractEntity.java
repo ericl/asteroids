@@ -9,19 +9,21 @@ import java.awt.Color;
 import java.util.*;
 
 import asteroids.*;
+
 import asteroids.ai.*;
-import asteroids.display.*;
 
 import asteroids.handlers.*;
 import asteroids.handlers.Timer;
+
 import asteroids.weapons.*;
 
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
 
-import static asteroids.Util.*;
 import static asteroids.AbstractGame.Level.*;
+
+import static asteroids.Util.*;
 
 public abstract class AbstractEntity extends TexturedPolyBody implements Entity {
 	protected static int CLOAK_DELAY = 250, CLOAK_MAX = 15000, BEAM_MIN = 30;
@@ -417,12 +419,6 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 
 	public World getWorld() {
 		return world;
-	}
-
-	public void multiplyHealth(float m) {
-		setHealth((float)health() * m);
-		if (health() < .01)
-			selfDestruct();
 	}
 
 	public void addMissiles(int num) {

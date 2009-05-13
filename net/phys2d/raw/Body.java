@@ -70,7 +70,7 @@ public interface Body {
 	public void setTorque(float t);
 	public ROVector2f getVelocity();
 	public float getAngularVelocity();
-	public void adjustVelocity(Vector2f delta);
+	public void adjustVelocity(ROVector2f delta);
 	public void adjustAngularVelocity(float delta);
 	public float getFriction();
 	public ROVector2f getForce();

@@ -8,20 +8,13 @@ import java.awt.Color;
 
 import java.util.*;
 
-import asteroids.*;
 import asteroids.ai.*;
+
 import asteroids.display.*;
 
-import asteroids.handlers.*;
-import asteroids.handlers.Timer;
 import asteroids.weapons.*;
 
-import net.phys2d.math.*;
-
 import net.phys2d.raw.*;
-
-import static asteroids.Util.*;
-import static asteroids.AbstractGame.Level.*;
 
 public interface Entity extends Targetable, Automated, Drawable, Enhancable, CauseOfDeath, Textured, Body, Explodable {
 
@@ -63,7 +56,6 @@ public interface Entity extends Targetable, Automated, Drawable, Enhancable, Cau
 	public void upgradeWeapons();
 	public void setHealth(float health);
 	public World getWorld();
-	public void multiplyHealth(float m);
 	public void addMissiles(int num);
 	public boolean isInvincible();
 	public int getPointValue();
