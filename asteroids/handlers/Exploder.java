@@ -91,9 +91,9 @@ public class Exploder implements CollisionListener {
 		if (event.getBodyB() instanceof Explodable)
 			((Explodable)event.getBodyB()).collided(event);
 		if (event.getBodyA() instanceof Explodable)
-			tryExplode(event.getBodyA(), event.getBodyB(), event);
+			tryExplode((Explodable)event.getBodyA(), event.getBodyB(), event);
 		if (event.getBodyB() instanceof Explodable)
-			tryExplode(event.getBodyB(), event.getBodyA(), event);
+			tryExplode((Explodable)event.getBodyB(), event.getBodyA(), event);
 	}
 
 	/**
@@ -102,81 +102,80 @@ public class Exploder implements CollisionListener {
 	 * @param	other	The other body that it has collided with.
 	 * @param	event	The collision event between body one and two.
 	 */
-	private void tryExplode(Body body, Body other, CollisionEvent event) {
-		if (exploded.contains(body)) // don't explode anything twice
+	private void tryExplode(Explodable e, Body other, CollisionEvent event) {
+		if (exploded.contains(e)) // don't explode anything twice
 			return;
-		exploded.add(body);
-		Explodable e = (Explodable)body;
+		exploded.add(e);
 		// don't explode some offscreen or non-exploding bodies
-		if (!isStuck(body, other) && (!e.canExplode()
-				|| !display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
-				&& !(body instanceof Weapon))) {
+		if (!isStuck(e, other) && (!e.canExplode()
+				|| !display.inView(e.getPosition(), e.getRadius()+COLLIDE_BOUNDS)
+				&& !(e instanceof Weapon))) {
 			return;
 		}
-		world.remove(body);
+		world.remove(e);
 		if (other instanceof Weapon)
 			for (Stats stat : stats)
-				stat.kill(((Weapon)other).getOrigin(), body, event);
+				stat.kill(((Weapon)other).getOrigin(), e, event);
 		else if (other instanceof Entity)
 			for (Stats stat : stats)
-				stat.kill((Entity)other, body, event);
+				stat.kill((Entity)other, e, event);
 		else if (other instanceof Shield)
 			for (Stats stat : stats)
-				stat.kill(((Shield)other).getSource(), body, event);
+				stat.kill(((Shield)other).getSource(), e, event);
 		Body rem = e.getRemnant();
 		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
 			return;
 		List<Body> f = e.getFragments();
-		long group = grouper.findGroup(body);
+		long group = grouper.findGroup(e);
 		if (rem instanceof Explosion) // gah, another special case
 			explosionQueue.add((Explosion)rem);
 		if (rem != null)
 			rem.addBit(group);
-		if (!(other instanceof Targetable || body instanceof Weapon))
+		if (!(other instanceof Targetable || e instanceof Weapon))
 			other.addBit(group);
 		// user-related stuff automatically passes the group limit
-		if (!(body instanceof Targetable || other instanceof Targetable
+		if (!(e instanceof Targetable || other instanceof Targetable
 				|| other instanceof Weapon || rem instanceof Explosion)) {
-			body.addBit(group);
+			e.addBit(group);
 		}
 		// not really J
-		float J = other.getMass() / body.getMass() *
-				   (body.getRestitution() + other.getRestitution()) / 2;
+		float J = other.getMass() / e.getMass() *
+				   (e.getRestitution() + other.getRestitution()) / 2;
 		J = Math.min(MAX_J, J);
-		Vector2f v = sub(body.getVelocity(),(scale(other.getVelocity(),-J)));
+		Vector2f v = sub(e.getVelocity(),(scale(other.getVelocity(),-J)));
 		if (f != null) {
 			for (Body b : f) {
 				b.addBit(group);
 				double theta = Math.random()*2*Math.PI;
-				float sx = body.getPosition().getX();
-				float sy = body.getPosition().getY();
+				float sx = e.getPosition().getX();
+				float sy = e.getPosition().getY();
 				sx += e.getRadius() * (float)Math.sin(theta) / 2;
 				sy -= e.getRadius() * (float)Math.cos(theta) / 2;
 				sx += range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
 				sy -= range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
 				b.setRotation((float)(2 * Math.PI * Math.random()));
 				b.adjustAngularVelocity(range(
-				   -body.getAngularVelocity(), body.getAngularVelocity()));
+				   -e.getAngularVelocity(), e.getAngularVelocity()));
 				b.adjustVelocity(scale(direction(theta),
 					(float)Math.sqrt(Math.random()*2*v.length())));
-				if (!(body instanceof Targetable)) // looks bad onscreen
+				if (!(e instanceof Targetable)) // looks bad onscreen
 					b.adjustVelocity(v);
 				b.setPosition(sx, sy);
 				world.add(b);
 			}
 		}
 		if (rem != null) {
-			if (rem instanceof Explosion && !(body instanceof Targetable))
+			if (rem instanceof Explosion && !(e instanceof Targetable))
 				rem.setPosition(event.getPoint().getX(),
 					event.getPoint().getY());
 			else
-				rem.setPosition(body.getPosition().getX(),
-					body.getPosition().getY());
+				rem.setPosition(e.getPosition().getX(),
+					e.getPosition().getY());
 			if (rem instanceof Explosion)
-				((Explosion)rem).setTracking(body, other);
+				((Explosion)rem).setTracking(e, other);
 			rem.adjustVelocity(v);
-			rem.setRotation(body.getRotation());
-			rem.adjustAngularVelocity(body.getAngularVelocity());
+			rem.setRotation(e.getRotation());
+			rem.adjustAngularVelocity(e.getAngularVelocity());
 			world.add(rem);
 		}
 	}
@@ -185,7 +184,7 @@ public class Exploder implements CollisionListener {
 	 * @return	Damage done to a body.
 	 */
 	public static double getDamage(CollisionEvent e, Body victim) {
-		Body other = e.getBodyA() == victim ? e.getBodyB() : e.getBodyA();
+		Body other = e.getBodyA().equals(victim) ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Weapon)
 			return ((Weapon)other).getDamage();
 		else if (other instanceof PowerUp) // got killed this way before :(
@@ -208,67 +207,5 @@ public class Exploder implements CollisionListener {
 		if (diff < e.getRadius() / 2)
 			return true;
 		return false;
-	}
-
-	// for use in alternative implementation... just ignore
-	public void fragment(Body body, Body other) {
-		exploded.add(body);
-		Explodable e = (Explodable)body;
-		// don't explode some offscreen or non-exploding bodies
-		if (!display.inView(body.getPosition(), e.getRadius()+COLLIDE_BOUNDS))
-			return;
-		world.remove(body);
-		Body rem = e.getRemnant();
-		if (!(rem instanceof Explosion) && world.getBodies().size() > MAX_BODIES)
-			return;
-		List<Body> f = e.getFragments();
-		long group = grouper.findGroup(body);
-		if (rem instanceof Explosion) // gah, another special case
-			explosionQueue.add((Explosion)rem);
-		if (rem != null)
-			rem.addBit(group);
-		if (!(other instanceof Targetable || body instanceof Weapon))
-			other.addBit(group);
-		// user-related stuff automatically passes the group limit
-		if (!(body instanceof Targetable || other instanceof Targetable
-				|| other instanceof Weapon || rem instanceof Explosion)) {
-			body.addBit(group);
-		}
-		// not really J
-		float J = other.getMass() / body.getMass() *
-				   (body.getRestitution() + other.getRestitution()) / 2;
-		J = Math.min(MAX_J, J);
-		Vector2f v = sub(body.getVelocity(),(scale(other.getVelocity(),-J)));
-		if (f != null) {
-			for (Body b : f) {
-				b.addBit(group);
-				double theta = Math.random()*2*Math.PI;
-				float sx = body.getPosition().getX();
-				float sy = body.getPosition().getY();
-				sx += e.getRadius() * (float)Math.sin(theta) / 2;
-				sy -= e.getRadius() * (float)Math.cos(theta) / 2;
-				sx += range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
-				sy -= range(-MAX_RADIAL_DEVIATION, MAX_RADIAL_DEVIATION);
-				b.setRotation((float)(2 * Math.PI * Math.random()));
-				b.adjustAngularVelocity(range(
-				   -body.getAngularVelocity(), body.getAngularVelocity()));
-				b.adjustVelocity(scale(direction(theta),
-					(float)Math.sqrt(Math.random()*2*v.length())));
-				if (!(body instanceof Targetable)) // looks bad onscreen
-					b.adjustVelocity(v);
-				b.setPosition(sx, sy);
-				world.add(b);
-			}
-		}
-		if (rem != null) {
-			rem.setPosition(body.getPosition().getX(),
-				body.getPosition().getY());
-			if (rem instanceof Explosion)
-				((Explosion)rem).setTracking(body, other);
-			rem.adjustVelocity(v);
-			rem.setRotation(body.getRotation());
-			rem.adjustAngularVelocity(body.getAngularVelocity());
-			world.add(rem);
-		}
 	}
 }

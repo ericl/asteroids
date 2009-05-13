@@ -20,6 +20,8 @@ public class Terror extends AbstractEntity {
 	public Terror(World world) {
 		super(raw, null, 64, 64, 7500, world, new Laser3());
 		setColor(Color.BLUE);
+		setWeaponType(new Laser3());
+		raiseShield = false;
 	}
 
 	public String getCause() {
@@ -65,10 +67,5 @@ public class Terror extends AbstractEntity {
 
 	public boolean preferDrawableFallback() {
 		return true;
-	}
-
-	public void reset() {
-		super.reset();
-		setWeaponType(new Laser3());
 	}
 }

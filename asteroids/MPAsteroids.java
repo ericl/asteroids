@@ -25,7 +25,9 @@ public class MPAsteroids extends AbstractGame {
 	private static final int NUM_PLAYERS = 2;
 	protected Field scenario;
 	protected Pointer[] pointer = new Pointer[NUM_PLAYERS];
+	protected int[] deaths = new int[NUM_PLAYERS];
 	protected Entity[] ships = new Entity[NUM_PLAYERS];
+	protected DynamicEntity[] swap = new DynamicEntity[NUM_PLAYERS];
 	protected StarField k;
 	protected boolean restart;
 
@@ -52,53 +54,34 @@ public class MPAsteroids extends AbstractGame {
 		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
-			Entity ship = new Ship(world, true) {
-				public void reset() {
-					super.reset();
-					setPosition(350*foo, 200*(foo % 2));
-				}	
-			};
-			ships[i] = ship;
+			swap[i] = new DynamicEntity(randomEntity());
+			ships[i] = swap[i].newProxyInstance();
 		}
 		if (NUM_PLAYERS > 1) {
-			Entity ship = new Ship(world, true) {
-				public boolean isVisible() {
-					return true;
-				}
-
-				public void reset() {
-					super.reset();
-					setPosition(400, 200);
+			swap[1] = new DynamicEntity(randomEntity());
+			ships[1] = swap[1].newProxyInstance();
+			HumanShipAI human = new HumanShipAI(world, ships[1], 500, true, null) {
+				public void keyPressed(KeyEvent e) {
+					switch (e.getKeyCode()) {
+						case KeyEvent.VK_Q:
+						case KeyEvent.VK_C:
+							return;
+					}
+					super.keyPressed(e);
 				}
 
 				public String toString() {
 					return "Controls: arrow keys, space, f";
 				}
 			};
-			HumanShipAI human = new HumanShipAI(world, ship, 500, true, null) {
-				public void keyPressed(KeyEvent e) {
-					switch (e.getKeyCode()) {
-						case KeyEvent.VK_Q:
-							return;
-					}
-					super.keyPressed(e);
-				}
-			};
+			swap[1].setAI(human);
 			frame.addKeyListener(human);
-			ships[1] = ship;
 		}
 
-		Entity ship = new Frigate(world, true) {
-			public boolean isVisible() {
-				return true;
-			}
+		swap[0] = new DynamicEntity(randomEntity());
+		ships[0] = swap[0].newProxyInstance();
 
-			public String toString() {
-				return "Controls: wasd, `, 1";
-			}
-		};
-
-		HumanShipAI human = new HumanShipAI(world, ship, 500, true, null) {
+		HumanShipAI human = new HumanShipAI(world, ships[0], 500, true, null) {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyChar()) {
 					case 'a': ship.modifyTorque(-8e-5f); notifyInput(true); break;
@@ -120,9 +103,13 @@ public class MPAsteroids extends AbstractGame {
 					case '1': ship.stopLaunching(); notifyInput(false); break;
 				}
 			}
+
+			public String toString() {
+				return "Controls: wasd, `, 1";
+			}
 		};
+		swap[0].setAI(human);
 		frame.addKeyListener(human);
-		ships[0] = ship;
 		for (int i=0; i < NUM_PLAYERS; i++) {
 			Explodable[] targets = new Explodable[NUM_PLAYERS-1];
 			int x = 0;
@@ -165,17 +152,46 @@ public class MPAsteroids extends AbstractGame {
 				g2ds[i].drawString(RESTART_MSG,
 					centerX(FONT_NORMAL, RESTART_MSG, g2ds[i]), display.h(0)/2-5);
 			}
-			shipStatus(g2ds[i], ships[i]);
+			shipStatus(g2ds[i], ships[i], deaths[i] + (ships[i].dead() ? 1 : 0));
 		}
 	}
 
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
-			case 'r': restart = true; break;
+			case 'r':
+			for (int i=0; i < NUM_PLAYERS; i++)
+				if (ships[i].canExplode())
+					deaths[i]++;
+			restart = true; break;
+		}
+	}
+
+	private Entity randomEntity() {
+		switch ((int)(6*Math.random())) {
+			case 1:
+				return new Jug(world);
+			case 2:
+				return new Frigate(world, true);
+			case 3:
+				return new Terror(world);
+			case 4:
+				return new Swarm(world);
+			default:
+				return new Ship(world, false);
 		}
 	}
 
 	public void newGame() {
+		for (int i=2; i < NUM_PLAYERS; i++) {
+			final int foo = i;
+			swap[i].setEntity(randomEntity());
+			ships[i].setPosition(350*foo, 200*(foo % 2));
+		}
+		if (NUM_PLAYERS > 1) {
+			swap[1].setEntity(randomEntity());
+			ships[1].setPosition(400, 200);
+		}
+		swap[0].setEntity(randomEntity());
 		k.init();
 		AbstractGame.globalLevel = BLUE;
 		scenario = new Field(world, display, "fight", ships);
@@ -186,7 +202,7 @@ public class MPAsteroids extends AbstractGame {
 		scenario.start();
 	}
 
-	private void shipStatus(Graphics2D g2d, Entity ship) {
+	private void shipStatus(Graphics2D g2d, Entity ship, int deaths) {
 		g2d.setFont(FONT_NORMAL);
 		String hull = "Infinity";
 		if (!ship.isInvincible())
@@ -201,7 +217,7 @@ public class MPAsteroids extends AbstractGame {
 		g2d.drawString("Hull: " + hull,
 			display.w(-110), display.h(-39));
 		g2d.setColor(COLOR);
-		g2d.drawString("Deaths: " + ship.numDeaths(),
+		g2d.drawString("Deaths: " + deaths,
 			display.w(-110), display.h(-19));
 		g2d.drawString(ship.toString(), 10, 20);
 		int pos = 20;

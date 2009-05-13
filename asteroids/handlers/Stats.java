@@ -55,7 +55,7 @@ public abstract class Stats {
 			return;
 		if (victim instanceof Targetable) {
 			Targetable t = (Targetable)victim;
-			if (killer == myShip)
+			if (killer.equals(myShip))
 				myPoints += t.getPointValue();
 			else
 				otherPoints += t.getPointValue();

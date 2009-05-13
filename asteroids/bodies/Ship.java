@@ -18,15 +18,18 @@ public class Ship extends AbstractEntity {
 
 	public Ship(World world) {
 		super(raw, "pixmaps/ship.png", 64, 44, 1500, world, null);
-	}
-
-	public String getCause() {
-		return "another ship";
+		setWeaponType(new Laser2());
+		raiseShield = false;
 	}
 
 	public Ship(World world, boolean shieldOn) {
 		super(raw, "pixmaps/ship.png", 64, 44, 1500, world, null);
-		defaultShield = raiseShield = shieldOn;
+		raiseShield = shieldOn;
+		setWeaponType(new Laser2());
+	}
+
+	public String getCause() {
+		return "another ship";
 	}
 
 	protected float getMaxArmor() {
@@ -35,11 +38,6 @@ public class Ship extends AbstractEntity {
 
 	public int getPointValue() {
 		return 100;
-	}
-
-	public void reset() {
-		super.reset();
-		setWeaponType(new Laser2());
 	}
 
 	public String getTexturePath() {

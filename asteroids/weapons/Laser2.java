@@ -42,7 +42,7 @@ public class Laser2 extends Weapon implements Heavy {
 	}
 
 	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		Body other = e.getBodyA().equals(this) ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Heavy || !(other instanceof Weapon) && other.getMass() > 100)
 			explode = true;
 		damage += Exploder.getDamage(e, this);

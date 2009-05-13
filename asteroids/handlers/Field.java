@@ -90,16 +90,8 @@ public class Field {
 	 */
 	public void start() {
 		world.clear();
-		for (Entity ship : ships) {
-			ship.reset();
-			for (int i=1; i < AbstractGame.globalLevel.quantify(); i++)
-				ship.upgradeWeapons();
-			if (AbstractGame.globalLevel.quantify() > MEDIUM.quantify()) {
-				Shield s = new Shield(ship, world);
-				world.add(s);
-			}
-			world.add((Body)ship);
-		}
+		for (Entity ship : ships)
+			world.add(ship);
 		count = 1;
 	}
 

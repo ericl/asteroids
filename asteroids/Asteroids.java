@@ -14,8 +14,6 @@ import java.io.FileOutputStream;
 
 import javax.swing.*;
 
-import java.lang.reflect.Proxy;
-
 import asteroids.ai.*;
 import asteroids.bodies.*;
 import asteroids.handlers.*;

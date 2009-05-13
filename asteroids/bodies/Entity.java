@@ -29,7 +29,6 @@ public interface Entity extends Targetable, Automated, Drawable, Enhancable, Cau
 	public void setWeaponType(Weapon w);
 	public void setAI(AI ai);
 	public String getCause();
-	public void reset();
 	public long cloakTime();
 	public void cloak();
 	public void uncloak();
@@ -38,7 +37,6 @@ public interface Entity extends Targetable, Automated, Drawable, Enhancable, Cau
 	public void startLaunching();
 	public void stopLaunching();
 	public boolean launchMissile();
-	public int numDeaths();
 	public int numMissiles();
 	public int numBeams();
 	public void selfDestruct();

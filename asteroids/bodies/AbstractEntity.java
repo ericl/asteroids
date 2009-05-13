@@ -35,7 +35,7 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 	protected Shield shield, oldshield;
 	protected Color color = Color.ORANGE;
 	protected Explosion explosion;
-	protected int deaths, numMissiles;
+	protected int numMissiles;
 	protected float damage, torque, accel;
 	protected boolean fire, launch, destruct;
 	protected int cloak = Integer.MAX_VALUE;
@@ -45,7 +45,6 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 	protected long invincibleEnd; // end of invincibility -> warning(warntime)
 	protected long last = Timer.gameTime();
 	protected boolean raiseShield = true;
-	protected boolean defaultShield;
 	protected int beams;
 	protected static Entity reference;
 
@@ -56,7 +55,6 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 		weapons = new WeaponSys(this, world, weapon);
 		missiles = new WeaponSys(this, world, new Missile(world));
 		ai = new ShipAI(world, this);
-		reset();
 	}
 
 	public void gainBeams(int add) {
@@ -75,30 +73,6 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 
 	public String getCause() {
 		return "an unknown entity";
-	}
-
-	public void reset() {
-		if (ai != null)
-			ai.reset();
-		cause = null;
-		beams = 0;
-		count = 0;
-		numMissiles = 0;
-		last = Timer.gameTime();
-		getExcluded().clear();
-		setRotation(0);
-		setPosition(0,0);
-		adjustVelocity(MathUtil.sub(v(0,0),getVelocity()));
-		adjustAngularVelocity(-getAngularVelocity());
-		torque = damage = accel = 0;
-		fire = launch = destruct = false;
-		explosion = null;
-		cloak = Integer.MAX_VALUE;
-		warningStart = invincibleEnd = 0;
-		raiseShield = defaultShield;
-		cloaktime = CLOAK_MAX;
-		shield = null;
-		oldshield = null;
 	}
 
 	public long cloakTime() {
@@ -142,10 +116,6 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 			}
 		}
 		return false;
-	}
-
-	public int numDeaths() {
-		return deaths;
 	}
 
 	public int numMissiles() {
@@ -319,7 +289,6 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 	}
 
 	public Body getRemnant() {
-		deaths++;
 		updateShield();
 		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 1.5f);
 	}
@@ -352,7 +321,7 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 	public void collided(CollisionEvent event) {
 		if (!canExplode()) {
 			killer = event.getBodyA();
-			if (killer == this)
+			if (killer.equals(this))
 				killer = event.getBodyB();
 		}
 		if (killer instanceof Cannon)
@@ -381,7 +350,7 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 			return "tracked down";
 		else if (killer == null)
 			return "died of unknown causes";
-		else if (killer == this)
+		else if (killer.equals(this))
 			return "imploded";
 		String prefix = "";
 		if (killer instanceof Swarm) {
@@ -465,4 +434,8 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 	}
 
 	public abstract int getPointValue();
+
+	public String toString() {
+		return ai.toString();
+	}
 }

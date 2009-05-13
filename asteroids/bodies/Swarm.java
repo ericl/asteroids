@@ -35,6 +35,7 @@ public class Swarm extends AbstractEntity {
 			setMaxVelocity(50,50);
 			fuse = 10;
 		}
+		raiseShield = false;
 	}
 
 	// HACK: workaround for using this as "asteroid" in field
@@ -44,7 +45,7 @@ public class Swarm extends AbstractEntity {
 	}
 
 	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		Body other = e.getBodyA().equals(this) ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Weapon)
 			super.collided(e);
 	}

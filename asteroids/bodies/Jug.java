@@ -13,17 +13,13 @@ public class Jug extends AbstractEntity {
 
 	public Jug(World world) {
 		super(raw, "pixmaps/jug.png", 80, 48, 5500, world, new Cannon());
-		this.defaultShield = raiseShield = true;
+		raiseShield = true;
 		setMaxVelocity(20,20);
+		setWeaponType(new Cannon());
 	}
 
 	public String getCause() {
 		return "a juggernaut";
-	}
-
-	public void reset() {
-		super.reset();
-		setWeaponType(new Cannon());
 	}
 
 	protected Shield getShield() {
@@ -33,7 +29,6 @@ public class Jug extends AbstractEntity {
 	}
 
 	public Body getRemnant() {
-		deaths++;
 		updateShield();
 		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 2.0f);
 	}

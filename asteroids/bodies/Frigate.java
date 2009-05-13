@@ -13,21 +13,18 @@ public class Frigate extends AbstractEntity {
 
 	public Frigate(World world, boolean shieldOn) {
 		super(raw, "pixmaps/foo.png", 50, 30, 1000, world, new Laser());
-		defaultShield = raiseShield = shieldOn;
+		raiseShield = shieldOn;
+		setWeaponType(new Laser());
 	}
 
 	public Frigate(World world) {
 		super(raw, "pixmaps/foo.png", 50, 30, 1000, world, new Laser());
-		this.defaultShield = raiseShield = false;
+		raiseShield = false;
+		setWeaponType(new Laser());
 	}
 
 	public String getCause() {
 		return "a frigate";
-	}
-
-	public void reset() {
-		super.reset();
-		setWeaponType(new Laser());
 	}
 
 	protected Shield getShield() {

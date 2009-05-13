@@ -42,7 +42,7 @@ public abstract class AI {
 		float d = 0;
 		for (int i=0; i < bodies.size(); i++) {
 			Body b = bodies.get(i);
-			if (b == ship || !(b instanceof Targetable) || !canTarget((Targetable)b))
+			if (b.equals(ship) || !(b instanceof Targetable) || !canTarget((Targetable)b))
 				continue;
 			Targetable t = (Targetable)b;
 			if (target == null)

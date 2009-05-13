@@ -73,7 +73,7 @@ public class Laser3 extends Weapon implements Heavy {
 	}
 
 	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		Body other = e.getBodyA().equals(this) ? e.getBodyB() : e.getBodyA();
 		explode = !(other instanceof Weapon) || other instanceof Heavy;
 	}
 

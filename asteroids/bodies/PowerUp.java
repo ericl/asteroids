@@ -74,7 +74,7 @@ public abstract class PowerUp extends TexturedPolyBody implements Explodable {
 	}
 
 	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		Body other = e.getBodyA().equals(this) ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Enhancable) {
 			up((Enhancable)other);
 			explode = true;

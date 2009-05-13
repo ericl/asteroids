@@ -104,7 +104,7 @@ public class Missile extends Weapon implements Automated, Heavy {
 	}
 
 	public void collided(CollisionEvent e) {
-		Body other = e.getBodyA() == this ? e.getBodyB() : e.getBodyA();
+		Body other = e.getBodyA().equals(this) ? e.getBodyB() : e.getBodyA();
 		if (other instanceof Entity || other instanceof Missile && ((Missile)other).getOrigin() != origin)
 			explode = true;
 	}

@@ -10,7 +10,7 @@ import asteroids.display.*;
 /**
  * Interface for explosion handling by Exploder.
  */
-public interface Explodable extends Visible {
+public interface Explodable extends Visible, Body {
 	/**
 	 * @return	True if the body should be exploded or has exploded.
 	 * Should be callable at any time.
