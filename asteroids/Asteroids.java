@@ -36,7 +36,7 @@ public class Asteroids extends AbstractGame {
 	private String name = System.getProperty("user.name");
 	private DynamicEntity swapper;
 	private HumanShipAI human;
-	private boolean restart_pressed, restart_up, scoresBuilt, multi;
+	private boolean restart, scoresBuilt, multi;
 	private static final int BASE_WIDTH = 700, BASE_HEIGHT = 700;
 
 	private boolean isSpecial(String name) {
@@ -114,8 +114,8 @@ public class Asteroids extends AbstractGame {
 	}
 
 	protected void update() {
-		if (restart_pressed && restart_up) {
-			restart_pressed = restart_up = false;
+		if (restart) {
+			restart = false;
 			newGame();
 		}
 		if (multi) {
@@ -206,12 +206,6 @@ public class Asteroids extends AbstractGame {
 		k.starField();
 	}
 
-	public void keyReleased(KeyEvent event) {
-		switch (event.getKeyChar()) {
-			case ' ': restart_up = true; break;
-		}
-	}
-
 	public void keyTyped(KeyEvent event) {
 		switch (event.getKeyChar()) {
 			case 'n': changeName(); break;
@@ -221,7 +215,7 @@ public class Asteroids extends AbstractGame {
 				break;
 			case ' ':
 				if (scenario instanceof WelcomeScreen || scenario.done())
-					restart_pressed = true;
+					restart = true;
 				break;
 		}
 		if (devmode) switch (event.getKeyChar()) {
