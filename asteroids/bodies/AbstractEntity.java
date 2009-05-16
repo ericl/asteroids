@@ -67,6 +67,10 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 		weapons.setWeaponType(w);
 	}
 
+	public AI getAI() {
+		return ai;
+	}
+
 	public void setAI(AI ai) {
 		this.ai = ai;
 		if (ai != null)
@@ -292,7 +296,7 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 
 	public Body getRemnant() {
 		updateShield();
-		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 1.5f);
+		return explosion = new LargeExplosion(Explosion.TrackingMode.ORIGIN, 1.5f);
 	}
 
 	public boolean isVisible() {

@@ -51,6 +51,10 @@ public class Util {
 		return (float)(min+(max-min)*Math.random());
 	}
 
+	public static Vector2f negate(ROVector2f r) {
+		return v(-r.getX(), -r.getY());
+	}
+
 	public static Vector2f direction(Number rotation) {
 		return v(Math.sin(rotation.doubleValue()),
 		        -Math.cos(rotation.doubleValue()));

@@ -32,8 +32,13 @@ public class Exploder implements CollisionListener {
 	private World world;
 	private Display display;
 	private CollisionGrouper grouper;
+	private List<Entity> dead = new LinkedList<Entity>();
 	private final static int MAX_BODIES = 300;
 	private final static float MAX_RADIAL_DEVIATION = 10, COLLIDE_BOUNDS = 150, MAX_J = 2;
+
+	public void reset() {
+		dead.clear();
+	}
 
 	/**
 	 * phys2d will not collide bodies with any matching bits...
@@ -67,8 +72,25 @@ public class Exploder implements CollisionListener {
 	/**
 	 * Clears the anti-explosion-duplication list.
 	 */
-	public void endFrame() {
+	public void endFrame(float timestep) {
 		exploded.clear();
+		ListIterator<Entity> iter = dead.listIterator();
+		while (iter.hasNext()) {
+			Entity e = iter.next();
+			if (e.dead() && !(e.getAI() instanceof HumanShipAI)) {
+				iter.remove();
+				world.remove(e);
+			} else {
+				Vector2f pos = sub(e.getPosition(), scale(e.getVelocity(), -5*timestep));
+				e.setEnabled(true);
+				if (e.getVelocity().length() < 5)
+					e.adjustVelocity(negate(e.getVelocity()));
+				else
+					e.adjustVelocity(scale(e.getVelocity(), -.01f));
+				e.setEnabled(false);
+				e.setPosition(pos.getX(), pos.getY());
+			}
+		}
 	}
 
 	/**
@@ -113,6 +135,8 @@ public class Exploder implements CollisionListener {
 			return;
 		}
 		world.remove(e);
+		if (e instanceof Entity)
+			dead.add((Entity)e);
 		if (other instanceof Weapon)
 			for (Stats stat : stats)
 				stat.kill(((Weapon)other).getOrigin(), e, event);
@@ -143,6 +167,11 @@ public class Exploder implements CollisionListener {
 				   (e.getRestitution() + other.getRestitution()) / 2;
 		J = Math.min(MAX_J, J);
 		Vector2f v = sub(e.getVelocity(),(scale(other.getVelocity(),-J)));
+		if (e instanceof Entity) {
+			e.adjustVelocity(negate(e.getVelocity()));
+			e.adjustVelocity(v);
+			e.setEnabled(false);
+		}
 		if (f != null) {
 			for (Body b : f) {
 				b.addBit(group);
@@ -158,8 +187,7 @@ public class Exploder implements CollisionListener {
 				   -e.getAngularVelocity(), e.getAngularVelocity()));
 				b.adjustVelocity(scale(direction(theta),
 					(float)Math.sqrt(Math.random()*2*v.length())));
-				if (!(e instanceof Targetable)) // looks bad onscreen
-					b.adjustVelocity(v);
+				b.adjustVelocity(v);
 				b.setPosition(sx, sy);
 				world.add(b);
 			}
@@ -189,7 +217,7 @@ public class Exploder implements CollisionListener {
 			return ((Weapon)other).getDamage();
 		else if (other instanceof PowerUp) // got killed this way before :(
 			return 0;
-		double vmod = sub(victim.getVelocity(),other.getVelocity()).lengthSquared();
+		double vmod = sub(victim.getVelocity(), other.getVelocity()).lengthSquared();
 		return Math.min(other.getMass(), victim.getMass()) * vmod / 1e7;
 	}
 

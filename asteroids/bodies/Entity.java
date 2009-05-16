@@ -21,6 +21,7 @@ public interface Entity extends Targetable, Automated, Drawable, Enhancable, Cau
 	public void gainBeams(int add);
 	public void setWeaponType(Weapon w);
 	public void setAI(AI ai);
+	public AI getAI();
 	public String getCause();
 	public long cloakTime();
 	public void cloak();

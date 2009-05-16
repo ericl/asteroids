@@ -2,12 +2,10 @@ package net.phys2d.raw;
 
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 
-import net.phys2d.raw.shapes.DynamicShape;
 import net.phys2d.raw.shapes.Shape;
 
 public interface Body {

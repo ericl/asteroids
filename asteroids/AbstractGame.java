@@ -75,6 +75,10 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 		}
 	}
 
+	public void newGame() {
+		exploder.reset();
+	}
+
 	protected int centerX(Font f, String s, Graphics2D g2d) {
 		return (int)((dim.getWidth() - g2d.getFontMetrics(f)
 				.getStringBounds(s, g2d).getWidth())/2);
@@ -147,7 +151,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	private void doPhysics(float timestep) {
 		for (int i=0; i < 5; i++)
 			world.step(timestep);
-		exploder.endFrame();
+		exploder.endFrame(timestep);
 	}
 
 	private void doGraphics() {

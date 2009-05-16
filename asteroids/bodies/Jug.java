@@ -30,7 +30,7 @@ public class Jug extends AbstractEntity {
 
 	public Body getRemnant() {
 		updateShield();
-		return explosion = new LargeExplosion(Explosion.TrackingMode.NONE, 2.0f);
+		return explosion = new LargeExplosion(Explosion.TrackingMode.ORIGIN, 2.0f);
 	}
 
 	public int getPointValue() {

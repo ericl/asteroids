@@ -64,6 +64,7 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public void newGame() {
+		super.newGame();
 		k.init();
 		AbstractGame.globalLevel = START;
 		if (name.indexOf("juggernaut") >= 0)

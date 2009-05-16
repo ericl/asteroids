@@ -183,6 +183,7 @@ public class MPAsteroids extends AbstractGame {
 	}
 
 	public void newGame() {
+		super.newGame();
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			final int foo = i;
 			swap[i].setEntity(randomEntity(world));
