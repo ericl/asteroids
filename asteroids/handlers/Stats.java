@@ -64,7 +64,7 @@ public abstract class Stats {
 	}
 
 	private void increaseLevel(Level d) {
-		if (AbstractGame.globalLevel.quantify() < d.quantify()) {
+		if (AbstractGame.globalLevel.quantify() < d.quantify() && !myShip.canExplode()) {
 			AbstractGame.globalLevel = d;
 			myShip.setHealth(1);
 			myShip.gainInvincibility(WARNING_TIME, WARNING_TIME);
