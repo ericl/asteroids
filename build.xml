@@ -4,6 +4,9 @@
 		APCS final project; an asteroids-like game.
 	</description>
 
+	<tstamp>
+		<format property="date" pattern="yyyyMMdd" locale="en"/>
+	</tstamp>
 	<property name="src" location="asteroids"/>
 	<property name="lib" location="net"/>
 	<property name="doc" location="doc"/>
@@ -16,7 +19,7 @@
 	</target>
 
 	<target name="jar" depends="compile">
-		<jar jarfile="Asteroids.jar" update="true">
+		<jar jarfile="Asteroids-${date}.jar" update="true">
 			<manifest>
 				<attribute name="Main-Class" value="asteroids.Asteroids"/>
 			</manifest>
