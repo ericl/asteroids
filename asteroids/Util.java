@@ -3,7 +3,12 @@
  */
 
 package asteroids;
+
 import java.awt.*;
+
+import java.io.File;
+import java.io.IOException;
+
 import net.phys2d.math.*;
 
 public class Util {
@@ -19,6 +24,25 @@ public class Util {
 	public static void mark(String id) {
 		Util.id = id;
 		time = System.nanoTime();
+	}
+
+	public static File mktemp(String name) {
+		File file = new File(System.getProperty("user.home") + "/" + name);
+		if (!file.exists()) try {
+			file.createNewFile();
+		} catch (IOException e) {}
+		if (!file.canWrite() || !file.canRead()) {
+			file = new File(name);
+			try {
+				file.createNewFile();
+			} catch (IOException e) {}
+		}
+		if (!file.canWrite() || !file.canRead())
+			file = new File(System.getProperty("java.io.tmpdir") + "/" + name);
+			if (!file.exists()) try {
+				file.createNewFile();
+			} catch (IOException e) {}
+		return file;
 	}
 
 	public static void report() {

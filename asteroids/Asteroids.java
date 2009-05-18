@@ -26,8 +26,10 @@ import static asteroids.AbstractGame.Level.*;
 
 import static asteroids.MPAsteroids.*;
 
+import static asteroids.Util.*;
+
 public class Asteroids extends AbstractGame {
-	private static File nameFile = new File(System.getProperty("user.home") + "/.asteroids-name");
+	private static File nameFile = mktemp(".asteroids-name");
 	private Entity ship;
 	private boolean devmode;
 	private Field scenario;
@@ -211,11 +213,11 @@ public class Asteroids extends AbstractGame {
 		switch (event.getKeyChar()) {
 			case 'n': changeName(); break;
 			case 'm':
-				if (scenario instanceof WelcomeScreen)
+				if (scenario != null && scenario instanceof WelcomeScreen)
 					multi = true;
 				break;
 			case ' ':
-				if (scenario instanceof WelcomeScreen || scenario.done())
+				if (scenario != null && (scenario instanceof WelcomeScreen || scenario.done()))
 					restart = true;
 				break;
 		}

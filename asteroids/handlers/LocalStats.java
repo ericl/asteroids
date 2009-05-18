@@ -14,18 +14,18 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.Collections;
 
+import static asteroids.Util.*;
+
 public class LocalStats extends Stats {
 	private static HighScore record;
-	private static File hsFile = new File(System.getProperty("user.home") + "/.asteroids-hs");
+	private static File hsFile = mktemp(".asteroids-hs");
 	static {
 		if (hsFile.exists()) {
 			try {
 				record = (HighScore)(new ObjectInputStream(
 					new FileInputStream(hsFile)
 				).readObject());
-			} catch (Exception e) {
-				System.err.println(e);
-			}
+			} catch (Exception e) {}
 		}
 		if (record == null)
 			record = new HighScore();
@@ -37,7 +37,7 @@ public class LocalStats extends Stats {
 			new ObjectOutputStream(new FileOutputStream(swp)).writeObject(record);
 			swp.renameTo(hsFile);
 		} catch (IOException e) {
-			System.err.println(e);
+			System.err.println("on highscore commit: " + e);
 		}
 	}
 
