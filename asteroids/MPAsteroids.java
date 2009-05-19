@@ -24,17 +24,16 @@ import static asteroids.AbstractGame.Level.*;
 
 public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
-	private static final int NUM_PLAYERS = 2;
 	protected Field scenario;
-	protected Radar[] pointer = new Radar[NUM_PLAYERS];
-	protected int[] deaths = new int[NUM_PLAYERS];
-	protected Entity[] ships = new Entity[NUM_PLAYERS];
-	protected DynamicEntity[] swap = new DynamicEntity[NUM_PLAYERS];
+	protected Radar[] pointer;
+	protected int[] deaths;
+	protected Entity[] ships;
+	protected DynamicEntity[] swap;
 	protected StarField k;
 	protected boolean restart;
 
 	public static void main(String[] args) {
-		AbstractGame game = new MPAsteroids();
+		AbstractGame game = new MPAsteroids(2);
 		game.mainLoop();
 	}
 
@@ -52,8 +51,12 @@ public class MPAsteroids extends AbstractGame {
 		return new Display(frame, dim, canvases);
 	}
 
-	public MPAsteroids() {
-		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
+	public MPAsteroids(int num) {
+		super("Multiplayer Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT), num);
+		pointer = new Radar[NUM_PLAYERS];
+		deaths = new int[NUM_PLAYERS];
+		ships = new Entity[NUM_PLAYERS];
+		swap = new DynamicEntity[NUM_PLAYERS];
 		for (int i=2; i < NUM_PLAYERS; i++) {
 			swap[i] = new DynamicEntity(randomEntity(world));
 			ships[i] = swap[i].newProxyInstance();

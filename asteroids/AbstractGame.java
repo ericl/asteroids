@@ -21,6 +21,7 @@ import net.phys2d.raw.strategies.*;
 import static asteroids.Util.*;
 
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
+	protected final int NUM_PLAYERS;
 	// where NONE = game intro, IMPOSSIBLE = resource starvation
 	public enum Level {
 		START(1), EASY(2), MEDIUM(3), HARD(4), BLUE(5), SWARM(6), DONE(7);
@@ -84,7 +85,8 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 				.getStringBounds(s, g2d).getWidth())/2);
 	}
 
-	public AbstractGame(String title, Dimension d) {
+	public AbstractGame(String title, Dimension d, int players) {
+		NUM_PLAYERS = players;
 		dim = d;
 		frame = new JFrame(title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

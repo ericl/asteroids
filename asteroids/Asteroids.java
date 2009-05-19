@@ -97,7 +97,7 @@ public class Asteroids extends AbstractGame {
 	}
 
 	public Asteroids() {
-		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT));
+		super("Asteroids", new Dimension(BASE_WIDTH, BASE_HEIGHT), 1);
 		try {
 			FileInputStream stream = new FileInputStream(nameFile);
 			byte[] bytes = new byte[stream.available()];
@@ -124,7 +124,7 @@ public class Asteroids extends AbstractGame {
 			newGame();
 		}
 		if (multi) {
-			new MPAsteroids().mainLoop();
+			Chooser.main(new String[0]);
 			frame.dispose();
 			running = false;
 		}
