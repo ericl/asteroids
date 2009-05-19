@@ -153,7 +153,10 @@ public class Asteroids extends AbstractGame {
 			if ((isSpecial(name) || isSpecial(scenario.startingName())) && !name.equals(scenario.startingName()))
 				sname = "(" + name + ")";
 			g2d.setColor(COLOR_BOLD);
-			String score = sname + "'s Score: " + stats.score();
+			String s = "s";
+			if (Character.isUpperCase(name.charAt(0)))
+				s = "S";
+			String score = sname + "'s " + s + "core: " + stats.score();
 			if (devmode)
 				score = "Score: " + stats.score();
 			renderCenter(g2d, FONT_BOLD, score, 40);
