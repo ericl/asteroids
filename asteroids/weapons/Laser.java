@@ -12,17 +12,12 @@ import static asteroids.Util.*;
 public class Laser extends Weapon {
 	private static float myRadius = 2;
 
-	public Laser() {
-		super(new Circle(myRadius), 1);
-	}
-
-	public Laser(int level) {
-		super(new Circle(myRadius), 1);
-		setLevel(level);
+	public Laser(World w, Body o) {
+		super(new Circle(myRadius), 1, w, o);
 	}
 
 	public Laser duplicate() {
-		Laser l = new Laser();
+		Laser l = new Laser(world, origin);
 		l.setLevel(getLevel());
 		return l;
 	}

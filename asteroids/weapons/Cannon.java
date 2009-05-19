@@ -13,14 +13,14 @@ public class Cannon extends Weapon implements Heavy {
 	private static float myRadius = 3;
 	private boolean explode;
 
-	public Cannon() {
-		super(new Circle(myRadius), 20);
+	public Cannon(World w, Body o) {
+		super(new Circle(myRadius), 20, w, o);
 		addBit(BIT_SHIELD_PENETRATING);
 		setRestitution(1);
 	}
 
 	public Cannon duplicate() {
-		return new Cannon();
+		return new Cannon(world, origin);
 	}
 
 	public Body getRemnant() {

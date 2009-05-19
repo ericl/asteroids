@@ -1,6 +1,6 @@
 /**
- * Single-player asteroid game.
- */
+* Single-player asteroid game.
+*/
 
 package asteroids;
 

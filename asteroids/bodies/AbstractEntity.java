@@ -55,7 +55,7 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 		this.world = world;
 		setRotDamping(mass*mass*mass/843750);
 		weapons = new WeaponSys(this, world, weapon);
-		missiles = new WeaponSys(this, world, new Missile(world));
+		missiles = new WeaponSys(this, world, new Missile(world, this));
 		ai = new ShipAI(world, this);
 	}
 
@@ -250,10 +250,6 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 		if (ai instanceof HumanShipAI)
 			reference = this;
 		updateShield();
-		weapons.gc();
-		if (oldweapons != null)
-			oldweapons.gc();
-		missiles.gc();
 		float v = getVelocity().length();
 		float limit = 50;
 		setDamping(getMass() / 1500 * (v < limit ? 0 : v < limit*2 ? .1f : .5f));
@@ -275,7 +271,7 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 			accel();
 			if (beams > 0) {
 				oldweapons = weapons;
-				weapons = new WeaponSys(this, world, new Beam());
+				weapons = new WeaponSys(this, world, new Beam(world, this));
 			}
 		}
 		if (launch)

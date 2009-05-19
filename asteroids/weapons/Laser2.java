@@ -14,21 +14,14 @@ public class Laser2 extends Weapon implements Heavy {
 	private float damage;
 	private int steps;
 
-	public Laser2() {
-		super(new Circle(myRadius), 10);
+	public Laser2(World w, Body o) {
+		super(new Circle(myRadius), 10, w, o);
 		setRestitution(1);
 		setRotDamping(5);
-	}
-
-	public Laser2(int level) {
-		super(new Circle(myRadius), 1);
-		setRestitution(1);
-		setRotDamping(5);
-		setLevel(level);
 	}
 
 	public Laser2 duplicate() {
-		Laser2 l = new Laser2();
+		Laser2 l = new Laser2(world, origin);
 		l.setLevel(getLevel());
 		return l;
 	}

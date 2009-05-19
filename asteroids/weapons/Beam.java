@@ -29,14 +29,14 @@ public class Beam extends Weapon implements Drawable, Heavy {
 	private static float myRadius = 3;
 	private SharedBeam state;
 
-	public Beam() {
-		super(new Circle(myRadius), 20);
+	public Beam(World w, Body o) {
+		super(new Circle(myRadius), 20, w, o);
 		state = new SharedBeam();
 		setRestitution(1);
 	}
 
-	public Beam(SharedBeam state) {
-		super(new Circle(myRadius), 20);
+	public Beam(World w, Body o, SharedBeam state) {
+		super(new Circle(myRadius), 20, w, o);
 		this.state = state;
 		setRestitution(1);
 	}
@@ -77,7 +77,7 @@ public class Beam extends Weapon implements Drawable, Heavy {
 	public Beam duplicate() {
 		if (!state.continuous())
 			state = new SharedBeam();
-		return new Beam(state);
+		return new Beam(world, origin, state);
 	}
 
 	public boolean hasPreferredRotation() {

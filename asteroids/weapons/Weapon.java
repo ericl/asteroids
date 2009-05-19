@@ -23,14 +23,17 @@ import net.phys2d.raw.shapes.*;
 
 public abstract class Weapon extends PObj implements Textured, Explodable {
 	private boolean exploded;
+	protected final World world;
 	private long startTime = Timer.gameTime();
 	protected float lastFire = 0;
 	protected boolean canFire = false;
 	protected int level = 0;
-	protected Body origin;
+	protected final Body origin;
 
-	public Weapon(DynamicShape weap, float mass) {
+	public Weapon(DynamicShape weap, float mass, World world, Body origin) {
 		super(weap, mass);
+		this.world = world;
+		this.origin = origin;
 	}
 
 	public boolean isMaxed() {
@@ -77,15 +80,6 @@ public abstract class Weapon extends PObj implements Textured, Explodable {
 		return origin;
 	}
 
-	/**
-	 * precondition: origin implements Visible
-	 */
-	public void setOrigin(Body origin) {
-		if (!(origin instanceof Visible))
-			throw new IllegalArgumentException("body not instanceof Visible");
-		this.origin = origin;
-	}
-
 	public void setLevel(int l) {
 		level = l;
 	}
@@ -108,6 +102,12 @@ public abstract class Weapon extends PObj implements Textured, Explodable {
 	}
 	
 	public void collided(CollisionEvent event) {}
+
+	public void endFrame() {
+		super.endFrame();
+		if (exploded())
+			world.remove(this);
+	}
 	
 	public boolean canExplode() {
 		return true;

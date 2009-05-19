@@ -13,13 +13,13 @@ public class Laser3 extends Weapon implements Heavy {
 	private static float myRadius = 3;
 	private boolean explode;
 
-	public Laser3() {
-		super(new Circle(myRadius), 100);
+	public Laser3(World w, Body o) {
+		super(new Circle(myRadius), 100, w, o);
 		setRestitution(1);
 	}
 
 	public Laser3 duplicate() {
-		Laser3 l = new Laser3();
+		Laser3 l = new Laser3(world, origin);
 		l.setLevel(getLevel());
 		return l;
 	}

@@ -37,7 +37,6 @@ public class WeaponSys {
 				while (!queue.isEmpty() && queue.peek().exploded()) {
 					Weapon w = queue.remove();
 					all.remove(w);
-					world.remove(w);
 					origin.removeExcludedBody(w);
 				}
 				if (queue.size() < 1)
@@ -48,6 +47,7 @@ public class WeaponSys {
 		}
 
 		public void add(Weapon w) {
+			gc();
 			Long type = w.getLifetime();
 			Queue<Weapon> queue = types.get(type);
 			if (queue == null) {
@@ -65,7 +65,7 @@ public class WeaponSys {
 
 	public WeaponSys(Body origin, World wo, Weapon w) {
 		if (w == null)
-			setWeaponType(new Laser());
+			setWeaponType(new Laser(wo, origin));
 		else
 			setWeaponType(w);
 		this.origin = origin;
@@ -78,10 +78,6 @@ public class WeaponSys {
 
 	public boolean isMaxed() {
 		return weapon.isMaxed();
-	}
-
-	public void gc() {
-		fired.gc();
 	}
 
 	public void setWeaponType(Weapon w) {
@@ -126,7 +122,6 @@ public class WeaponSys {
 		Weapon c = weapon.duplicate();
 		if (weapon.hasPreferredRotation())
 			originRotation = weapon.getPreferredRotation();
-		c.setOrigin(origin);
 		c.setRotation(originRotation+angle);
 		float xc = (float)Math.sin(originRotation+angle);
 		float yc = (float)Math.cos(originRotation+angle);

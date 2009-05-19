@@ -13,19 +13,17 @@ public class Missile extends Weapon implements Automated, Heavy {
 	private static float myRadius = 2;
 	private HomingAI ai;
 	private float torque;
-	private World world;
 	private boolean explode;
 
-	public Missile(World w) {
-		super(new Circle(myRadius), 1000);
-		world = w;
+	public Missile(World w, Body o) {
+		super(new Circle(myRadius), 1000, w, o);
 		ai = new HomingAI(world, this);
 		setMaxVelocity(40, 40);
 		setRotDamping(100);
 	}
 
 	public Missile duplicate() {
-		return new Missile(world);
+		return new Missile(world, origin);
 	}
 
 	public void setAI(AI ai) {}

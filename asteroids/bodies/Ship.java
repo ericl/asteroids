@@ -18,14 +18,14 @@ public class Ship extends AbstractEntity {
 
 	public Ship(World world) {
 		super(raw, "pixmaps/ship.png", 64, 44, 1500, world, null);
-		setWeaponType(new Laser2());
+		setWeaponType(new Laser2(world, this));
 		raiseShield = false;
 	}
 
 	public Ship(World world, boolean shieldOn) {
 		super(raw, "pixmaps/ship.png", 64, 44, 1500, world, null);
 		raiseShield = shieldOn;
-		setWeaponType(new Laser2());
+		setWeaponType(new Laser2(world, this));
 	}
 
 	public String getCause() {
