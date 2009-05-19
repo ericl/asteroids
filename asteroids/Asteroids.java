@@ -31,6 +31,7 @@ import static asteroids.Util.*;
 public class Asteroids extends AbstractGame {
 	private static File nameFile = mktemp(".asteroids-name");
 	private Entity ship;
+	private Radar radar;
 	private boolean devmode;
 	private Field scenario;
 	private StarField k;
@@ -107,6 +108,7 @@ public class Asteroids extends AbstractGame {
 		}
 		swapper = new DynamicEntity(new Ship(world));
 		ship = swapper.newProxyInstance();
+		radar = new Radar(ship, display, world);
 		human = new HumanShipAI(world, ship, Integer.MAX_VALUE, true, display.getDimension());
 		swapper.setAI(human);
 		frame.addKeyListener(human);
@@ -207,6 +209,7 @@ public class Asteroids extends AbstractGame {
 
 	protected void preWorld() {
 		k.starField();
+		radar.drawTo(display.getGraphics()[0]);
 	}
 
 	public void keyTyped(KeyEvent event) {
@@ -242,6 +245,9 @@ public class Asteroids extends AbstractGame {
 				break;
 			case 'I':
 				ship.gainInvincibility(20000, 4000);
+				break;
+			case '!':
+				ship.gainInvincibility(Integer.MAX_VALUE, 0);
 				break;
 			case 'W':
 				ship.upgradeWeapons();

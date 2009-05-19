@@ -26,7 +26,7 @@ public class MPAsteroids extends AbstractGame {
 	private static final int BASE_WIDTH = 500, BASE_HEIGHT = 500;
 	private static final int NUM_PLAYERS = 2;
 	protected Field scenario;
-	protected Pointer[] pointer = new Pointer[NUM_PLAYERS];
+	protected Radar[] pointer = new Radar[NUM_PLAYERS];
 	protected int[] deaths = new int[NUM_PLAYERS];
 	protected Entity[] ships = new Entity[NUM_PLAYERS];
 	protected DynamicEntity[] swap = new DynamicEntity[NUM_PLAYERS];
@@ -111,15 +111,8 @@ public class MPAsteroids extends AbstractGame {
 		};
 		swap[0].setAI(human);
 		frame.addKeyListener(human);
-		for (int i=0; i < NUM_PLAYERS; i++) {
-			Explodable[] targets = new Explodable[NUM_PLAYERS-1];
-			int x = 0;
-			for (int j=0; j < NUM_PLAYERS; j++) {
-				if (j != i)
-					targets[x++] = ships[j];
-			}
-			pointer[i] = new Pointer(ships[i], display, targets);
-		}
+		for (int i=0; i < NUM_PLAYERS; i++)
+			pointer[i] = new Radar(ships[i], display, world);
 		display.setBackground("pixmaps/background2.jpg");
 		k = new StarField(display);
 		newGame();
