@@ -65,6 +65,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 				steps++;
 				dt = timer.tick();
 				while (pause) try {
+					Timer.pauseMode = true;
 					Thread.sleep(Long.MAX_VALUE);
 				} catch (InterruptedException e) {
 					timer.reset();

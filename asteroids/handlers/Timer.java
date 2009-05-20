@@ -6,15 +6,24 @@
 package asteroids.handlers;
 
 public class Timer {
-	private static long pauseTime, lastTime;
+	private static long pauseTotal, lastTime = System.currentTimeMillis();
 	private final float target_ns;
 	private long old_ns, now_ns, old_diff, now_diff, sleep_ms;
+
+	/* Set to true if you want monotonicity of gameTime()
+	 * to be preserved even while the game is paused.
+	 * Necessary because pauseTotal is updated in one big chunk.
+	 */
+	public static boolean pauseMode;
 
 	/**
 	 * @return	Time from the game's perspective in milliseconds.
 	 */
 	public static long gameTime() {
-		return System.currentTimeMillis() - pauseTime;
+		if (pauseMode)
+			return lastTime - pauseTotal; // monotonicity preserved here
+		else // more accurate in this case
+			return System.currentTimeMillis() - pauseTotal;
 	}
 
 	/**
@@ -31,7 +40,8 @@ public class Timer {
 	 * The time delta is used to calculate gameTime.
 	 */
 	public void reset() {
-		pauseTime += System.currentTimeMillis() - lastTime;
+		pauseTotal += System.currentTimeMillis() - lastTime;
+		pauseMode = false;
 		lastTime = System.currentTimeMillis();
 		old_ns = System.nanoTime();
 		now_ns = old_ns;
