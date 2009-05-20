@@ -31,6 +31,7 @@ import static asteroids.Util.*;
 public class Asteroids extends AbstractGame {
 	private static File nameFile = mktemp(".asteroids-name");
 	private Entity ship;
+	private long spaceTime;
 	private Radar radar;
 	private boolean devmode;
 	private Field scenario;
@@ -102,9 +103,12 @@ public class Asteroids extends AbstractGame {
 			FileInputStream stream = new FileInputStream(nameFile);
 			byte[] bytes = new byte[stream.available()];
 			stream.read(bytes);
-			name = new String(bytes);
+			name = new String(bytes).trim();
 		} catch (Exception e) {
-			System.err.println(e);
+			System.err.println("on reading name: " + e);
+		} finally {
+			if (name == null || name.length() < 1)
+				name = System.getProperty("user.name");
 		}
 		swapper = new DynamicEntity(new Ship(world));
 		ship = swapper.newProxyInstance();
@@ -154,7 +158,7 @@ public class Asteroids extends AbstractGame {
 				sname = "(" + name + ")";
 			g2d.setColor(COLOR_BOLD);
 			String s = "s";
-			if (Character.isUpperCase(name.charAt(0)))
+			if (name.length() > 0 && Character.isUpperCase(name.charAt(0)))
 				s = "S";
 			String score = sname + "'s " + s + "core: " + stats.score();
 			if (devmode)
@@ -223,7 +227,10 @@ public class Asteroids extends AbstractGame {
 					multi = true;
 				break;
 			case ' ':
-				if (scenario != null && (scenario instanceof WelcomeScreen || scenario.done()))
+				long current = System.currentTimeMillis();
+				long diff = current - spaceTime;
+				spaceTime = current;
+				if (diff > 500 && scenario != null && (scenario instanceof WelcomeScreen || scenario.done()))
 					restart = true;
 				break;
 		}

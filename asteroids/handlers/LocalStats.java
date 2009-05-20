@@ -25,7 +25,9 @@ public class LocalStats extends Stats {
 				record = (HighScore)(new ObjectInputStream(
 					new FileInputStream(hsFile)
 				).readObject());
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				System.err.println("on highscore read: " + e);
+			}
 		}
 		if (record == null)
 			record = new HighScore();
