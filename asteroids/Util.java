@@ -8,6 +8,10 @@ import java.awt.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.swing.JOptionPane;
 
 import net.phys2d.math.*;
 
@@ -24,6 +28,15 @@ public class Util {
 	public static void mark(String id) {
 		Util.id = id;
 		time = System.nanoTime();
+	}
+
+	public static void oops(Throwable e) {
+		e.printStackTrace();
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		JOptionPane.showMessageDialog(null, sw.toString(), e.toString(), JOptionPane.DEFAULT_OPTION);
+		System.exit(1);
 	}
 
 	public static File mktemp(String name) {

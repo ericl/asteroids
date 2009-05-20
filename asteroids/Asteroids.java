@@ -11,8 +11,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.swing.*;
 
@@ -99,12 +97,7 @@ public class Asteroids extends AbstractGame {
 		try {
 			new Asteroids().mainLoop();
 		} catch (Throwable e) {
-			e.printStackTrace();
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			JOptionPane.showMessageDialog(null, sw.toString(), e.toString(), JOptionPane.DEFAULT_OPTION);
-			System.exit(1);
+			oops(e);
 		}
 	}
 
