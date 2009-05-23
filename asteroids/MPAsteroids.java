@@ -39,7 +39,7 @@ public class MPAsteroids extends AbstractGame {
 
 	protected Display makeDisplay() {
 		frame.setLocationByPlatform(true);
-		GridLayout layout = new GridLayout(NUM_PLAYERS/2, NUM_PLAYERS, 2, 2);
+		GridLayout layout = new GridLayout((int)Math.sqrt(NUM_PLAYERS), (int)Math.sqrt(NUM_PLAYERS) + 1, 2, 2);
 		frame.setLayout(layout);
 		Canvas[] canvases = new Canvas[NUM_PLAYERS];
 		for (int i=0; i < NUM_PLAYERS; i++) {
