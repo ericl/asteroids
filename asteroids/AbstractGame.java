@@ -22,6 +22,7 @@ import static asteroids.Util.*;
 
 public abstract class AbstractGame extends KeyAdapter implements WindowFocusListener {
 	protected final int NUM_PLAYERS;
+	protected boolean devmode;
 	// where NONE = game intro, IMPOSSIBLE = resource starvation
 	public enum Level {
 		START(1), EASY(2), MEDIUM(3), HARD(4), BLUE(5), SWARM(6), DONE(7);
@@ -133,7 +134,7 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	}
 
 	public void pause() {
-		if (!pause)
+		if (!pause && !devmode)
 			pause = true;
 	}
 

@@ -33,7 +33,6 @@ public class Asteroids extends AbstractGame {
 	private Entity ship;
 	private long spaceTime;
 	private Radar radar;
-	private boolean devmode;
 	private Field scenario;
 	private StarField k;
 	private Thread scoreBuilder;
