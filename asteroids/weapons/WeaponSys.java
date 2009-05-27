@@ -5,7 +5,6 @@
 package asteroids.weapons;
 
 import java.util.*;
-import java.util.Collections;
 
 import asteroids.display.*;
 
@@ -23,45 +22,8 @@ public class WeaponSys {
 	protected World world;
 	protected Weapon weapon;
 	protected long lastFired;
-	protected LifeQueue fired = new LifeQueue();
 	protected float burst;
-
-	private class LifeQueue {
-		Map<Long,Queue<Weapon>> types = new HashMap<Long,Queue<Weapon>>();	
-		Set<Weapon> all = new HashSet<Weapon>();
-
-		public void gc() {
-			List<Long> remove = new ArrayList<Long>();
-			for (Long type : types.keySet()) {
-				Queue<Weapon> queue = types.get(type);
-				while (!queue.isEmpty() && queue.peek().exploded()) {
-					Weapon w = queue.remove();
-					all.remove(w);
-					origin.removeExcludedBody(w);
-				}
-				if (queue.size() < 1)
-					remove.add(type);
-			}
-			for (Long type : remove)
-				types.remove(type);
-		}
-
-		public void add(Weapon w) {
-			gc();
-			Long type = w.getLifetime();
-			Queue<Weapon> queue = types.get(type);
-			if (queue == null) {
-				queue = new LinkedList<Weapon>();
-				types.put(type, queue);
-			}
-			queue.add(w);
-			all.add(w);
-		}
-
-		public Set<Weapon> getActive() {
-			return Collections.unmodifiableSet(all);
-		}
-	}
+	protected Set<Weapon> fired = new HashSet<Weapon>();
 
 	public WeaponSys(Body origin, World wo, Weapon w) {
 		if (w == null)
@@ -119,7 +81,7 @@ public class WeaponSys {
 
 	// postcondition: nothing is modified
 	private Weapon makeWeapon(float angle, float originRotation) {
-		Weapon c = weapon.duplicate();
+		final Weapon c = weapon.duplicate();
 		if (weapon.hasPreferredRotation())
 			originRotation = weapon.getPreferredRotation();
 		c.setRotation(originRotation+angle);
@@ -137,8 +99,15 @@ public class WeaponSys {
 		Set<Body> excluded = origin.getExcluded();
 		for (Body e : excluded)
 			c.addExcludedBody(e);
-		for (Weapon f : fired.getActive())
+		for (Weapon f : fired)
 			c.addExcludedBody(f);
+		c.setOnDeathCallback(new Runnable() {
+			public void run() {
+				world.remove(c);
+				origin.removeExcludedBody(c);
+				fired.remove(c);
+			}
+		});
 		return c;
 	}
 

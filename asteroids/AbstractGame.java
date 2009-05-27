@@ -57,6 +57,11 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 	public final static String RESTART_MSG = "R - Restart Game";
 	public final static Color COLOR_BOLD = Color.ORANGE, COLOR = Color.lightGray;
 
+	private void checkDiff(String section, long diff) {
+		if (diff > 100)
+			System.out.println("W: " + section + " took " + diff + " ms");
+	}
+
 	private class MainLoop extends Thread {
 		int steps;
 		float dt;
@@ -64,17 +69,43 @@ public abstract class AbstractGame extends KeyAdapter implements WindowFocusList
 			try {
 				Timer timer = new Timer(60f);
 				while (running) {
+					long last = System.currentTimeMillis(), diff = 0;
 					steps++;
 					dt = timer.tick();
+					if (devmode) {
+						diff = System.currentTimeMillis() - last;
+						checkDiff("tick", diff);
+						last = System.currentTimeMillis();
+					}
 					while (pause) try {
 						Timer.pauseMode = true;
 						Thread.sleep(Long.MAX_VALUE);
 					} catch (InterruptedException e) {
 						timer.reset();
 					}
+					if (devmode) {
+						diff = System.currentTimeMillis() - last;
+						checkDiff("pause", diff);
+						last = System.currentTimeMillis();
+					}
 					doGraphics();
+					if (devmode) {
+						diff = System.currentTimeMillis() - last;
+						checkDiff("graphics", diff);
+						last = System.currentTimeMillis();
+					}
 					doPhysics(dt);
+					if (devmode) {
+						diff = System.currentTimeMillis() - last;
+						checkDiff("physics", diff);
+						last = System.currentTimeMillis();
+					}
 					update();
+					if (devmode) {
+						diff = System.currentTimeMillis() - last;
+						checkDiff("update", diff);
+						last = System.currentTimeMillis();
+					}
 				}
 			} catch (Throwable e) {
 				oops(e);

@@ -27,6 +27,9 @@ public interface Body {
 	public void collided(Body other);
 	public void endFrame();
 	public boolean isTouchingStatic(ArrayList path);
+	public boolean removed();
+	public void notifyRemove();
+	public void notifyReAdded();
 	public BodyList getTouching();
 	public BodyList getConnected();
 	public BodyList getConnected(boolean stopAtStatic);

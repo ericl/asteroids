@@ -28,12 +28,17 @@ public abstract class Weapon extends PObj implements Textured, Explodable {
 	protected float lastFire = 0;
 	protected boolean canFire = false;
 	protected int level = 0;
+	protected Runnable onDeathCallback;
 	protected final Body origin;
 
 	public Weapon(DynamicShape weap, float mass, World world, Body origin) {
 		super(weap, mass);
 		this.world = world;
 		this.origin = origin;
+	}
+
+	public void setOnDeathCallback(Runnable e) {
+		onDeathCallback = e;
 	}
 
 	public boolean isMaxed() {
@@ -105,8 +110,18 @@ public abstract class Weapon extends PObj implements Textured, Explodable {
 
 	public void endFrame() {
 		super.endFrame();
-		if (exploded())
-			world.remove(this);
+		if (exploded() && onDeathCallback != null) {
+			onDeathCallback.run();
+			onDeathCallback = null;
+		}
+	}
+
+	public void notifyRemove() {
+		super.notifyRemove();
+		if (onDeathCallback != null) {
+			onDeathCallback.run();
+			onDeathCallback = null;
+		}
 	}
 	
 	public boolean canExplode() {

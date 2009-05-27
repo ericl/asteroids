@@ -41,6 +41,7 @@
 package net.phys2d.raw;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -58,6 +59,7 @@ import net.phys2d.raw.shapes.Shape;
 public strictfp class PObj implements Body {
 	/** The next ID to be assigned */
 	private static int NEXT_ID = 0;
+	private boolean removed;
 	
 	/** The current position of this body */
 	private Vector2f position = new Vector2f();
@@ -158,7 +160,7 @@ public strictfp class PObj implements Body {
 	private Vector2f maxVelocity;
 
 	/** The list of bodies excluded from colliding with this body */
-	private WeakHashMap<Body,Object> excluded = new WeakHashMap<Body,Object>();
+	private Map<Body,Object> excluded = new WeakHashMap<Body,Object>();
 	
 	/**
 	 * Create a new un-named body
@@ -630,6 +632,18 @@ public strictfp class PObj implements Body {
 	 */
 	public Set<Body> getExcluded() {
 		return excluded.keySet();
+	}
+
+	public void notifyRemove() {
+		removed = true;
+	}
+
+	public void notifyReAdded() {
+		removed = false;
+	}
+
+	public boolean removed() {
+		return removed;
 	}
 	
 	/**
