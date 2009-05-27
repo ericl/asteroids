@@ -38,7 +38,7 @@ public class Shield extends PObj implements Explodable, Textured, Drawable, Over
 		this.world = world;
 		this.radius = source.getRadius() * 4 / 3;
 		this.source = source;
-		this.addExcludedBody((Body)source);
+		group = ((Body)source).getGroup();
 	}
 
 	public Visible getSource() {

@@ -4,8 +4,6 @@
 
 package asteroids.weapons;
 
-import java.util.*;
-
 import asteroids.display.*;
 
 import asteroids.handlers.Timer;
@@ -23,7 +21,6 @@ public class WeaponSys {
 	protected Weapon weapon;
 	protected long lastFired;
 	protected float burst;
-	protected Set<Weapon> fired = new HashSet<Weapon>();
 
 	public WeaponSys(Body origin, World wo, Weapon w) {
 		if (w == null)
@@ -74,7 +71,6 @@ public class WeaponSys {
 		for (int i=0; i < weapon.getNum(); i++) {
 			Weapon weap = makeWeapon(i*ANGULAR_DISTRIBUTION - initialAngle, rotation);
 			world.add(weap);
-			fired.add(weap);
 		}
 		return true;
 	}
@@ -95,19 +91,7 @@ public class WeaponSys {
 		else
 			c.hintVelocity(vel);
 		c.adjustVelocity((Vector2f)origin.getVelocity());
-		c.addExcludedBody(origin);
-		Set<Body> excluded = origin.getExcluded();
-		for (Body e : excluded)
-			c.addExcludedBody(e);
-		for (Weapon f : fired)
-			c.addExcludedBody(f);
-		c.setOnDeathCallback(new Runnable() {
-			public void run() {
-				world.remove(c);
-				origin.removeExcludedBody(c);
-				fired.remove(c);
-			}
-		});
+		c.setGroup(origin.getGroup());
 		return c;
 	}
 

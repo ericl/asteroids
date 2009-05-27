@@ -1,14 +1,10 @@
 package asteroids.ai;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import net.phys2d.math.*;
 
 import net.phys2d.raw.World;
 
 public class HomingAI extends AI {
-	private Set<Object> whitelist = new HashSet<Object>();
 
 	public HomingAI(World world, Automated ship) {
 		super(world, ship);
@@ -16,10 +12,6 @@ public class HomingAI extends AI {
 
 	public float getMaxTorque() {
 		return 3e-5f;
-	}
-
-	public void addExcluded(Object o) {
-		whitelist.add(o);
 	}
 
 	public float minTorqueThreshold() {
@@ -35,7 +27,7 @@ public class HomingAI extends AI {
 	protected void launchMissile() {}
 
 	public boolean canTarget(Targetable t) {
-		return super.canTarget(t) && !whitelist.contains(t);
+		return super.canTarget(t) && t.getGroup() != ship.getGroup();
 	}
 
 	public void update() {

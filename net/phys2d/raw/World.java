@@ -457,8 +457,6 @@ public strictfp class World extends CollisionSpace {
 	 */
 	public void add(Body body) {                         
 		body.configureRestingBodyDetection(hitTolerance, rotationTolerance, positionTolerance);
-		if (body.removed())
-			body.notifyReAdded();
 		super.add(body);
 	}
 
@@ -468,10 +466,7 @@ public strictfp class World extends CollisionSpace {
 	 * @param body The body to be removed
 	 */
 	public void remove(Body body) {
-		if (!body.removed()) {
-			clearArbiters(body);
-			body.notifyRemove();
-			super.remove(body);
-		}
+		clearArbiters(body);
+		super.remove(body);
 	}
 }

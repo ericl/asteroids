@@ -15,6 +15,7 @@ public interface Body {
 	public boolean disabled();
 	public void setEnabled(boolean enabled);
 	public int getID();
+	public int getGroup();
 	public void setUserData(Object o);
 	public Object getUserData();
 	public void getConnected(BodyList list, ArrayList path, boolean stopAtStatic);
@@ -27,9 +28,6 @@ public interface Body {
 	public void collided(Body other);
 	public void endFrame();
 	public boolean isTouchingStatic(ArrayList path);
-	public boolean removed();
-	public void notifyRemove();
-	public void notifyReAdded();
 	public BodyList getTouching();
 	public BodyList getConnected();
 	public BodyList getConnected(boolean stopAtStatic);

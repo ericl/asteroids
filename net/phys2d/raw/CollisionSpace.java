@@ -155,6 +155,9 @@ public class CollisionSpace implements CollisionContext {
 				if (bi.getExcluded().contains(bj)) {
 					continue;
 				}
+				if (bi.getGroup() == bj.getGroup()) {
+					continue;
+				}
 				if (bi.getInvMass() == 0.0f && bj.getInvMass() == 0.0f) {
 					continue;
 				}

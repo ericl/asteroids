@@ -72,11 +72,6 @@ public class Missile extends Weapon implements Automated, Heavy {
 		return 1;
 	}
 
-	public void addExcludedBody(Body b) {
-		ai.addExcluded(b);
-		super.addExcludedBody(b);
-	}
-
 	public void endFrame() {
 		super.endFrame();
 		Vector2f dir = direction(getRotation());

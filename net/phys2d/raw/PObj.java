@@ -59,7 +59,7 @@ import net.phys2d.raw.shapes.Shape;
 public strictfp class PObj implements Body {
 	/** The next ID to be assigned */
 	private static int NEXT_ID = 0;
-	private boolean removed;
+	private static int NEXT_GROUP = 0;
 	
 	/** The current position of this body */
 	private Vector2f position = new Vector2f();
@@ -108,6 +108,7 @@ public strictfp class PObj implements Body {
 	private String name;
 	/** The id assigned ot this body */
 	private int id;
+	protected int group;
 	/** The restitution of this body */
 	private float restitution = 0f;
 	/** True if this body is effected by gravity */
@@ -222,6 +223,7 @@ public strictfp class PObj implements Body {
 		this.name = name;
 
 		id = NEXT_ID++;
+		group = NEXT_GROUP++;
 		position.set(0.0f, 0.0f);
 		lastPosition.set(0.0f, 0.0f);
 		rotation = 0.0f;
@@ -248,6 +250,10 @@ public strictfp class PObj implements Body {
 	 */
 	public int getID() {
 		return id;
+	}
+
+	public int getGroup() {
+		return group;
 	}
 	
 	/**
@@ -634,18 +640,6 @@ public strictfp class PObj implements Body {
 		return excluded.keySet();
 	}
 
-	public void notifyRemove() {
-		removed = true;
-	}
-
-	public void notifyReAdded() {
-		removed = false;
-	}
-
-	public boolean removed() {
-		return removed;
-	}
-	
 	/**
 	 * Get the mass of this body
 	 * 
