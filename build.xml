@@ -33,6 +33,7 @@
 				<include name="asteroids/**/*.png"/>
 				<include name="asteroids/**/*.jpg"/>
 				<include name="net/**/*.class"/>
+				<include name="net/**/*.java"/>
 			</fileset>
 		</jar>
 	</target>

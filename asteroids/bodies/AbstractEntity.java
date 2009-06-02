@@ -340,20 +340,20 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 		Object foo = killer; // do not modify killer!
 		if (destruct) {
 			if (AbstractGame.globalLevel == DONE)
-				return "quit while ahead";
+				return cause = "quit while ahead";
 			else
-				return "quit game";
+				return cause = "quit game";
 		}
 		else if (AbstractGame.globalLevel == DONE)
-			return "ran out of levels";
+			return cause = "ran out of levels";
 		else if (killer instanceof Beam)
-			return "blasted apart";
+			return cause = "blasted apart";
 		else if (killer instanceof Missile)
-			return "tracked down";
+			return cause = "tracked down";
 		else if (killer == null)
-			return "died of unknown causes";
+			return cause = "died of unknown causes";
 		else if (killer.equals(this))
-			return "imploded";
+			return cause = "imploded";
 		String prefix = "";
 		if (killer instanceof Swarm) {
 			prefix = "crushed by ";
