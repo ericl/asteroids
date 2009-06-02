@@ -162,7 +162,7 @@ public abstract class AbstractEntity extends TexturedPolyBody implements Entity 
 
 	// directional - only for certain weapons
 	public boolean fire(float rotation) {
-		if (weapons.isBeam())
+		if (canExplode() || weapons.isBeam())
 			return false;
 		if (weapons.fire(rotation)) {
 			cloak = Integer.MAX_VALUE;
