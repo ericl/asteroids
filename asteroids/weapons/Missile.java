@@ -49,7 +49,7 @@ public class Missile extends Weapon implements Automated, Heavy {
 	}
 
 	public boolean isVisible() {
-		return false;
+		return true;
 	}
 
 	public boolean targetableBy(Object o) {

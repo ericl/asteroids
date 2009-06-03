@@ -301,6 +301,10 @@ public strictfp class PObj implements Body {
 		
 		return moveable;
 	}
+
+	public boolean isVisible() {
+		return true;
+	}
 	
 	/**
 	 * Indicate whether this body should be able to rotate. Use this feature at

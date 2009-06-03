@@ -37,7 +37,7 @@ public class Radar {
 		BodyList bodies = world.getBodies();
 		for (int i=0; i < bodies.size(); i++) {
 			Body b = bodies.get(i);
-			if (b instanceof Entity && !b.equals(ship))
+			if (b instanceof Entity && b.isVisible() && !b.equals(ship))
 				targets.add((Entity)b);
 		}
 		return targets;

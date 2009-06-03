@@ -68,14 +68,13 @@ public class MPAsteroids extends AbstractGame {
 				public void keyPressed(KeyEvent e) {
 					switch (e.getKeyCode()) {
 						case KeyEvent.VK_Q:
-						case KeyEvent.VK_C:
 							return;
 					}
 					super.keyPressed(e);
 				}
 
 				public String toString() {
-					return "Controls: arrow keys, space, f";
+					return "Controls: arrow keys, space, f, c";
 				}
 			};
 			swap[1].setAI(human);
@@ -94,6 +93,12 @@ public class MPAsteroids extends AbstractGame {
 					case 's': ship.setAccel(-3.75f); notifyInput(true); break;
 					case '`': ship.startFiring(); notifyInput(true); break;
 					case '1': ship.startLaunching(); notifyInput(true); break;
+					case '2':
+						if (ship.isVisible())
+							ship.cloak();
+						else
+							ship.uncloak();
+						notifyInput(false); break;
 				}
 			}
 
@@ -109,7 +114,7 @@ public class MPAsteroids extends AbstractGame {
 			}
 
 			public String toString() {
-				return "Controls: wasd, `, 1";
+				return "Controls: wasd, `, 1, 2";
 			}
 		};
 		swap[0].setAI(human);
@@ -136,8 +141,11 @@ public class MPAsteroids extends AbstractGame {
 	protected void preWorld() {
 		k.starField();
 		Graphics2D[] g2ds = display.getGraphics();
-		for (int i=0; i < NUM_PLAYERS; i++)
+		for (int i=0; i < NUM_PLAYERS; i++) {
 			pointer[i].drawTo(g2ds[i]);
+			if (!ships[i].isVisible())
+				display.drawBody(ships[i], i);
+		}
 	}
 
 	protected void postWorld() {
@@ -210,13 +218,14 @@ public class MPAsteroids extends AbstractGame {
 		if (s >= 0)
 			shield = "Shield: " + (int)(s*1000)/10 + "%";
 		g2d.setColor(COLOR);
-		g2d.drawString(shield, display.w(-110),display.h(-59));
+		g2d.drawString(shield, display.w(-110),display.h(-79));
 		g2d.setColor(ship.getColor());
 		g2d.drawString("Hull: " + hull,
-			display.w(-110), display.h(-39));
+			display.w(-110), display.h(-59));
 		g2d.setColor(COLOR);
 		g2d.drawString("Deaths: " + deaths,
-			display.w(-110), display.h(-19));
+			display.w(-110), display.h(-39));
+		g2d.drawString("Cloak: " + (int)(ship.cloakTime()/1000) + "s", display.w(-110), display.h(-19));
 		g2d.drawString(ship.toString(), 10, 20);
 		int pos = 20;
 		if (ship.numMissiles() > 0) {

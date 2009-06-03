@@ -220,6 +220,8 @@ public class Asteroids extends AbstractGame {
 	protected void preWorld() {
 		k.starField();
 		radar.drawTo(display.getGraphics()[0]);
+		if (!ship.isVisible())
+			display.drawBody(ship);
 	}
 
 	public void keyTyped(KeyEvent event) {

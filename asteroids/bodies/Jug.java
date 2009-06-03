@@ -28,6 +28,13 @@ public class Jug extends AbstractEntity {
 		return s;
 	}
 
+	public String getTexturePath() {
+		if (isVisible())
+			return "pixmaps/jug.png";
+		else
+			return "pixmaps/jug-c.png";
+	}
+
 	public Body getRemnant() {
 		updateShield();
 		return explosion = new LargeExplosion(Explosion.TrackingMode.ORIGIN, 2.0f);

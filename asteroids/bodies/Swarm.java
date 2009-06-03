@@ -1,5 +1,7 @@
 package asteroids.bodies;
 
+import java.awt.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class Swarm extends AbstractEntity {
 
 	public Swarm(World world) {
 		super(raw, "pixmaps/3.png", 35, range(8,15), 1000, world, null);
+		setColor(Color.BLACK);
 		setAI(new HomingAI(world, this));
 		setRotDamping(5000);
 		if (AbstractGame.globalLevel == DONE) {
@@ -42,6 +45,10 @@ public class Swarm extends AbstractEntity {
 	public void setMaxVelocity(float vx, float vy) {
 		if (AbstractGame.globalLevel != DONE)
 			super.setMaxVelocity(vx, vy);
+	}
+
+	public boolean preferDrawableFallback() {
+		return !isVisible();
 	}
 
 	public void collided(CollisionEvent e) {
@@ -71,7 +78,7 @@ public class Swarm extends AbstractEntity {
 	}
 
 	public boolean targetableBy(Object o) {
-		return !(o instanceof Swarm);
+		return super.targetableBy(o) && !(o instanceof Swarm);
 	}
 
 	public void endFrame() {

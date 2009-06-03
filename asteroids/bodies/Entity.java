@@ -46,7 +46,6 @@ public interface Entity extends Targetable, Automated, Drawable, Enhancable, Cau
 	public boolean weaponsMaxed();
 	public void endFrame();
 	public Body getRemnant();
-	public boolean isVisible();
 	public boolean targetableBy(Object o);
 	public Color getColor();
 	public boolean canExplode();

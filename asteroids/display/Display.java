@@ -120,31 +120,38 @@ public class Display {
 	}
 
 	public void drawBody(Body b) {
+		for (int i=0; i < n; i++)
+			drawBody(b, i);
+	}
+
+	public void drawBody(Body b, int i) {
 		if (b instanceof Textured) {
 			if (((Textured)b).preferDrawableFallback() && b instanceof Drawable) {
-				drawDrawable((Drawable)b);
+				drawDrawable((Drawable)b, i);
 			} else {
-				drawTextured((Textured)b);
+				drawTextured((Textured)b, i);
 			}
 		} else if (b instanceof Drawable) {
-			drawDrawable((Drawable)b);
+			drawDrawable((Drawable)b, i);
 		} else {
 			throw new RuntimeException(b + " cannot be rendered");
 		}
 	}
 
 	/**
-	 * Draws all drawable bodies in the world to an offscreen buffer.
+	 * Draws all visible bodies in the world to an offscreen buffer.
 	 */
 	public void drawWorld(World world) {
 		BodyList bodies = world.getBodies();
 		List<Body> top = new ArrayList<Body>();
 		for (int i=0; i < bodies.size(); i++) {
 			Body b = bodies.get(i);
-			if (b instanceof Overlay)
-				top.add(b);
-			else
-				drawBody(b);
+			if (b.isVisible()) {
+				if (b instanceof Overlay)
+					top.add(b);
+				else
+					drawBody(b);
+			}
 		}
 		for (Body b : top)
 			drawBody(b);
@@ -164,10 +171,14 @@ public class Display {
 	 */
 	public void drawDrawable(Drawable thing) {
 		for (int i=0; i < n; i++)
-			if (isVisible(centers[i], dim, thing.getPosition(), thing.getRadius())) {
-				bufs[i].setColor(thing.getColor());
-				thing.drawTo(bufs[i], centers[i]);
-			}
+			drawDrawable(thing, i);
+	}
+
+	public void drawDrawable(Drawable thing, int i) {
+		if (isVisible(centers[i], dim, thing.getPosition(), thing.getRadius())) {
+			bufs[i].setColor(thing.getColor());
+			thing.drawTo(bufs[i], centers[i]);
+		}
 	}
 
 	/**
@@ -175,20 +186,24 @@ public class Display {
 	 * @param	thing	The textured object to be drawn.
 	 */
 	public void drawTextured(Textured thing) {
+		for (int i=0; i < n; i++)
+			drawTextured(thing, i);
+	}
+
+	public void drawTextured(Textured thing, int i) {
 		Image img = loadImage(thing.getTexturePath());
 		float scale = thing.getTextureScaleFactor();
 		Vector2f c = thing.getTextureCenter();
-		for (int i=0; i < n; i++)
-			if (isVisible(centers[i], dim, thing.getPosition(), thing.getRadius())) {
-				float x = thing.getPosition().getX() - centers[i].getX();
-				float y = thing.getPosition().getY() - centers[i].getY();
-				AffineTransform trans = AffineTransform.getTranslateInstance
-					(x-c.getX()*scale, y-c.getY()*scale);
-				trans.concatenate(AffineTransform.getScaleInstance(scale, scale));
-				trans.concatenate(AffineTransform.getRotateInstance
-					(thing.getRotation(), c.getX(), c.getY()));
-				bufs[i].drawImage(img, trans, null);
-			}
+		if (isVisible(centers[i], dim, thing.getPosition(), thing.getRadius())) {
+			float x = thing.getPosition().getX() - centers[i].getX();
+			float y = thing.getPosition().getY() - centers[i].getY();
+			AffineTransform trans = AffineTransform.getTranslateInstance
+				(x-c.getX()*scale, y-c.getY()*scale);
+			trans.concatenate(AffineTransform.getScaleInstance(scale, scale));
+			trans.concatenate(AffineTransform.getRotateInstance
+				(thing.getRotation(), c.getX(), c.getY()));
+			bufs[i].drawImage(img, trans, null);
+		}
 	}
 
 	/**

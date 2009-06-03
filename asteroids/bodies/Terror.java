@@ -1,6 +1,7 @@
 package asteroids.bodies;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ import asteroids.weapons.ShieldFailing;
 import net.phys2d.math.*;
 
 import net.phys2d.raw.*;
+
+import net.phys2d.raw.shapes.*;
 
 import static asteroids.Util.*;
 
@@ -26,6 +29,19 @@ public class Terror extends AbstractEntity {
 
 	public String getCause() {
 		return "a blue terror";
+	}
+
+	public void drawTo(Graphics2D g2d, ROVector2f o) {
+		Polygon poly = (Polygon)getShape();
+		ROVector2f[] verts = poly.getVertices(getPosition(), getRotation());
+		int[] xcoords = new int[verts.length];
+		int[] ycoords = new int[verts.length];
+		for (int i=0; i < verts.length; i++) {
+			xcoords[i] = (int)(verts[i].getX() - o.getX());
+			ycoords[i] = (int)(verts[i].getY() - o.getY());
+		}
+		g2d.setColor(isVisible() ? Color.BLUE : Color.BLACK);
+		g2d.fillPolygon(xcoords, ycoords, verts.length);
 	}
 
 	protected float getMaxArmor() {
@@ -49,7 +65,7 @@ public class Terror extends AbstractEntity {
 	}
 
 	public boolean targetableBy(Object o) {
-		return !(o instanceof Terror);
+		return super.targetableBy(o) && !(o instanceof Terror);
 	}
 
 	public List<Body> getFragments() {

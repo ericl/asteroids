@@ -21,6 +21,7 @@ public interface Body {
 	public void getConnected(BodyList list, ArrayList path, boolean stopAtStatic);
 	public boolean isRotatable();
 	public boolean isMoveable();
+	public boolean isVisible();
 	public void setRotatable(boolean rotatable);
 	public void setMoveable(boolean moveable);
 	public void setCanRest(boolean canRest);

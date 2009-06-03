@@ -27,6 +27,13 @@ public class Frigate extends AbstractEntity {
 		return "a frigate";
 	}
 
+	public String getTexturePath() {
+		if (isVisible())
+			return "pixmaps/foo.png";
+		else
+			return "pixmaps/foo-c.png";
+	}
+
 	protected Shield getShield() {
 		return new OrangeShield(this, world);
 	}

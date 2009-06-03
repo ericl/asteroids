@@ -53,10 +53,6 @@ public class Shield extends PObj implements Explodable, Textured, Drawable, Over
 		return MAX;
 	}
 
-	public boolean isVisible() {
-		return false;
-	}
-
 	public boolean targetableBy(Object o) {
 		return false;
 	}

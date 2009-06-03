@@ -22,7 +22,7 @@ public abstract class AI {
 	}
 
 	protected boolean canTarget(Targetable object) {
-		return object.isVisible() && object.targetableBy(ship);
+		return object.targetableBy(ship);
 	}
 
 	public void setShip(Automated ship) {
